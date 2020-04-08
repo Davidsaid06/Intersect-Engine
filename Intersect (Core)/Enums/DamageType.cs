@@ -8,7 +8,27 @@ namespace Intersect.Enums
 
         Magic,
 
-        True
+        True,
+
+        Faith,
+
+        Fire,
+
+        Ice,
+
+        Thunder,
+
+        Earth,
+
+        Wind,
+
+        Water,
+
+        Nature,
+
+        Light,
+
+        Dark
 
     }
 

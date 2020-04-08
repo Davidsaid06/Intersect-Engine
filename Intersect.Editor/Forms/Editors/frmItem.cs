@@ -131,12 +131,34 @@ namespace Intersect.Editor.Forms.Editors
             nudDef.Maximum = Options.MaxStatValue;
             nudMR.Maximum = Options.MaxStatValue;
             nudSpd.Maximum = Options.MaxStatValue;
+            nudFaith.Maximum = Options.MaxStatValue;
+            nudFire.Maximum = Options.MaxStatValue;
+            nudIce.Maximum = Options.MaxStatValue;
+            nudThunder.Maximum = Options.MaxStatValue;
+            nudEarth.Maximum = Options.MaxStatValue;
+            nudWind.Maximum = Options.MaxStatValue;
+            nudWater.Maximum = Options.MaxStatValue;
+            nudNature.Maximum = Options.MaxStatValue;
+            nudLight.Maximum = Options.MaxStatValue;
+            nudDark.Maximum = Options.MaxStatValue;
+            nudCapacity.Maximum = Options.MaxStatValue;
 
             nudStr.Minimum = -Options.MaxStatValue;
             nudMag.Minimum = -Options.MaxStatValue;
             nudDef.Minimum = -Options.MaxStatValue;
             nudMR.Minimum = -Options.MaxStatValue;
             nudSpd.Minimum = -Options.MaxStatValue;
+            nudFaith.Minimum = -Options.MaxStatValue;
+            nudFire.Minimum = -Options.MaxStatValue;
+            nudIce.Minimum = -Options.MaxStatValue;
+            nudThunder.Minimum = -Options.MaxStatValue;
+            nudEarth.Minimum = -Options.MaxStatValue;
+            nudWind.Minimum = -Options.MaxStatValue;
+            nudWater.Minimum = -Options.MaxStatValue;
+            nudNature.Minimum = -Options.MaxStatValue;
+            nudLight.Minimum = -Options.MaxStatValue;
+            nudDark.Minimum = -Options.MaxStatValue;
+            nudCapacity.Minimum = -Options.MaxStatValue;
 
             InitLocalization();
             UpdateEditor();
@@ -284,12 +306,26 @@ namespace Intersect.Editor.Forms.Editors
                 nudDef.Value = mEditorItem.StatsGiven[2];
                 nudMR.Value = mEditorItem.StatsGiven[3];
                 nudSpd.Value = mEditorItem.StatsGiven[4];
+                nudFaith.Value = mEditorItem.StatsGiven[5];
+                nudFire.Value = mEditorItem.StatsGiven[6];
+                nudIce.Value = mEditorItem.StatsGiven[7];
+                nudThunder.Value = mEditorItem.StatsGiven[8];
+                nudEarth.Value = mEditorItem.StatsGiven[9];
+                nudWind.Value = mEditorItem.StatsGiven[10];
+                nudWater.Value = mEditorItem.StatsGiven[11];
+                nudNature.Value = mEditorItem.StatsGiven[12];
+                nudLight.Value = mEditorItem.StatsGiven[13];
+                nudDark.Value = mEditorItem.StatsGiven[14];
+                nudCapacity.Value = mEditorItem.StatsGiven[15];
+
+
 
                 nudStrPercentage.Value = mEditorItem.PercentageStatsGiven[0];
                 nudMagPercentage.Value = mEditorItem.PercentageStatsGiven[1];
                 nudDefPercentage.Value = mEditorItem.PercentageStatsGiven[2];
                 nudMRPercentage.Value = mEditorItem.PercentageStatsGiven[3];
                 nudSpdPercentage.Value = mEditorItem.PercentageStatsGiven[4];
+                nudFaithPercentage.Value = mEditorItem.PercentageStatsGiven[5];
 
                 nudHealthBonus.Value = mEditorItem.VitalsGiven[0];
                 nudManaBonus.Value = mEditorItem.VitalsGiven[1];
@@ -745,6 +781,61 @@ namespace Intersect.Editor.Forms.Editors
             mEditorItem.StatsGiven[4] = (int) nudSpd.Value;
         }
 
+        private void nudFaith_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.StatsGiven[5] = (int)nudFaith.Value;
+        }
+
+        private void nudFire_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.StatsGiven[6] = (int)nudFire.Value;
+        }
+
+        private void nudIce_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.StatsGiven[7] = (int)nudIce.Value;
+        }
+
+        private void nudThunder_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.StatsGiven[8] = (int)nudThunder.Value;
+        }
+
+        private void nudEarth_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.StatsGiven[9] = (int)nudEarth.Value;
+        }
+
+        private void nudWind_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.StatsGiven[10] = (int)nudWind.Value;
+        }
+
+        private void nudWater_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.StatsGiven[11] = (int)nudWater.Value;
+        }
+
+        private void nudNature_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.StatsGiven[12] = (int)nudNature.Value;
+        }
+
+        private void nudLight_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.StatsGiven[13] = (int)nudLight.Value;
+        }
+
+        private void nudDark_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.StatsGiven[14] = (int)nudDark.Value;
+        }
+
+        private void nudCapacity_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.StatsGiven[15] = (int)nudCapacity.Value;
+        }
+
         private void nudStrPercentage_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.PercentageStatsGiven[0] = (int) nudStrPercentage.Value;
@@ -768,6 +859,11 @@ namespace Intersect.Editor.Forms.Editors
         private void nudSpdPercentage_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.PercentageStatsGiven[4] = (int) nudSpdPercentage.Value;
+        }
+
+        private void nudFaithPercentage_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.PercentageStatsGiven[5] = (int)nudFaithPercentage.Value;
         }
 
         private void nudBag_ValueChanged(object sender, EventArgs e)
@@ -1114,6 +1210,12 @@ namespace Intersect.Editor.Forms.Editors
         }
 
         #endregion
+
+        private void ToolStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
+        }
+
 
     }
 

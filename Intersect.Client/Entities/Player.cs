@@ -38,7 +38,7 @@ namespace Intersect.Client.Entities
 
         public InventoryUpdated InventoryUpdatedDelegate;
 
-        public Dictionary<Guid, long> ItemCooldowns = new Dictionary<Guid, long>();
+        public Dictionary<  Guid, long> ItemCooldowns = new Dictionary<Guid, long>();
 
         private ItemDescWindow mItemTargetBox;
 

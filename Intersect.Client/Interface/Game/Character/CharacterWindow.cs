@@ -57,9 +57,31 @@ namespace Intersect.Client.Interface.Game.Character
 
         Label mMagicRstLabel;
 
+        Label mFaithLabel;
+
+        Label mFireLabel;
+
+        Label mIceLabel;
+
+        Label mThunderLabel;
+
+        Label mEarthLabel;
+
+        Label mWindLabel;
+
+        Label mWaterLabel;
+
+        Label mNatureLabel;
+
+        Label mLightLabel;
+
+        Label mDarkLabel;
+
         Label mPointsLabel;
 
         Label mSpeedLabel;
+
+        Label mCapacityLabel;
 
         public ImagePanel[] PaperdollPanels;
 
@@ -121,6 +143,29 @@ namespace Intersect.Client.Interface.Game.Character
             mMagicRstLabel = new Label(mCharacterWindow, "MagicResistLabel");
             mAddMagicResistBtn = new Button(mCharacterWindow, "IncreaseMagicResistButton");
             mAddMagicResistBtn.Clicked += _addMagicResistBtn_Clicked;
+
+            mFaithLabel = new Label(mCharacterWindow, "FaithLabel");
+
+            mFireLabel = new Label(mCharacterWindow, "FireLabel");
+
+            mIceLabel = new Label(mCharacterWindow, "IceLabel");
+
+            mThunderLabel = new Label(mCharacterWindow, "ThunderLabel");
+
+            mEarthLabel = new Label(mCharacterWindow, "EarthLabel");
+
+            mWindLabel = new Label(mCharacterWindow, "WindLabel");
+
+            mWaterLabel = new Label(mCharacterWindow, "WaterLabel");
+
+            mNatureLabel = new Label(mCharacterWindow, "NatureLabel");
+
+            mLightLabel = new Label(mCharacterWindow, "LightLabel");
+
+            mDarkLabel = new Label(mCharacterWindow, "DarkLabel");
+
+            mCapacityLabel = new Label(mCharacterWindow, "CapacityLabel");
+
 
             mPointsLabel = new Label(mCharacterWindow, "PointsLabel");
 
@@ -295,6 +340,51 @@ namespace Intersect.Client.Interface.Game.Character
             mMagicRstLabel.SetText(
                 Strings.Character.stat3.ToString(Strings.Combat.stat3, Globals.Me.Stat[(int) Stats.MagicResist])
             );
+
+            mFaithLabel.SetText(
+                Strings.Character.stat5.ToString(Strings.Combat.stat5, Globals.Me.Stat[(int)Stats.Faith])
+            );
+
+            mFireLabel.SetText(
+                Strings.Character.stat6.ToString(Strings.Combat.stat6, Globals.Me.Stat[(int)Stats.Fire])
+            );
+
+            mIceLabel.SetText(
+                Strings.Character.stat7.ToString(Strings.Combat.stat7, Globals.Me.Stat[(int)Stats.Ice])
+            );
+
+            mThunderLabel.SetText(
+                Strings.Character.stat8.ToString(Strings.Combat.stat8, Globals.Me.Stat[(int)Stats.Thunder])
+            );
+
+            mEarthLabel.SetText(
+                Strings.Character.stat9.ToString(Strings.Combat.stat9, Globals.Me.Stat[(int)Stats.Earth])
+            );
+
+            mWindLabel.SetText(
+                Strings.Character.stat10.ToString(Strings.Combat.stat10, Globals.Me.Stat[(int)Stats.Wind])
+            );
+
+            mWaterLabel.SetText(
+                Strings.Character.stat11.ToString(Strings.Combat.stat11, Globals.Me.Stat[(int)Stats.Water])
+            );
+
+            mNatureLabel.SetText(
+                Strings.Character.stat12.ToString(Strings.Combat.stat12, Globals.Me.Stat[(int)Stats.Nature])
+            );
+
+            mLightLabel.SetText(
+                Strings.Character.stat13.ToString(Strings.Combat.stat13, Globals.Me.Stat[(int)Stats.Light])
+            );
+
+            mDarkLabel.SetText(
+                Strings.Character.stat14.ToString(Strings.Combat.stat14, Globals.Me.Stat[(int)Stats.Dark])
+            );
+
+            mCapacityLabel.SetText(
+                Strings.Character.stat15.ToString(Strings.Combat.stat15, Globals.Me.Stat[(int)Stats.Capacity])
+            );
+
 
             mPointsLabel.SetText(Strings.Character.points.ToString(Globals.Me.StatPoints));
             mAddAbilityPwrBtn.IsHidden = Globals.Me.StatPoints == 0 ||
