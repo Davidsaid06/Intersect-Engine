@@ -46,10 +46,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             mEventEditor = eventEditor;
             mLoading = true;
             cmbGraphicType.SelectedIndex = (int)mEditingGraphic.Type;
-<<<<<<< HEAD
 
-=======
->>>>>>> 1b1af509d7f269d577c4a1dec45e3e1a2a627653
             UpdateGraphicList();
             if (cmbGraphic.Items.Contains(mEditingGraphic.Filename))
             {
@@ -59,10 +56,7 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             mRouteDesigner = moveRouteDesigner;
             mNewRouteAction = newMoveRouteAction;
             mLoading = false;
-<<<<<<< HEAD
 
-=======
->>>>>>> 1b1af509d7f269d577c4a1dec45e3e1a2a627653
             mTmpGraphic.CopyFrom(mEditingGraphic);
             UpdatePreview();
         }

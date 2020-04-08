@@ -311,7 +311,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpGeneral.Controls.Add(this.lblName);
             this.grpGeneral.Controls.Add(this.txtName);
             this.grpGeneral.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpGeneral.Location = new System.Drawing.Point(3, -155);
+            this.grpGeneral.Location = new System.Drawing.Point(3, 22);
             this.grpGeneral.Margin = new System.Windows.Forms.Padding(4);
             this.grpGeneral.Name = "grpGeneral";
             this.grpGeneral.Padding = new System.Windows.Forms.Padding(4);
@@ -547,7 +547,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpStats.Controls.Add(this.lblHP);
             this.grpStats.Controls.Add(this.lblExp);
             this.grpStats.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpStats.Location = new System.Drawing.Point(4, 69);
+            this.grpStats.Location = new System.Drawing.Point(4, 248);
             this.grpStats.Margin = new System.Windows.Forms.Padding(4);
             this.grpStats.Name = "grpStats";
             this.grpStats.Padding = new System.Windows.Forms.Padding(4);
@@ -845,7 +845,7 @@ namespace Intersect.Editor.Forms.Editors
             this.pnlContainer.Location = new System.Drawing.Point(300, 48);
             this.pnlContainer.Margin = new System.Windows.Forms.Padding(4);
             this.pnlContainer.Name = "pnlContainer";
-            this.pnlContainer.Size = new System.Drawing.Size(619, 651);
+            this.pnlContainer.Size = new System.Drawing.Size(619, 728);
             this.pnlContainer.TabIndex = 17;
             // 
             // grpElements
@@ -871,7 +871,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpElements.Controls.Add(this.lblFire);
             this.grpElements.Controls.Add(this.lblDark);
             this.grpElements.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpElements.Location = new System.Drawing.Point(5, 296);
+            this.grpElements.Location = new System.Drawing.Point(5, 480);
             this.grpElements.Margin = new System.Windows.Forms.Padding(4);
             this.grpElements.Name = "grpElements";
             this.grpElements.Padding = new System.Windows.Forms.Padding(4);
@@ -1173,7 +1173,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpCombat.Controls.Add(this.lblAttackAnimation);
             this.grpCombat.Controls.Add(this.lblDamage);
             this.grpCombat.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpCombat.Location = new System.Drawing.Point(287, 224);
+            this.grpCombat.Location = new System.Drawing.Point(287, 403);
             this.grpCombat.Margin = new System.Windows.Forms.Padding(4);
             this.grpCombat.Name = "grpCombat";
             this.grpCombat.Padding = new System.Windows.Forms.Padding(4);
@@ -1515,7 +1515,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpCommonEvents.Controls.Add(this.cmbOnDeathEventKiller);
             this.grpCommonEvents.Controls.Add(this.lblOnDeathEventKiller);
             this.grpCommonEvents.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpCommonEvents.Location = new System.Drawing.Point(287, 1072);
+            this.grpCommonEvents.Location = new System.Drawing.Point(287, 1249);
             this.grpCommonEvents.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.grpCommonEvents.Name = "grpCommonEvents";
             this.grpCommonEvents.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -1610,7 +1610,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpBehavior.Controls.Add(this.nudSightRange);
             this.grpBehavior.Controls.Add(this.lblSightRange);
             this.grpBehavior.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpBehavior.Location = new System.Drawing.Point(287, -155);
+            this.grpBehavior.Location = new System.Drawing.Point(287, 31);
             this.grpBehavior.Margin = new System.Windows.Forms.Padding(4);
             this.grpBehavior.Name = "grpBehavior";
             this.grpBehavior.Padding = new System.Windows.Forms.Padding(4);
@@ -1802,7 +1802,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpRegen.Controls.Add(this.lblManaRegen);
             this.grpRegen.Controls.Add(this.lblRegenHint);
             this.grpRegen.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpRegen.Location = new System.Drawing.Point(4, 434);
+            this.grpRegen.Location = new System.Drawing.Point(4, 618);
             this.grpRegen.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.grpRegen.Name = "grpRegen";
             this.grpRegen.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -1863,7 +1863,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             // lblRegenHint
             // 
-            this.lblRegenHint.Location = new System.Drawing.Point(136, 32);
+            this.lblRegenHint.Location = new System.Drawing.Point(136, 29);
             this.lblRegenHint.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblRegenHint.Name = "lblRegenHint";
             this.lblRegenHint.Size = new System.Drawing.Size(133, 89);
@@ -1884,7 +1884,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpDrops.Controls.Add(this.lblDropChance);
             this.grpDrops.Controls.Add(this.lblDropItem);
             this.grpDrops.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpDrops.Location = new System.Drawing.Point(291, 740);
+            this.grpDrops.Location = new System.Drawing.Point(291, 917);
             this.grpDrops.Margin = new System.Windows.Forms.Padding(4);
             this.grpDrops.Name = "grpDrops";
             this.grpDrops.Padding = new System.Windows.Forms.Padding(4);
@@ -2037,7 +2037,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpNpcVsNpc.Controls.Add(this.chkAttackAllies);
             this.grpNpcVsNpc.Controls.Add(this.chkEnabled);
             this.grpNpcVsNpc.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpNpcVsNpc.Location = new System.Drawing.Point(0, 862);
+            this.grpNpcVsNpc.Location = new System.Drawing.Point(0, 1039);
             this.grpNpcVsNpc.Margin = new System.Windows.Forms.Padding(4);
             this.grpNpcVsNpc.Name = "grpNpcVsNpc";
             this.grpNpcVsNpc.Padding = new System.Windows.Forms.Padding(4);
@@ -2149,7 +2149,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpSpells.Controls.Add(this.btnAdd);
             this.grpSpells.Controls.Add(this.lstSpells);
             this.grpSpells.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpSpells.Location = new System.Drawing.Point(4, 562);
+            this.grpSpells.Location = new System.Drawing.Point(4, 739);
             this.grpSpells.Margin = new System.Windows.Forms.Padding(4);
             this.grpSpells.Name = "grpSpells";
             this.grpSpells.Padding = new System.Windows.Forms.Padding(4);
@@ -2269,7 +2269,7 @@ namespace Intersect.Editor.Forms.Editors
             // btnCancel
             // 
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(635, 716);
+            this.btnCancel.Location = new System.Drawing.Point(627, 785);
             this.btnCancel.Margin = new System.Windows.Forms.Padding(4);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Padding = new System.Windows.Forms.Padding(7, 6, 7, 6);
@@ -2280,7 +2280,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(361, 716);
+            this.btnSave.Location = new System.Drawing.Point(353, 784);
             this.btnSave.Margin = new System.Windows.Forms.Padding(4);
             this.btnSave.Name = "btnSave";
             this.btnSave.Padding = new System.Windows.Forms.Padding(7, 6, 7, 6);
@@ -2431,7 +2431,7 @@ namespace Intersect.Editor.Forms.Editors
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            this.ClientSize = new System.Drawing.Size(932, 757);
+            this.ClientSize = new System.Drawing.Size(932, 831);
             this.ControlBox = false;
             this.Controls.Add(this.toolStrip);
             this.Controls.Add(this.btnCancel);
