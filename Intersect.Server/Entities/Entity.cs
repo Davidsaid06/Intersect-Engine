@@ -1727,6 +1727,76 @@ namespace Intersect.Server.Entities
                             );
 
                             break;
+
+                        case DamageType.Faith:
+                            PacketSender.SendActionMsg(
+                                enemy, Strings.Combat.removesymbol + (int)baseDamage, CustomColors.Combat.FaithDamage
+                            );
+
+                            break;
+
+                        case DamageType.Fire:
+                            PacketSender.SendActionMsg(
+                                enemy, Strings.Combat.removesymbol + (int)baseDamage, CustomColors.Combat.FireDamage
+                            );
+
+                            break;
+
+                        case DamageType.Ice:
+                            PacketSender.SendActionMsg(
+                                enemy, Strings.Combat.removesymbol + (int)baseDamage, CustomColors.Combat.IceDamage
+                            );
+
+                            break;
+
+                        case DamageType.Thunder:
+                            PacketSender.SendActionMsg(
+                                enemy, Strings.Combat.removesymbol + (int)baseDamage, CustomColors.Combat.ThunderDamage
+                            );
+
+                            break;
+
+                        case DamageType.Earth:
+                            PacketSender.SendActionMsg(
+                                enemy, Strings.Combat.removesymbol + (int)baseDamage, CustomColors.Combat.EarthDamage
+                            );
+
+                            break;
+
+                        case DamageType.Wind:
+                            PacketSender.SendActionMsg(
+                                enemy, Strings.Combat.removesymbol + (int)baseDamage, CustomColors.Combat.WindDamage
+                            );
+
+                            break;
+
+                        case DamageType.Water:
+                            PacketSender.SendActionMsg(
+                                enemy, Strings.Combat.removesymbol + (int)baseDamage, CustomColors.Combat.WaterDamage
+                            );
+
+                            break;
+
+                        case DamageType.Nature:
+                            PacketSender.SendActionMsg(
+                                enemy, Strings.Combat.removesymbol + (int)baseDamage, CustomColors.Combat.NatureDamage
+                            );
+
+                            break;
+
+                        case DamageType.Light:
+                            PacketSender.SendActionMsg(
+                                enemy, Strings.Combat.removesymbol + (int)baseDamage, CustomColors.Combat.LightDamage
+                            );
+
+                            break;
+
+                        case DamageType.Dark:
+                            PacketSender.SendActionMsg(
+                                enemy, Strings.Combat.removesymbol + (int)baseDamage, CustomColors.Combat.DarkDamage
+                            );
+
+                            break;
                     }
 
                     foreach (var status in statuses)

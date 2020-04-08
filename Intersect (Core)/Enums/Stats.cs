@@ -13,6 +13,28 @@ namespace Intersect.Enums
         MagicResist,
 
         Speed,
+        
+        Faith,
+
+        Fire,
+
+        Ice,
+
+        Thunder,
+
+        Earth,
+
+        Wind,
+
+        Water,
+
+        Nature,
+
+        Light,
+
+        Dark,
+
+        Capacity,
 
         StatCount
 

@@ -152,6 +152,18 @@ namespace Intersect.Editor.Forms.Editors
                 nudDef.Value = mEditorItem.BaseStat[(int) Stats.Defense];
                 nudMR.Value = mEditorItem.BaseStat[(int) Stats.MagicResist];
                 nudSpd.Value = mEditorItem.BaseStat[(int) Stats.Speed];
+                nudFaith.Value = mEditorItem.BaseStat[(int)Stats.Faith];
+                nudFire.Value = mEditorItem.BaseStat[(int)Stats.Fire];
+                nudIce.Value = mEditorItem.BaseStat[(int)Stats.Ice];
+                nudThunder.Value = mEditorItem.BaseStat[(int)Stats.Thunder];
+                nudEarth.Value = mEditorItem.BaseStat[(int)Stats.Earth];
+                nudWind.Value = mEditorItem.BaseStat[(int)Stats.Wind];
+                nudWater.Value = mEditorItem.BaseStat[(int)Stats.Water];
+                nudNature.Value = mEditorItem.BaseStat[(int)Stats.Nature];
+                nudLight.Value = mEditorItem.BaseStat[(int)Stats.Light];
+                nudDark.Value = mEditorItem.BaseStat[(int)Stats.Dark];
+                nudCapacity.Value = mEditorItem.BaseStat[(int)Stats.Capacity];
+
                 nudBaseHP.Value = Math.Max(
                     Math.Min(mEditorItem.BaseVital[(int) Vitals.Health], nudBaseHP.Maximum), nudBaseHP.Minimum
                 );
@@ -299,6 +311,16 @@ namespace Intersect.Editor.Forms.Editors
             nudDef.Maximum = Options.MaxStatValue;
             nudMR.Maximum = Options.MaxStatValue;
             nudSpd.Maximum = Options.MaxStatValue;
+            nudFaith.Maximum = Options.MaxStatValue;
+            nudFire.Maximum = Options.MaxStatValue;
+            nudIce.Maximum = Options.MaxStatValue;
+            nudThunder.Maximum = Options.MaxStatValue;
+            nudEarth.Maximum = Options.MaxStatValue;
+            nudWind.Maximum = Options.MaxStatValue;
+            nudWater.Maximum = Options.MaxStatValue;
+            nudNature.Maximum = Options.MaxStatValue;
+            nudLight.Maximum = Options.MaxStatValue;
+            nudDark.Maximum = Options.MaxStatValue;
 
             InitLocalization();
             UpdateEditor();
@@ -827,6 +849,8 @@ namespace Intersect.Editor.Forms.Editors
                 nudMagicIncrease.Maximum = Options.MaxStatValue;
                 nudMagicResistIncrease.Maximum = Options.MaxStatValue;
                 nudSpeedIncrease.Maximum = Options.MaxStatValue;
+                nudFaithIncrease.Maximum = Options.MaxStatValue;
+                nudCapacityIncrease.Maximum = Options.MaxStatValue;
             }
             else
             {
@@ -837,6 +861,8 @@ namespace Intersect.Editor.Forms.Editors
                 nudMagicIncrease.Maximum = 100;
                 nudMagicResistIncrease.Maximum = 100;
                 nudSpeedIncrease.Maximum = 100;
+                nudFaithIncrease.Maximum = 100;
+                nudCapacityIncrease.Maximum = 100;
             }
 
             nudHpIncrease.Value = Math.Min(nudHpIncrease.Maximum, mEditorItem.VitalIncrease[(int) Vitals.Health]);
@@ -853,6 +879,14 @@ namespace Intersect.Editor.Forms.Editors
 
             nudMagicResistIncrease.Value = Math.Min(
                 nudMagicResistIncrease.Maximum, mEditorItem.StatIncrease[(int) Stats.MagicResist]
+            );
+
+            nudFaithIncrease.Value = Math.Min(
+                nudFaithIncrease.Maximum, mEditorItem.StatIncrease[(int)Stats.Faith]
+            );
+
+            nudCapacityIncrease.Value = Math.Min(
+                nudCapacityIncrease.Maximum, mEditorItem.StatIncrease[(int)Stats.Capacity]
             );
 
             nudSpeedIncrease.Value = Math.Min(nudSpeedIncrease.Maximum, mEditorItem.StatIncrease[(int) Stats.Speed]);
@@ -1068,9 +1102,64 @@ namespace Intersect.Editor.Forms.Editors
             mEditorItem.BaseStat[(int) Stats.Defense] = (int) nudDef.Value;
         }
 
+        private void nudCapacity_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.BaseStat[(int)Stats.Capacity] = (int)nudCapacity.Value;
+        }
+
         private void nudMR_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.BaseStat[(int) Stats.MagicResist] = (int) nudMR.Value;
+        }
+
+        private void nudFaith_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.BaseStat[(int)Stats.Faith] = (int)nudFaith.Value;
+        }
+
+        private void nudFire_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.BaseStat[(int)Stats.Fire] = (int)nudFire.Value;
+        }
+
+        private void nudIce_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.BaseStat[(int)Stats.Ice] = (int)nudIce.Value;
+        }
+
+        private void nudThunder_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.BaseStat[(int)Stats.Thunder] = (int)nudThunder.Value;
+        }
+
+        private void nudEarth_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.BaseStat[(int)Stats.Earth] = (int)nudEarth.Value;
+        }
+
+        private void nudWind_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.BaseStat[(int)Stats.Wind] = (int)nudWind.Value;
+        }
+
+        private void nudWater_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.BaseStat[(int)Stats.Water] = (int)nudWater.Value;
+        }
+
+        private void nudNature_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.BaseStat[(int)Stats.Nature] = (int)nudNature.Value;
+        }
+
+        private void nudLight_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.BaseStat[(int)Stats.Light] = (int)nudLight.Value;
+        }
+
+        private void nudDark_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.BaseStat[(int)Stats.Dark] = (int)nudDark.Value;
         }
 
         private void nudPoints_ValueChanged(object sender, EventArgs e)
@@ -1157,6 +1246,18 @@ namespace Intersect.Editor.Forms.Editors
         private void nudSpeedIncrease_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.StatIncrease[(int) Stats.Speed] = (int) nudSpeedIncrease.Value;
+            UpdateIncreases();
+        }
+
+        private void nudFaithIncrease_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.StatIncrease[(int)Stats.Faith] = (int)nudFaithIncrease.Value;
+            UpdateIncreases();
+        }
+
+        private void nudCapacityIncrease_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.StatIncrease[(int)Stats.Capacity] = (int)nudCapacityIncrease.Value;
             UpdateIncreases();
         }
 
@@ -1684,6 +1785,10 @@ namespace Intersect.Editor.Forms.Editors
 
         #endregion
 
+        private void Label8_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 
 }

@@ -1253,7 +1253,18 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             "Defense",
             "Speed",
             "Ability Power",
-            "Magic Resist"});
+            "Magic Resist",
+            "Faith",
+            "Fire",
+            "Ice",
+            "Thunder",
+            "Earth",
+            "Wind",
+            "Water",
+            "Nature",
+            "Light",
+            "Dark",
+            "Capacity"});
             this.cmbLevelStat.Location = new System.Drawing.Point(79, 23);
             this.cmbLevelStat.Name = "cmbLevelStat";
             this.cmbLevelStat.Size = new System.Drawing.Size(177, 21);
