@@ -310,7 +310,7 @@ namespace Intersect.Server.General
                 (double) (parameters[1] ?? throw new NullReferenceException("First parameter is null."))
             );
 
-            return min >= max ? min : Globals.Rand.Next(min, max + 1);
+            return min >= max ? min : Randomization.Next(min, max + 1);
         }
 
         private static int ElementalDamage(int res,int a_element,int v_elementStrong1,int v_elementStrong2,int v_elementWeak1, int v_elementWeak2)
