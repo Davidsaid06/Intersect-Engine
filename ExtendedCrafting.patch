@@ -1,0 +1,4296 @@
+From 5cb2421d07f6d3abf229c62cec10bac955e465b6 Mon Sep 17 00:00:00 2001
+From: alloin <antony@alloin.org>
+Date: Mon, 6 Apr 2020 20:13:34 +0200
+Subject: [PATCH] update
+
+---
+ Intersect (Core)/GameObjects/Crafting/CraftBase.cs |   24 +
+ Intersect (Core)/Intersect (Core).csproj           |    2 +
+ .../Network/Packets/Client/CraftRequestPacket.cs   |   18 +
+ .../Network/Packets/Server/CraftStartPacket.cs     |   19 +
+ .../Network/Packets/Server/CraftingTablePacket.cs  |    5 +-
+ Intersect.Client/Entities/Entity.cs                |  231 ++++-
+ Intersect.Client/Entities/SpriteAnimations.cs      |   14 +
+ Intersect.Client/General/Globals.cs                |    7 +
+ .../Interface/Game/Crafting/CraftingWindow.cs      |  124 ++-
+ Intersect.Client/Intersect.Client.csproj           |    1 +
+ Intersect.Client/Networking/PacketHandler.cs       |   15 +
+ Intersect.Client/Networking/PacketSender.cs        |    5 +
+ .../Forms/Editors/frmCrafts.Designer.cs            |  282 ++++--
+ Intersect.Editor/Forms/Editors/frmCrafts.cs        |   26 +
+ Intersect.Editor/Forms/Editors/frmCrafts.resx      |   93 +-
+ .../Forms/Editors/frmDynamicRequirements.cs        |    6 +
+ Intersect.Editor/Localization/Strings.cs           |   11 +-
+ Intersect.Server/Entities/Player.cs                |  163 ++-
+ Intersect.Server/Intersect.Server.csproj           |    8 +
+ Intersect.Server/Localization/Strings.cs           |    8 +
+ .../20200404164233_ExtendedCraftingNew.Designer.cs | 1042 +++++++++++++++++++
+ .../Game/20200404164233_ExtendedCraftingNew.cs     |   34 +
+ .../20200404174804_CraftRequirementsv2.Designer.cs | 1045 ++++++++++++++++++++
+ .../Game/20200404174804_CraftRequirementsv2.cs     |   22 +
+ .../Migrations/Game/GameContextModelSnapshot.cs    |    9 +
+ Intersect.Server/Networking/PacketHandler.cs       |   11 +
+ Intersect.Server/Networking/PacketSender.cs        |   29 +-
+ 27 files changed, 3022 insertions(+), 232 deletions(-)
+ create mode 100644 Intersect (Core)/Network/Packets/Client/CraftRequestPacket.cs
+ create mode 100644 Intersect (Core)/Network/Packets/Server/CraftStartPacket.cs
+ create mode 100644 Intersect.Client/Entities/SpriteAnimations.cs
+ create mode 100644 Intersect.Server/Migrations/Game/20200404164233_ExtendedCraftingNew.Designer.cs
+ create mode 100644 Intersect.Server/Migrations/Game/20200404164233_ExtendedCraftingNew.cs
+ create mode 100644 Intersect.Server/Migrations/Game/20200404174804_CraftRequirementsv2.Designer.cs
+ create mode 100644 Intersect.Server/Migrations/Game/20200404174804_CraftRequirementsv2.cs
+
+diff --git a/Intersect (Core)/GameObjects/Crafting/CraftBase.cs b/Intersect (Core)/GameObjects/Crafting/CraftBase.cs
+index 529f73e6..6937e7af 100644
+--- a/Intersect (Core)/GameObjects/Crafting/CraftBase.cs	
++++ b/Intersect (Core)/GameObjects/Crafting/CraftBase.cs	
+@@ -1,6 +1,7 @@
+ ﻿using System;
+ using System.Collections.Generic;
+ using System.ComponentModel.DataAnnotations.Schema;
++using Intersect.GameObjects.Conditions;
+ 
+ using Intersect.Models;
+ 
+@@ -13,6 +14,7 @@ public class CraftBase : DatabaseObject<CraftBase>, IFolderable
+     {
+ 
+         [NotMapped] public List<CraftIngredient> Ingredients = new List<CraftIngredient>();
++        [NotMapped] public ConditionLists CraftRequirements = new ConditionLists();
+ 
+         [JsonConstructor]
+         public CraftBase(Guid id) : base(id)
+@@ -43,6 +45,28 @@ public string IngredientsJson
+         [JsonProperty(Order = -2)]
+         public int Time { get; set; }
+ 
++        [Column("SuccessRate")]
++        public int SuccessRate { get; set; } = 100;
++
++        [Column("CraftEvent")]
++        public Guid CraftEventId { get; set; }
++
++        [NotMapped]
++        [JsonIgnore]
++        public Events.EventBase CraftEvent
++        {
++            get => Events.EventBase.Get(CraftEventId);
++            set => CraftEventId = value?.Id ?? Guid.Empty;
++        }
++
++        [Column("CraftRequirements")]
++        [JsonIgnore]
++        public string JsonCraftRequirements
++        {
++            get => CraftRequirements.Data();
++            set => CraftRequirements.Load(value ?? "[]");
++        }
++
+         /// <inheritdoc />
+         public string Folder { get; set; } = "";
+ 
+diff --git a/Intersect (Core)/Intersect (Core).csproj b/Intersect (Core)/Intersect (Core).csproj
+index faa4aba3..10c830d6 100644
+--- a/Intersect (Core)/Intersect (Core).csproj	
++++ b/Intersect (Core)/Intersect (Core).csproj	
+@@ -312,6 +312,7 @@
+     <Compile Include="Network\Packets\Client\CloseCraftingPacket.cs" />
+     <Compile Include="Network\Packets\Client\CloseShopPacket.cs" />
+     <Compile Include="Network\Packets\Client\CraftItemPacket.cs" />
++    <Compile Include="Network\Packets\Client\CraftRequestPacket.cs" />
+     <Compile Include="Network\Packets\Client\CreateAccountPacket.cs" />
+     <Compile Include="Network\Packets\Client\CreateCharacterPacket.cs" />
+     <Compile Include="Network\Packets\Client\DeclineTradePacket.cs" />
+@@ -328,6 +329,7 @@
+     <Compile Include="Network\Packets\Client\HotbarUpdatePacket.cs" />
+     <Compile Include="Network\Packets\Client\LoginPacket.cs" />
+     <Compile Include="Network\Packets\Client\LogoutPacket.cs" />
++    <Compile Include="Network\Packets\Server\CraftStartPacket.cs" />
+     <Compile Include="Network\Packets\SlotQuantityPacket.cs" />
+     <Compile Include="Network\Packets\Client\SwapBankItemsPacket.cs" />
+     <Compile Include="Network\Packets\Client\MovePacket.cs" />
+diff --git a/Intersect (Core)/Network/Packets/Client/CraftRequestPacket.cs b/Intersect (Core)/Network/Packets/Client/CraftRequestPacket.cs
+new file mode 100644
+index 00000000..05b76b11
+--- /dev/null
++++ b/Intersect (Core)/Network/Packets/Client/CraftRequestPacket.cs	
+@@ -0,0 +1,18 @@
++﻿using System;
++
++namespace Intersect.Network.Packets.Client
++{
++
++    public class CraftRequestPacket : CerasPacket
++    {
++
++        public CraftRequestPacket(Guid craftId)
++        {
++            CraftId = craftId;
++        }
++
++        public Guid CraftId { get; set; }
++
++    }
++
++}
+\ No newline at end of file
+diff --git a/Intersect (Core)/Network/Packets/Server/CraftStartPacket.cs b/Intersect (Core)/Network/Packets/Server/CraftStartPacket.cs
+new file mode 100644
+index 00000000..a960d86d
+--- /dev/null
++++ b/Intersect (Core)/Network/Packets/Server/CraftStartPacket.cs	
+@@ -0,0 +1,19 @@
++﻿namespace Intersect.Network.Packets.Server
++{
++
++    public class CraftStartPacket : CerasPacket
++    {
++
++        public CraftStartPacket(System.Guid craftData, bool canstart)
++        {
++            CraftData = craftData;
++            Canstart = canstart;
++        }
++
++        public System.Guid CraftData { get; set; }
++
++        public bool Canstart { get; set; }
++
++    }
++
++}
+\ No newline at end of file
+diff --git a/Intersect (Core)/Network/Packets/Server/CraftingTablePacket.cs b/Intersect (Core)/Network/Packets/Server/CraftingTablePacket.cs
+index a1392296..d6c56ab5 100644
+--- a/Intersect (Core)/Network/Packets/Server/CraftingTablePacket.cs	
++++ b/Intersect (Core)/Network/Packets/Server/CraftingTablePacket.cs	
+@@ -4,16 +4,19 @@
+     public class CraftingTablePacket : CerasPacket
+     {
+ 
+-        public CraftingTablePacket(string tableData, bool close)
++        public CraftingTablePacket(string tableData, bool close, string reqcheck)
+         {
+             TableData = tableData;
+             Close = close;
++            ReqCheck = reqcheck;
+         }
+ 
+         public string TableData { get; set; }
+ 
+         public bool Close { get; set; }
+ 
++        public string ReqCheck { get; set; }
++
+     }
+ 
+ }
+diff --git a/Intersect.Client/Entities/Entity.cs b/Intersect.Client/Entities/Entity.cs
+index de0f4902..1ad7b70f 100644
+--- a/Intersect.Client/Entities/Entity.cs
++++ b/Intersect.Client/Entities/Entity.cs
+@@ -1,6 +1,8 @@
+ ﻿using System;
+ using System.Collections.Generic;
++using System.IO;
+ using System.Linq;
++using System.Runtime.Remoting.Messaging;
+ 
+ using Intersect.Client.Core;
+ using Intersect.Client.Entities.Events;
+@@ -148,6 +150,22 @@ public enum LabelType
+ 
+         public GameTexture Texture;
+ 
++        #region "Animation Textures and Timing"
++        public SpriteAnimations SpriteAnimation = SpriteAnimations.Normal;
++
++        public Dictionary<SpriteAnimations,GameTexture> AnimatedTextures = new Dictionary<SpriteAnimations, GameTexture>();
++
++        public int SpriteFrame = 0;
++
++        public long SpriteFrameTimer = -1;
++
++        public long LastActionTime = -1;
++
++        public const long TimeBeforeIdling = 4000;
++
++        public const long IdleFrameDuration = 200;
++        #endregion
++
+         public int Type;
+ 
+         public int[] Vital = new int[(int) Vitals.VitalCount];
+@@ -214,6 +232,7 @@ public virtual string TransformedSprite
+             {
+                 mTransformedSprite = value;
+                 Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, mTransformedSprite);
++                LoadAnimationTextures(mTransformedSprite);
+                 if (value == "")
+                 {
+                     MySprite = mMySprite;
+@@ -228,6 +247,7 @@ public virtual string MySprite
+             {
+                 mMySprite = value;
+                 Texture = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, mMySprite);
++                LoadAnimationTextures(mMySprite);
+             }
+         }
+ 
+@@ -678,6 +698,8 @@ public virtual bool Update()
+ 
+             mLastUpdate = Globals.System.GetTimeMs();
+ 
++            UpdateSpriteAnimation();
++
+             return true;
+         }
+ 
+@@ -821,12 +843,15 @@ public virtual void Draw()
+                 MySprite = sprite;
+             }
+ 
+-            if (Texture != null)
++
++            var texture = AnimatedTextures[SpriteAnimation] ?? Texture;
++
++            if (texture != null)
+             {
+-                if (Texture.GetHeight() / 4 > Options.TileHeight)
++                if (texture.GetHeight() / 4 > Options.TileHeight)
+                 {
+                     destRectangle.X = map.GetX() + X * Options.TileWidth + OffsetX + Options.TileWidth / 2;
+-                    destRectangle.Y = GetCenterPos().Y - Texture.GetHeight() / 8;
++                    destRectangle.Y = GetCenterPos().Y - texture.GetHeight() / 8;
+                 }
+                 else
+                 {
+@@ -834,7 +859,7 @@ public virtual void Draw()
+                     destRectangle.Y = map.GetY() + Y * Options.TileHeight + OffsetY;
+                 }
+ 
+-                destRectangle.X -= Texture.GetWidth() / 8;
++                destRectangle.X -= texture.GetWidth() / 8;
+                 switch (Dir)
+                 {
+                     case 0:
+@@ -860,30 +885,41 @@ public virtual void Draw()
+                         break;
+                 }
+ 
+-                destRectangle.X = (int) Math.Ceiling(destRectangle.X);
+-                destRectangle.Y = (int) Math.Ceiling(destRectangle.Y);
++                destRectangle.X = (int)Math.Ceiling(destRectangle.X);
++                destRectangle.Y = (int)Math.Ceiling(destRectangle.Y);
+                 if (Options.AnimatedSprites.Contains(sprite.ToLower()))
+                 {
+                     srcRectangle = new FloatRect(
+-                        AnimationFrame * (int) Texture.GetWidth() / 4, d * (int) Texture.GetHeight() / 4,
+-                        (int) Texture.GetWidth() / 4, (int) Texture.GetHeight() / 4
++                        AnimationFrame * (int)texture.GetWidth() / 4, d * (int)texture.GetHeight() / 4,
++                        (int)texture.GetWidth() / 4, (int)texture.GetHeight() / 4
+                     );
+                 }
+                 else
+                 {
+-                    var attackTime = CalculateAttackTime();
+-                    if (AttackTimer - CalculateAttackTime() / 2 > Globals.System.GetTimeMs() || Blocking)
++                    if (SpriteAnimation == SpriteAnimations.Normal)
+                     {
+-                        srcRectangle = new FloatRect(
+-                            3 * (int) Texture.GetWidth() / 4, d * (int) Texture.GetHeight() / 4,
+-                            (int) Texture.GetWidth() / 4, (int) Texture.GetHeight() / 4
+-                        );
++                        var attackTime = CalculateAttackTime();
++                        if (AttackTimer - CalculateAttackTime() / 2 > Globals.System.GetTimeMs() || Blocking)
++                        {
++                            srcRectangle = new FloatRect(
++                                3 * (int)texture.GetWidth() / 4, d * (int)texture.GetHeight() / 4,
++                                (int)texture.GetWidth() / 4, (int)texture.GetHeight() / 4
++                            );
++                        }
++                        else
++                        {
++                            //Restore Original Attacking/Blocking Code
++                            srcRectangle = new FloatRect(
++                                WalkFrame * (int) texture.GetWidth() / 4, d * (int) texture.GetHeight() / 4,
++                                (int) texture.GetWidth() / 4, (int) texture.GetHeight() / 4
++                            );
++                        }
+                     }
+                     else
+                     {
+                         srcRectangle = new FloatRect(
+-                            WalkFrame * (int) Texture.GetWidth() / 4, d * (int) Texture.GetHeight() / 4,
+-                            (int) Texture.GetWidth() / 4, (int) Texture.GetHeight() / 4
++                            SpriteFrame * (int)texture.GetWidth() / 4, d * (int)texture.GetHeight() / 4,
++                            (int)texture.GetWidth() / 4, (int)texture.GetHeight() / 4
+                         );
+                     }
+                 }
+@@ -906,7 +942,7 @@ public virtual void Draw()
+                     if (paperdoll == "Player")
+                     {
+                         Graphics.DrawGameTexture(
+-                            Texture, srcRectangle, destRectangle, new Intersect.Color(alpha, 255, 255, 255)
++                            texture, srcRectangle, destRectangle, new Intersect.Color(alpha, 255, 255, 255)
+                         );
+                     }
+                     else if (equipSlot > -1)
+@@ -971,7 +1007,18 @@ public virtual void DrawEquipment(string filename, int alpha)
+             var srcRectangle = new FloatRect();
+             var destRectangle = new FloatRect();
+             var d = 0;
+-            var paperdollTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Paperdoll, filename);
++
++            GameTexture paperdollTex = null;
++            var filenameNoExt = Path.GetFileNameWithoutExtension(filename);
++            paperdollTex = Globals.ContentManager.GetTexture(
++                GameContentManager.TextureType.Paperdoll, $"{filenameNoExt}_{SpriteAnimation.ToString()}.png"
++            );
++
++            if (paperdollTex == null)
++            {
++                paperdollTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Paperdoll, filename);
++            }
++
+             if (paperdollTex != null)
+             {
+                 if (paperdollTex.GetHeight() / 4 > Options.TileHeight)
+@@ -1012,18 +1059,28 @@ public virtual void DrawEquipment(string filename, int alpha)
+ 
+                 destRectangle.X = (int) Math.Ceiling(destRectangle.X);
+                 destRectangle.Y = (int) Math.Ceiling(destRectangle.Y);
+-                if (AttackTimer - CalculateAttackTime() / 2 > Globals.System.GetTimeMs() || Blocking)
++                if (SpriteAnimation == SpriteAnimations.Normal)
+                 {
+-                    srcRectangle = new FloatRect(
+-                        3 * (int) paperdollTex.GetWidth() / 4, d * (int) paperdollTex.GetHeight() / 4,
+-                        (int) paperdollTex.GetWidth() / 4, (int) paperdollTex.GetHeight() / 4
+-                    );
++                    if (AttackTimer - CalculateAttackTime() / 2 > Globals.System.GetTimeMs() || Blocking)
++                    {
++                        srcRectangle = new FloatRect(
++                            3 * (int)paperdollTex.GetWidth() / 4, d * (int)paperdollTex.GetHeight() / 4,
++                            (int)paperdollTex.GetWidth() / 4, (int)paperdollTex.GetHeight() / 4
++                        );
++                    }
++                    else
++                    {
++                        srcRectangle = new FloatRect(
++                            WalkFrame * (int) paperdollTex.GetWidth() / 4, d * (int) paperdollTex.GetHeight() / 4,
++                            (int) paperdollTex.GetWidth() / 4, (int) paperdollTex.GetHeight() / 4
++                        );
++                    }
+                 }
+                 else
+                 {
+                     srcRectangle = new FloatRect(
+-                        WalkFrame * (int) paperdollTex.GetWidth() / 4, d * (int) paperdollTex.GetHeight() / 4,
+-                        (int) paperdollTex.GetWidth() / 4, (int) paperdollTex.GetHeight() / 4
++                        SpriteFrame * (int)paperdollTex.GetWidth() / 4, d * (int)paperdollTex.GetHeight() / 4,
++                        (int)paperdollTex.GetWidth() / 4, (int)paperdollTex.GetHeight() / 4
+                     );
+                 }
+ 
+@@ -1558,11 +1615,135 @@ public void SortStatuses()
+             Status = Status.OrderByDescending(x => x.RemainingMs()).ToList();
+         }
+ 
++        public void UpdateSpriteAnimation()
++        {
++            var oldAnim = SpriteAnimation;
++
++            //Exit if textures haven't been loaded yet
++            if (AnimatedTextures.Count == 0)
++            {
++                return;
++            }
++
++            SpriteAnimation = AnimatedTextures[SpriteAnimations.Idle] != null && LastActionTime + TimeBeforeIdling < Globals.System.GetTimeMs() ? SpriteAnimations.Idle : SpriteAnimations.Normal;
++            if (IsMoving)
++            {
++                SpriteAnimation = SpriteAnimations.Normal;
++                LastActionTime = Globals.System.GetTimeMs();
++            }
++            else if (AttackTimer > Globals.System.GetTimeMs()) //Attacking
++            {
++                var timeIn = CalculateAttackTime() - (AttackTimer - Globals.System.GetTimeMs());
++                LastActionTime = Globals.System.GetTimeMs();
++
++                if (AnimatedTextures[SpriteAnimations.Attack] != null)
++                {
++                    SpriteAnimation = SpriteAnimations.Attack;
++                    SpriteFrame = (int)Math.Floor((timeIn / (CalculateAttackTime() / 4f)));
++                }
++
++                if (Options.WeaponIndex > -1 && Options.WeaponIndex < Equipment.Length)
++                {
++                    if (Equipment[Options.WeaponIndex] != Guid.Empty && this != Globals.Me ||
++                        MyEquipment[Options.WeaponIndex] < Options.MaxInvItems)
++                    {
++                        var itemId = Guid.Empty;
++                        if (this == Globals.Me)
++                        {
++                            var slot = MyEquipment[Options.WeaponIndex];
++                            if (slot > -1)
++                            {
++                                itemId = Inventory[slot].ItemId;
++                            }
++                        }
++                        else
++                        {
++                            itemId = Equipment[Options.WeaponIndex];
++                        }
++
++                        var item = ItemBase.Get(itemId);
++                        if (item != null)
++                        {
++                            if (AnimatedTextures[SpriteAnimations.Weapon] != null)
++                            {
++                                SpriteAnimation = SpriteAnimations.Weapon;
++                            }
++
++                            if (AnimatedTextures[SpriteAnimations.Shoot] != null && item.ProjectileId != Guid.Empty)
++                            {
++                                SpriteAnimation = SpriteAnimations.Shoot;
++                            }
++                        }
++                    }
++                }
++            }
++            else if (CastTime > Globals.System.GetTimeMs())
++            {
++                var spell = SpellBase.Get(SpellCast);
++                if (spell != null)
++                {
++                    var duration = spell.CastDuration;
++                    var timeIn = duration - (CastTime - Globals.System.GetTimeMs());
++                    SpriteFrame = (int)Math.Floor((timeIn / (duration / 4f)));
++
++                    if (AnimatedTextures[SpriteAnimations.Cast] != null)
++                    {
++                        SpriteAnimation = SpriteAnimations.Cast;
++                    }
++
++                    if (spell.SpellType == SpellTypes.CombatSpell &&
++                        spell.Combat.TargetType == SpellTargetTypes.Projectile && AnimatedTextures[SpriteAnimations.Shoot] != null)
++                    {
++                        SpriteAnimation = SpriteAnimations.Shoot;
++                    }
++                }
++                LastActionTime = Globals.System.GetTimeMs();
++            }
++
++            if (SpriteAnimation == SpriteAnimations.Normal)
++            {
++                ResetSpriteFrame();
++            }
++            else if (SpriteAnimation == SpriteAnimations.Idle)
++            {
++                if (SpriteFrameTimer + IdleFrameDuration < Globals.System.GetTimeMs())
++                {
++                    SpriteFrame++;
++                    if (SpriteFrame > 3)
++                    {
++                        SpriteFrame = 0;
++                    }
++                    SpriteFrameTimer = Globals.System.GetTimeMs();
++                }
++            }
++        }
++
++        public void ResetSpriteFrame()
++        {
++            SpriteFrame = 0;
++            SpriteFrameTimer = Globals.System.GetTimeMs();
++        }
++
++        public void LoadAnimationTextures(string tex)
++        {
++            var file = Path.GetFileNameWithoutExtension(tex);
++            var ext = Path.GetExtension(tex);
++
++            AnimatedTextures.Clear();
++            foreach (var anim in Enum.GetValues(typeof(SpriteAnimations)))
++            {
++                AnimatedTextures.Add((SpriteAnimations)anim, Globals.ContentManager.GetTexture(GameContentManager.TextureType.Entity, $@"{file}_{anim}.png"));
++            }
++        }
++
+         ~Entity()
+         {
+             Dispose();
+         }
+ 
++
++
++
+     }
+ 
+ }
+diff --git a/Intersect.Client/Entities/SpriteAnimations.cs b/Intersect.Client/Entities/SpriteAnimations.cs
+new file mode 100644
+index 00000000..90329e2c
+--- /dev/null
++++ b/Intersect.Client/Entities/SpriteAnimations.cs
+@@ -0,0 +1,14 @@
++﻿namespace Intersect.Client.Entities
++{
++    public enum SpriteAnimations
++    {
++        Normal = 0,
++        Idle,
++        Attack,
++        Shoot,
++        Cast,
++        Weapon,
++    }
++
++
++}
+diff --git a/Intersect.Client/General/Globals.cs b/Intersect.Client/General/Globals.cs
+index eab10f8e..1320f351 100644
+--- a/Intersect.Client/General/Globals.cs
++++ b/Intersect.Client/General/Globals.cs
+@@ -23,6 +23,13 @@ public static class Globals
+         //Only need 1 table, and that is the one we see at a given moment in time.
+         public static CraftingTableBase ActiveCraftingTable;
+ 
++        //ReqCheck
++        public static string ActiveCraftingTableReqs;
++
++        //Craftcheck
++        public static bool canCraftrq = false;
++        public static Guid canCraftitem = Guid.Empty;
++
+         public static int AnimFrame = 0;
+ 
+         //Bag
+diff --git a/Intersect.Client/Interface/Game/Crafting/CraftingWindow.cs b/Intersect.Client/Interface/Game/Crafting/CraftingWindow.cs
+index 4f0854fa..92f42dcf 100644
+--- a/Intersect.Client/Interface/Game/Crafting/CraftingWindow.cs
++++ b/Intersect.Client/Interface/Game/Crafting/CraftingWindow.cs
+@@ -11,6 +11,7 @@
+ using Intersect.Client.Networking;
+ using Intersect.GameObjects;
+ using Intersect.GameObjects.Crafting;
++using Intersect.Enums;
+ 
+ namespace Intersect.Client.Interface.Game.Crafting
+ {
+@@ -57,6 +58,8 @@ public class CraftingWindow
+ 
+         private Label mLblRecipes;
+ 
++        public bool clickedCraft = false;
++
+         //Objects
+         private ListBox mRecipes;
+ 
+@@ -290,66 +293,16 @@ void tmpNode_DoubleClicked(Base sender, ClickedEventArgs arguments)
+             if (Crafting == false)
+             {
+                 LoadCraftItems((Guid) ((ListBoxRow) sender).UserData);
++                //Uncomment next line for a check before pressing the button so the button gets disabled, disabled by default because some people don't think this is needed
++                //PacketSender.SendCraftRequest((Guid)((ListBoxRow)sender).UserData);
+             }
+         }
+ 
+-        //Craft the item
++        //Send a Craftrequest
+         void craft_Clicked(Base sender, ClickedEventArgs arguments)
+         {
+-            //This shouldn't be client side :(
+-            //Quickly Look through the inventory and create a catalog of what items we have, and how many
+-            var availableItemQuantities = new Dictionary<Guid, int>();
+-            foreach (var item in Globals.Me.Inventory)
+-            {
+-                if (item != null)
+-                {
+-                    if (availableItemQuantities.ContainsKey(item.ItemId))
+-                    {
+-                        availableItemQuantities[item.ItemId] += item.Quantity;
+-                    }
+-                    else
+-                    {
+-                        availableItemQuantities.Add(item.ItemId, item.Quantity);
+-                    }
+-                }
+-            }
+-
+-            var craftDescriptor = CraftBase.Get(mCraftId);
+-            var canCraft = craftDescriptor?.Ingredients != null;
+-
+-            if (canCraft)
+-            {
+-                foreach (var ingredient in craftDescriptor.Ingredients)
+-                {
+-                    if (!availableItemQuantities.TryGetValue(ingredient.ItemId, out var availableQuantity))
+-                    {
+-                        canCraft = false;
+-
+-                        break;
+-                    }
+-
+-                    if (availableQuantity < ingredient.Quantity)
+-                    {
+-                        canCraft = false;
+-
+-                        break;
+-                    }
+-
+-                    availableItemQuantities[ingredient.ItemId] -= ingredient.Quantity;
+-                }
+-            }
+-
+-            if (canCraft)
+-            {
+-                Crafting = true;
+-                mBarTimer = Globals.System.GetTimeMs();
+-                PacketSender.SendCraftItem(mCraftId);
+-                mCraftWindow.IsClosable = false;
+-
+-                return;
+-            }
+-
+-            ChatboxMsg.AddMessage(new ChatboxMsg(Strings.Crafting.incorrectresources, Color.Red));
++            PacketSender.SendCraftRequest(mCraftId);
++            clickedCraft = true;
+         }
+ 
+         //Update the crafting bar
+@@ -357,25 +310,38 @@ public void Update()
+         {
+             if (!mInitialized)
+             {
+-                for (var i = 0; i < Globals.ActiveCraftingTable?.Crafts?.Count; ++i)
++                //Quickly Look through the inventory and count the luck stat
++                double luck = 0;
++                foreach (var equip in Globals.Me.Equipment)
+                 {
++                    if (ItemBase.Get(equip)?.Effect?.Type == EffectType.Luck)
++                    {
++                        luck += ItemBase.Get(equip).Effect.Percentage;
++                    }
++                }            
++                var j = 0;
++                for (var i = 0; i < Globals.ActiveCraftingTable?.Crafts?.Count; ++i)
++                {                    
+                     var activeCraft = CraftBase.Get(Globals.ActiveCraftingTable.Crafts[i]);
+                     if (activeCraft == null)
+                     {
+                         continue;
+                     }
+-
+-                    var tmpRow = mRecipes?.AddRow(i + 1 + ") " + ItemBase.GetName(activeCraft.ItemId));
+-                    if (tmpRow == null)
++                    if (!Globals.ActiveCraftingTableReqs.Contains(i + "-"))
+                     {
+-                        continue;
+-                    }
++                        j++;
++                        var tmpRow = mRecipes?.AddRow(j + ") " + ItemBase.GetName(activeCraft.ItemId) + " (" + Math.Min(activeCraft.SuccessRate+(luck/10),100) + "%) ");
++                        if (tmpRow == null)
++                        {
++                            continue;
++                        }
+ 
+-                    tmpRow.UserData = Globals.ActiveCraftingTable.Crafts[i];
+-                    tmpRow.DoubleClicked += tmpNode_DoubleClicked;
+-                    tmpRow.Clicked += tmpNode_DoubleClicked;
+-                    tmpRow.SetTextColor(Color.White);
+-                    tmpRow.RenderColor = new Color(50, 255, 255, 255);
++                        tmpRow.UserData = Globals.ActiveCraftingTable.Crafts[i];
++                        tmpRow.DoubleClicked += tmpNode_DoubleClicked;
++                        tmpRow.Clicked += tmpNode_DoubleClicked;
++                        tmpRow.SetTextColor(Color.White);
++                        tmpRow.RenderColor = new Color(50, 255, 255, 255);
++                    }
+                 }
+ 
+                 //Load the craft data
+@@ -387,6 +353,32 @@ public void Update()
+                 mInitialized = true;
+             }
+ 
++            //We received green light to craft, continue crafting
++            if (Globals.canCraftrq && clickedCraft)
++            {
++                Crafting = true;
++                mBarTimer = Globals.System.GetTimeMs();
++                PacketSender.SendCraftItem(Globals.canCraftitem);
++                mCraftWindow.IsClosable = false;
++                Globals.canCraftrq = false;
++                Globals.canCraftitem = Guid.Empty;
++                clickedCraft = false;
++                return;
++            }
++
++            //Uncomment next lines to have the craftbutton disable if requirements are not met
++            /*
++            if (!Globals.canCraftrq)
++            {
++                mCraft.Disable();
++            }
++
++            if (Globals.canCraftrq)
++            {
++                mCraft.Enable();
++            }
++            */
++
+             if (!Crafting)
+             {
+                 mBar.Width = 0;
+diff --git a/Intersect.Client/Intersect.Client.csproj b/Intersect.Client/Intersect.Client.csproj
+index a6cd7d9e..78077c4b 100644
+--- a/Intersect.Client/Intersect.Client.csproj
++++ b/Intersect.Client/Intersect.Client.csproj
+@@ -90,6 +90,7 @@
+     <Compile Include="Entities\Projectiles\Projectile.cs" />
+     <Compile Include="Entities\Projectiles\ProjectileSpawns.cs" />
+     <Compile Include="Entities\Resource.cs" />
++    <Compile Include="Entities\SpriteAnimations.cs" />
+     <Compile Include="Entities\Status.cs" />
+     <Compile Include="General\Time.cs" />
+     <Compile Include="General\Enums.cs" />
+diff --git a/Intersect.Client/Networking/PacketHandler.cs b/Intersect.Client/Networking/PacketHandler.cs
+index c69ec70d..33c6538a 100644
+--- a/Intersect.Client/Networking/PacketHandler.cs
++++ b/Intersect.Client/Networking/PacketHandler.cs
+@@ -1162,6 +1162,7 @@ private static void HandlePacket(CraftingTablePacket packet)
+             {
+                 Globals.ActiveCraftingTable = new CraftingTableBase();
+                 Globals.ActiveCraftingTable.Load(packet.TableData);
++                Globals.ActiveCraftingTableReqs = packet.ReqCheck;
+                 Interface.Interface.GameUi.NotifyOpenCraftingTable();
+             }
+             else
+@@ -1170,6 +1171,20 @@ private static void HandlePacket(CraftingTablePacket packet)
+             }
+         }
+ 
++        //CraftStartPacket
++        private static void HandlePacket(CraftStartPacket packet)
++        {
++            if (!packet.Canstart)
++            {
++                Globals.canCraftrq = false;
++            }
++            else
++            {
++                Globals.canCraftrq = true;
++                Globals.canCraftitem = packet.CraftData;
++            }
++        }
++
+         //BankPacket
+         private static void HandlePacket(BankPacket packet)
+         {
+diff --git a/Intersect.Client/Networking/PacketSender.cs b/Intersect.Client/Networking/PacketSender.cs
+index 41082f45..227b902a 100644
+--- a/Intersect.Client/Networking/PacketSender.cs
++++ b/Intersect.Client/Networking/PacketSender.cs
+@@ -218,6 +218,11 @@ public static void SendCraftItem(Guid id)
+             Network.SendPacket(new CraftItemPacket(id));
+         }
+ 
++        public static void SendCraftRequest(Guid id)
++        {
++            Network.SendPacket(new CraftRequestPacket(id));
++        }
++
+         public static void SendPartyInvite(Guid targetId)
+         {
+             Network.SendPacket(new PartyInvitePacket(targetId));
+diff --git a/Intersect.Editor/Forms/Editors/frmCrafts.Designer.cs b/Intersect.Editor/Forms/Editors/frmCrafts.Designer.cs
+index b24f5fdf..27bbbefb 100644
+--- a/Intersect.Editor/Forms/Editors/frmCrafts.Designer.cs
++++ b/Intersect.Editor/Forms/Editors/frmCrafts.Designer.cs
+@@ -53,6 +53,10 @@ private void InitializeComponent()
+             this.txtName = new DarkUI.Controls.DarkTextBox();
+             this.lblSpeed = new System.Windows.Forms.Label();
+             this.grpIngredients = new DarkUI.Controls.DarkGroupBox();
++            this.nudSuccessRate = new DarkUI.Controls.DarkNumericUpDown();
++            this.lblSuccessRate = new System.Windows.Forms.Label();
++            this.cmbCraftEvent = new DarkUI.Controls.DarkComboBox();
++            this.lblCraftEvent = new System.Windows.Forms.Label();
+             this.nudQuantity = new DarkUI.Controls.DarkNumericUpDown();
+             this.cmbIngredient = new DarkUI.Controls.DarkComboBox();
+             this.btnDupIngredient = new DarkUI.Controls.DarkButton();
+@@ -72,12 +76,14 @@ private void InitializeComponent()
+             this.toolStripItemPaste = new System.Windows.Forms.ToolStripButton();
+             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
++            this.btnEditRequirements = new DarkUI.Controls.DarkButton();
+             this.grpCrafts.SuspendLayout();
+             this.pnlContainer.SuspendLayout();
+             this.grpGeneral.SuspendLayout();
+             ((System.ComponentModel.ISupportInitialize)(this.nudCraftQuantity)).BeginInit();
+             ((System.ComponentModel.ISupportInitialize)(this.nudSpeed)).BeginInit();
+             this.grpIngredients.SuspendLayout();
++            ((System.ComponentModel.ISupportInitialize)(this.nudSuccessRate)).BeginInit();
+             ((System.ComponentModel.ISupportInitialize)(this.nudQuantity)).BeginInit();
+             this.toolStrip.SuspendLayout();
+             this.SuspendLayout();
+@@ -85,20 +91,22 @@ private void InitializeComponent()
+             // btnCancel
+             // 
+             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
+-            this.btnCancel.Location = new System.Drawing.Point(330, 440);
++            this.btnCancel.Location = new System.Drawing.Point(495, 715);
++            this.btnCancel.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+             this.btnCancel.Name = "btnCancel";
+-            this.btnCancel.Padding = new System.Windows.Forms.Padding(5);
+-            this.btnCancel.Size = new System.Drawing.Size(172, 27);
++            this.btnCancel.Padding = new System.Windows.Forms.Padding(8);
++            this.btnCancel.Size = new System.Drawing.Size(258, 42);
+             this.btnCancel.TabIndex = 24;
+             this.btnCancel.Text = "Cancel";
+             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
+             // 
+             // btnSave
+             // 
+-            this.btnSave.Location = new System.Drawing.Point(119, 440);
++            this.btnSave.Location = new System.Drawing.Point(178, 715);
++            this.btnSave.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+             this.btnSave.Name = "btnSave";
+-            this.btnSave.Padding = new System.Windows.Forms.Padding(5);
+-            this.btnSave.Size = new System.Drawing.Size(169, 27);
++            this.btnSave.Padding = new System.Windows.Forms.Padding(8);
++            this.btnSave.Size = new System.Drawing.Size(254, 42);
+             this.btnSave.TabIndex = 23;
+             this.btnSave.Text = "Save";
+             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+@@ -111,19 +119,22 @@ private void InitializeComponent()
+             this.grpCrafts.Controls.Add(this.txtSearch);
+             this.grpCrafts.Controls.Add(this.lstCrafts);
+             this.grpCrafts.ForeColor = System.Drawing.Color.Gainsboro;
+-            this.grpCrafts.Location = new System.Drawing.Point(12, 36);
++            this.grpCrafts.Location = new System.Drawing.Point(18, 55);
++            this.grpCrafts.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+             this.grpCrafts.Name = "grpCrafts";
+-            this.grpCrafts.Size = new System.Drawing.Size(203, 398);
++            this.grpCrafts.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
++            this.grpCrafts.Size = new System.Drawing.Size(304, 612);
+             this.grpCrafts.TabIndex = 22;
+             this.grpCrafts.TabStop = false;
+             this.grpCrafts.Text = "Crafts";
+             // 
+             // btnClearSearch
+             // 
+-            this.btnClearSearch.Location = new System.Drawing.Point(179, 13);
++            this.btnClearSearch.Location = new System.Drawing.Point(268, 20);
++            this.btnClearSearch.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+             this.btnClearSearch.Name = "btnClearSearch";
+-            this.btnClearSearch.Padding = new System.Windows.Forms.Padding(5);
+-            this.btnClearSearch.Size = new System.Drawing.Size(18, 20);
++            this.btnClearSearch.Padding = new System.Windows.Forms.Padding(8);
++            this.btnClearSearch.Size = new System.Drawing.Size(27, 31);
+             this.btnClearSearch.TabIndex = 28;
+             this.btnClearSearch.Text = "X";
+             this.btnClearSearch.Click += new System.EventHandler(this.btnClearSearch_Click);
+@@ -133,9 +144,10 @@ private void InitializeComponent()
+             this.txtSearch.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+             this.txtSearch.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+             this.txtSearch.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.txtSearch.Location = new System.Drawing.Point(6, 13);
++            this.txtSearch.Location = new System.Drawing.Point(9, 20);
++            this.txtSearch.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+             this.txtSearch.Name = "txtSearch";
+-            this.txtSearch.Size = new System.Drawing.Size(167, 20);
++            this.txtSearch.Size = new System.Drawing.Size(250, 26);
+             this.txtSearch.TabIndex = 27;
+             this.txtSearch.Text = "Search...";
+             this.txtSearch.Click += new System.EventHandler(this.txtSearch_Click);
+@@ -153,10 +165,11 @@ private void InitializeComponent()
+             this.lstCrafts.ImageIndex = 0;
+             this.lstCrafts.ImageList = this.imageList;
+             this.lstCrafts.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
+-            this.lstCrafts.Location = new System.Drawing.Point(6, 39);
++            this.lstCrafts.Location = new System.Drawing.Point(9, 60);
++            this.lstCrafts.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+             this.lstCrafts.Name = "lstCrafts";
+             this.lstCrafts.SelectedImageIndex = 0;
+-            this.lstCrafts.Size = new System.Drawing.Size(191, 351);
++            this.lstCrafts.Size = new System.Drawing.Size(286, 540);
+             this.lstCrafts.TabIndex = 26;
+             this.lstCrafts.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.lstCrafts_AfterSelect);
+             this.lstCrafts.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.lstCrafts_NodeMouseClick);
+@@ -172,9 +185,10 @@ private void InitializeComponent()
+             // 
+             this.pnlContainer.Controls.Add(this.grpGeneral);
+             this.pnlContainer.Controls.Add(this.grpIngredients);
+-            this.pnlContainer.Location = new System.Drawing.Point(221, 36);
++            this.pnlContainer.Location = new System.Drawing.Point(332, 55);
++            this.pnlContainer.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+             this.pnlContainer.Name = "pnlContainer";
+-            this.pnlContainer.Size = new System.Drawing.Size(281, 398);
++            this.pnlContainer.Size = new System.Drawing.Size(696, 650);
+             this.pnlContainer.TabIndex = 31;
+             this.pnlContainer.Visible = false;
+             // 
+@@ -182,6 +196,7 @@ private void InitializeComponent()
+             // 
+             this.grpGeneral.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+             this.grpGeneral.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
++            this.grpGeneral.Controls.Add(this.btnEditRequirements);
+             this.grpGeneral.Controls.Add(this.btnAddFolder);
+             this.grpGeneral.Controls.Add(this.lblFolder);
+             this.grpGeneral.Controls.Add(this.cmbFolder);
+@@ -194,19 +209,22 @@ private void InitializeComponent()
+             this.grpGeneral.Controls.Add(this.txtName);
+             this.grpGeneral.Controls.Add(this.lblSpeed);
+             this.grpGeneral.ForeColor = System.Drawing.Color.Gainsboro;
+-            this.grpGeneral.Location = new System.Drawing.Point(5, 3);
++            this.grpGeneral.Location = new System.Drawing.Point(8, 5);
++            this.grpGeneral.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+             this.grpGeneral.Name = "grpGeneral";
+-            this.grpGeneral.Size = new System.Drawing.Size(273, 153);
++            this.grpGeneral.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
++            this.grpGeneral.Size = new System.Drawing.Size(684, 235);
+             this.grpGeneral.TabIndex = 31;
+             this.grpGeneral.TabStop = false;
+             this.grpGeneral.Text = "General";
+             // 
+             // btnAddFolder
+             // 
+-            this.btnAddFolder.Location = new System.Drawing.Point(245, 41);
++            this.btnAddFolder.Location = new System.Drawing.Point(368, 63);
++            this.btnAddFolder.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+             this.btnAddFolder.Name = "btnAddFolder";
+-            this.btnAddFolder.Padding = new System.Windows.Forms.Padding(5);
+-            this.btnAddFolder.Size = new System.Drawing.Size(18, 21);
++            this.btnAddFolder.Padding = new System.Windows.Forms.Padding(8);
++            this.btnAddFolder.Size = new System.Drawing.Size(27, 32);
+             this.btnAddFolder.TabIndex = 46;
+             this.btnAddFolder.Text = "+";
+             this.btnAddFolder.Click += new System.EventHandler(this.btnAddFolder_Click);
+@@ -214,9 +232,10 @@ private void InitializeComponent()
+             // lblFolder
+             // 
+             this.lblFolder.AutoSize = true;
+-            this.lblFolder.Location = new System.Drawing.Point(6, 45);
++            this.lblFolder.Location = new System.Drawing.Point(9, 69);
++            this.lblFolder.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+             this.lblFolder.Name = "lblFolder";
+-            this.lblFolder.Size = new System.Drawing.Size(39, 13);
++            this.lblFolder.Size = new System.Drawing.Size(58, 20);
+             this.lblFolder.TabIndex = 45;
+             this.lblFolder.Text = "Folder:";
+             // 
+@@ -234,9 +253,10 @@ private void InitializeComponent()
+             this.cmbFolder.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+             this.cmbFolder.ForeColor = System.Drawing.Color.Gainsboro;
+             this.cmbFolder.FormattingEnabled = true;
+-            this.cmbFolder.Location = new System.Drawing.Point(73, 41);
++            this.cmbFolder.Location = new System.Drawing.Point(110, 63);
++            this.cmbFolder.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+             this.cmbFolder.Name = "cmbFolder";
+-            this.cmbFolder.Size = new System.Drawing.Size(166, 21);
++            this.cmbFolder.Size = new System.Drawing.Size(247, 27);
+             this.cmbFolder.TabIndex = 44;
+             this.cmbFolder.Text = null;
+             this.cmbFolder.TextPadding = new System.Windows.Forms.Padding(2);
+@@ -246,7 +266,8 @@ private void InitializeComponent()
+             // 
+             this.nudCraftQuantity.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+             this.nudCraftQuantity.ForeColor = System.Drawing.Color.Gainsboro;
+-            this.nudCraftQuantity.Location = new System.Drawing.Point(73, 95);
++            this.nudCraftQuantity.Location = new System.Drawing.Point(110, 146);
++            this.nudCraftQuantity.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+             this.nudCraftQuantity.Maximum = new decimal(new int[] {
+             2147483647,
+             0,
+@@ -258,7 +279,7 @@ private void InitializeComponent()
+             0,
+             0});
+             this.nudCraftQuantity.Name = "nudCraftQuantity";
+-            this.nudCraftQuantity.Size = new System.Drawing.Size(190, 20);
++            this.nudCraftQuantity.Size = new System.Drawing.Size(285, 26);
+             this.nudCraftQuantity.TabIndex = 43;
+             this.nudCraftQuantity.Value = new decimal(new int[] {
+             1,
+@@ -270,9 +291,10 @@ private void InitializeComponent()
+             // lblCraftQuantity
+             // 
+             this.lblCraftQuantity.AutoSize = true;
+-            this.lblCraftQuantity.Location = new System.Drawing.Point(6, 97);
++            this.lblCraftQuantity.Location = new System.Drawing.Point(9, 149);
++            this.lblCraftQuantity.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+             this.lblCraftQuantity.Name = "lblCraftQuantity";
+-            this.lblCraftQuantity.Size = new System.Drawing.Size(49, 13);
++            this.lblCraftQuantity.Size = new System.Drawing.Size(72, 20);
+             this.lblCraftQuantity.TabIndex = 42;
+             this.lblCraftQuantity.Text = "Quantity:";
+             // 
+@@ -280,7 +302,8 @@ private void InitializeComponent()
+             // 
+             this.nudSpeed.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+             this.nudSpeed.ForeColor = System.Drawing.Color.Gainsboro;
+-            this.nudSpeed.Location = new System.Drawing.Point(73, 121);
++            this.nudSpeed.Location = new System.Drawing.Point(110, 186);
++            this.nudSpeed.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+             this.nudSpeed.Maximum = new decimal(new int[] {
+             2147483647,
+             0,
+@@ -292,7 +315,7 @@ private void InitializeComponent()
+             0,
+             0});
+             this.nudSpeed.Name = "nudSpeed";
+-            this.nudSpeed.Size = new System.Drawing.Size(190, 20);
++            this.nudSpeed.Size = new System.Drawing.Size(285, 26);
+             this.nudSpeed.TabIndex = 35;
+             this.nudSpeed.Value = new decimal(new int[] {
+             1,
+@@ -315,9 +338,10 @@ private void InitializeComponent()
+             this.cmbResult.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+             this.cmbResult.ForeColor = System.Drawing.Color.Gainsboro;
+             this.cmbResult.FormattingEnabled = true;
+-            this.cmbResult.Location = new System.Drawing.Point(73, 68);
++            this.cmbResult.Location = new System.Drawing.Point(110, 105);
++            this.cmbResult.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+             this.cmbResult.Name = "cmbResult";
+-            this.cmbResult.Size = new System.Drawing.Size(190, 21);
++            this.cmbResult.Size = new System.Drawing.Size(283, 27);
+             this.cmbResult.TabIndex = 34;
+             this.cmbResult.Text = null;
+             this.cmbResult.TextPadding = new System.Windows.Forms.Padding(2);
+@@ -326,18 +350,20 @@ private void InitializeComponent()
+             // lblItem
+             // 
+             this.lblItem.AutoSize = true;
+-            this.lblItem.Location = new System.Drawing.Point(6, 71);
++            this.lblItem.Location = new System.Drawing.Point(9, 109);
++            this.lblItem.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+             this.lblItem.Name = "lblItem";
+-            this.lblItem.Size = new System.Drawing.Size(30, 13);
++            this.lblItem.Size = new System.Drawing.Size(45, 20);
+             this.lblItem.TabIndex = 33;
+             this.lblItem.Text = "Item:";
+             // 
+             // lblName
+             // 
+             this.lblName.AutoSize = true;
+-            this.lblName.Location = new System.Drawing.Point(6, 17);
++            this.lblName.Location = new System.Drawing.Point(9, 26);
++            this.lblName.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+             this.lblName.Name = "lblName";
+-            this.lblName.Size = new System.Drawing.Size(38, 13);
++            this.lblName.Size = new System.Drawing.Size(55, 20);
+             this.lblName.TabIndex = 19;
+             this.lblName.Text = "Name:";
+             // 
+@@ -346,18 +372,20 @@ private void InitializeComponent()
+             this.txtName.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+             this.txtName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+             this.txtName.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+-            this.txtName.Location = new System.Drawing.Point(73, 15);
++            this.txtName.Location = new System.Drawing.Point(110, 23);
++            this.txtName.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+             this.txtName.Name = "txtName";
+-            this.txtName.Size = new System.Drawing.Size(190, 20);
++            this.txtName.Size = new System.Drawing.Size(284, 26);
+             this.txtName.TabIndex = 18;
+             this.txtName.TextChanged += new System.EventHandler(this.txtName_TextChanged);
+             // 
+             // lblSpeed
+             // 
+             this.lblSpeed.AutoSize = true;
+-            this.lblSpeed.Location = new System.Drawing.Point(6, 123);
++            this.lblSpeed.Location = new System.Drawing.Point(9, 189);
++            this.lblSpeed.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+             this.lblSpeed.Name = "lblSpeed";
+-            this.lblSpeed.Size = new System.Drawing.Size(55, 13);
++            this.lblSpeed.Size = new System.Drawing.Size(82, 20);
+             this.lblSpeed.TabIndex = 3;
+             this.lblSpeed.Text = "Time (ms):";
+             // 
+@@ -365,6 +393,10 @@ private void InitializeComponent()
+             // 
+             this.grpIngredients.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+             this.grpIngredients.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
++            this.grpIngredients.Controls.Add(this.nudSuccessRate);
++            this.grpIngredients.Controls.Add(this.lblSuccessRate);
++            this.grpIngredients.Controls.Add(this.cmbCraftEvent);
++            this.grpIngredients.Controls.Add(this.lblCraftEvent);
+             this.grpIngredients.Controls.Add(this.nudQuantity);
+             this.grpIngredients.Controls.Add(this.cmbIngredient);
+             this.grpIngredients.Controls.Add(this.btnDupIngredient);
+@@ -374,18 +406,85 @@ private void InitializeComponent()
+             this.grpIngredients.Controls.Add(this.lstIngredients);
+             this.grpIngredients.Controls.Add(this.lblQuantity);
+             this.grpIngredients.ForeColor = System.Drawing.Color.Gainsboro;
+-            this.grpIngredients.Location = new System.Drawing.Point(5, 162);
++            this.grpIngredients.Location = new System.Drawing.Point(8, 249);
++            this.grpIngredients.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+             this.grpIngredients.Name = "grpIngredients";
+-            this.grpIngredients.Size = new System.Drawing.Size(273, 233);
++            this.grpIngredients.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
++            this.grpIngredients.Size = new System.Drawing.Size(684, 396);
+             this.grpIngredients.TabIndex = 30;
+             this.grpIngredients.TabStop = false;
+             this.grpIngredients.Text = "Ingredients";
+             // 
++            // nudSuccessRate
++            // 
++            this.nudSuccessRate.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
++            this.nudSuccessRate.ForeColor = System.Drawing.Color.Gainsboro;
++            this.nudSuccessRate.Location = new System.Drawing.Point(18, 358);
++            this.nudSuccessRate.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
++            this.nudSuccessRate.Minimum = new decimal(new int[] {
++            1,
++            0,
++            0,
++            0});
++            this.nudSuccessRate.Name = "nudSuccessRate";
++            this.nudSuccessRate.Size = new System.Drawing.Size(159, 26);
++            this.nudSuccessRate.TabIndex = 45;
++            this.nudSuccessRate.Value = new decimal(new int[] {
++            100,
++            0,
++            0,
++            0});
++            this.nudSuccessRate.ValueChanged += new System.EventHandler(this.nudSuccessRate_ValueChanged);
++            // 
++            // lblSuccessRate
++            // 
++            this.lblSuccessRate.AutoSize = true;
++            this.lblSuccessRate.Location = new System.Drawing.Point(14, 337);
++            this.lblSuccessRate.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
++            this.lblSuccessRate.Name = "lblSuccessRate";
++            this.lblSuccessRate.Size = new System.Drawing.Size(113, 20);
++            this.lblSuccessRate.TabIndex = 44;
++            this.lblSuccessRate.Text = "Success Rate:";
++            // 
++            // cmbCraftEvent
++            // 
++            this.cmbCraftEvent.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
++            this.cmbCraftEvent.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
++            this.cmbCraftEvent.BorderStyle = System.Windows.Forms.ButtonBorderStyle.Solid;
++            this.cmbCraftEvent.ButtonColor = System.Drawing.Color.FromArgb(((int)(((byte)(43)))), ((int)(((byte)(43)))), ((int)(((byte)(43)))));
++            this.cmbCraftEvent.ButtonIcon = ((System.Drawing.Bitmap)(resources.GetObject("cmbCraftEvent.ButtonIcon")));
++            this.cmbCraftEvent.DrawDropdownHoverOutline = false;
++            this.cmbCraftEvent.DrawFocusRectangle = false;
++            this.cmbCraftEvent.DrawMode = System.Windows.Forms.DrawMode.OwnerDrawFixed;
++            this.cmbCraftEvent.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
++            this.cmbCraftEvent.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
++            this.cmbCraftEvent.ForeColor = System.Drawing.Color.Gainsboro;
++            this.cmbCraftEvent.FormattingEnabled = true;
++            this.cmbCraftEvent.Location = new System.Drawing.Point(185, 358);
++            this.cmbCraftEvent.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
++            this.cmbCraftEvent.Name = "cmbCraftEvent";
++            this.cmbCraftEvent.Size = new System.Drawing.Size(206, 27);
++            this.cmbCraftEvent.TabIndex = 43;
++            this.cmbCraftEvent.Text = null;
++            this.cmbCraftEvent.TextPadding = new System.Windows.Forms.Padding(2);
++            this.cmbCraftEvent.SelectedIndexChanged += new System.EventHandler(this.cmbCraftEvent_SelectedIndexChanged);
++            // 
++            // lblCraftEvent
++            // 
++            this.lblCraftEvent.AutoSize = true;
++            this.lblCraftEvent.Location = new System.Drawing.Point(181, 337);
++            this.lblCraftEvent.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
++            this.lblCraftEvent.Name = "lblCraftEvent";
++            this.lblCraftEvent.Size = new System.Drawing.Size(54, 20);
++            this.lblCraftEvent.TabIndex = 42;
++            this.lblCraftEvent.Text = "Event:";
++            // 
+             // nudQuantity
+             // 
+             this.nudQuantity.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+             this.nudQuantity.ForeColor = System.Drawing.Color.Gainsboro;
+-            this.nudQuantity.Location = new System.Drawing.Point(12, 175);
++            this.nudQuantity.Location = new System.Drawing.Point(18, 262);
++            this.nudQuantity.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+             this.nudQuantity.Maximum = new decimal(new int[] {
+             2147483647,
+             0,
+@@ -397,7 +496,7 @@ private void InitializeComponent()
+             0,
+             0});
+             this.nudQuantity.Name = "nudQuantity";
+-            this.nudQuantity.Size = new System.Drawing.Size(251, 20);
++            this.nudQuantity.Size = new System.Drawing.Size(376, 26);
+             this.nudQuantity.TabIndex = 41;
+             this.nudQuantity.Value = new decimal(new int[] {
+             1,
+@@ -420,9 +519,10 @@ private void InitializeComponent()
+             this.cmbIngredient.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+             this.cmbIngredient.ForeColor = System.Drawing.Color.Gainsboro;
+             this.cmbIngredient.FormattingEnabled = true;
+-            this.cmbIngredient.Location = new System.Drawing.Point(13, 133);
++            this.cmbIngredient.Location = new System.Drawing.Point(18, 198);
++            this.cmbIngredient.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+             this.cmbIngredient.Name = "cmbIngredient";
+-            this.cmbIngredient.Size = new System.Drawing.Size(250, 21);
++            this.cmbIngredient.Size = new System.Drawing.Size(373, 27);
+             this.cmbIngredient.TabIndex = 40;
+             this.cmbIngredient.Text = null;
+             this.cmbIngredient.TextPadding = new System.Windows.Forms.Padding(2);
+@@ -430,30 +530,33 @@ private void InitializeComponent()
+             // 
+             // btnDupIngredient
+             // 
+-            this.btnDupIngredient.Location = new System.Drawing.Point(188, 201);
++            this.btnDupIngredient.Location = new System.Drawing.Point(282, 299);
++            this.btnDupIngredient.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+             this.btnDupIngredient.Name = "btnDupIngredient";
+-            this.btnDupIngredient.Padding = new System.Windows.Forms.Padding(5);
+-            this.btnDupIngredient.Size = new System.Drawing.Size(75, 23);
++            this.btnDupIngredient.Padding = new System.Windows.Forms.Padding(8);
++            this.btnDupIngredient.Size = new System.Drawing.Size(112, 35);
+             this.btnDupIngredient.TabIndex = 39;
+             this.btnDupIngredient.Text = "Duplicate";
+             this.btnDupIngredient.Click += new System.EventHandler(this.btnDupIngredient_Click);
+             // 
+             // btnRemove
+             // 
+-            this.btnRemove.Location = new System.Drawing.Point(97, 201);
++            this.btnRemove.Location = new System.Drawing.Point(146, 299);
++            this.btnRemove.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+             this.btnRemove.Name = "btnRemove";
+-            this.btnRemove.Padding = new System.Windows.Forms.Padding(5);
+-            this.btnRemove.Size = new System.Drawing.Size(79, 23);
++            this.btnRemove.Padding = new System.Windows.Forms.Padding(8);
++            this.btnRemove.Size = new System.Drawing.Size(118, 35);
+             this.btnRemove.TabIndex = 38;
+             this.btnRemove.Text = "Remove";
+             this.btnRemove.Click += new System.EventHandler(this.btnRemove_Click);
+             // 
+             // btnAdd
+             // 
+-            this.btnAdd.Location = new System.Drawing.Point(12, 201);
++            this.btnAdd.Location = new System.Drawing.Point(18, 299);
++            this.btnAdd.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+             this.btnAdd.Name = "btnAdd";
+-            this.btnAdd.Padding = new System.Windows.Forms.Padding(5);
+-            this.btnAdd.Size = new System.Drawing.Size(75, 23);
++            this.btnAdd.Padding = new System.Windows.Forms.Padding(8);
++            this.btnAdd.Size = new System.Drawing.Size(112, 35);
+             this.btnAdd.TabIndex = 37;
+             this.btnAdd.Text = "Add";
+             this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
+@@ -461,9 +564,10 @@ private void InitializeComponent()
+             // lblIngredient
+             // 
+             this.lblIngredient.AutoSize = true;
+-            this.lblIngredient.Location = new System.Drawing.Point(9, 116);
++            this.lblIngredient.Location = new System.Drawing.Point(14, 173);
++            this.lblIngredient.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+             this.lblIngredient.Name = "lblIngredient";
+-            this.lblIngredient.Size = new System.Drawing.Size(30, 13);
++            this.lblIngredient.Size = new System.Drawing.Size(45, 20);
+             this.lblIngredient.TabIndex = 31;
+             this.lblIngredient.Text = "Item:";
+             // 
+@@ -473,20 +577,23 @@ private void InitializeComponent()
+             this.lstIngredients.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+             this.lstIngredients.ForeColor = System.Drawing.Color.Gainsboro;
+             this.lstIngredients.FormattingEnabled = true;
++            this.lstIngredients.ItemHeight = 20;
+             this.lstIngredients.Items.AddRange(new object[] {
+             "Ingredient: None x1"});
+-            this.lstIngredients.Location = new System.Drawing.Point(12, 19);
++            this.lstIngredients.Location = new System.Drawing.Point(18, 29);
++            this.lstIngredients.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+             this.lstIngredients.Name = "lstIngredients";
+-            this.lstIngredients.Size = new System.Drawing.Size(255, 93);
++            this.lstIngredients.Size = new System.Drawing.Size(382, 142);
+             this.lstIngredients.TabIndex = 29;
+             this.lstIngredients.SelectedIndexChanged += new System.EventHandler(this.lstIngredients_SelectedIndexChanged);
+             // 
+             // lblQuantity
+             // 
+             this.lblQuantity.AutoSize = true;
+-            this.lblQuantity.Location = new System.Drawing.Point(10, 159);
++            this.lblQuantity.Location = new System.Drawing.Point(14, 237);
++            this.lblQuantity.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+             this.lblQuantity.Name = "lblQuantity";
+-            this.lblQuantity.Size = new System.Drawing.Size(49, 13);
++            this.lblQuantity.Size = new System.Drawing.Size(72, 20);
+             this.lblQuantity.TabIndex = 28;
+             this.lblQuantity.Text = "Quantity:";
+             // 
+@@ -495,6 +602,7 @@ private void InitializeComponent()
+             this.toolStrip.AutoSize = false;
+             this.toolStrip.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+             this.toolStrip.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
++            this.toolStrip.ImageScalingSize = new System.Drawing.Size(24, 24);
+             this.toolStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+             this.toolStripItemNew,
+             this.toolStripSeparator1,
+@@ -508,8 +616,8 @@ private void InitializeComponent()
+             this.toolStripItemUndo});
+             this.toolStrip.Location = new System.Drawing.Point(0, 0);
+             this.toolStrip.Name = "toolStrip";
+-            this.toolStrip.Padding = new System.Windows.Forms.Padding(5, 0, 1, 0);
+-            this.toolStrip.Size = new System.Drawing.Size(508, 25);
++            this.toolStrip.Padding = new System.Windows.Forms.Padding(8, 0, 2, 0);
++            this.toolStrip.Size = new System.Drawing.Size(1041, 38);
+             this.toolStrip.TabIndex = 43;
+             this.toolStrip.Text = "toolStrip1";
+             // 
+@@ -520,7 +628,7 @@ private void InitializeComponent()
+             this.toolStripItemNew.Image = ((System.Drawing.Image)(resources.GetObject("toolStripItemNew.Image")));
+             this.toolStripItemNew.ImageTransparentColor = System.Drawing.Color.Magenta;
+             this.toolStripItemNew.Name = "toolStripItemNew";
+-            this.toolStripItemNew.Size = new System.Drawing.Size(23, 22);
++            this.toolStripItemNew.Size = new System.Drawing.Size(28, 35);
+             this.toolStripItemNew.Text = "New";
+             this.toolStripItemNew.Click += new System.EventHandler(this.toolStripItemNew_Click);
+             // 
+@@ -529,7 +637,7 @@ private void InitializeComponent()
+             this.toolStripSeparator1.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+             this.toolStripSeparator1.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
+             this.toolStripSeparator1.Name = "toolStripSeparator1";
+-            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 25);
++            this.toolStripSeparator1.Size = new System.Drawing.Size(6, 38);
+             // 
+             // toolStripItemDelete
+             // 
+@@ -539,7 +647,7 @@ private void InitializeComponent()
+             this.toolStripItemDelete.Image = ((System.Drawing.Image)(resources.GetObject("toolStripItemDelete.Image")));
+             this.toolStripItemDelete.ImageTransparentColor = System.Drawing.Color.Magenta;
+             this.toolStripItemDelete.Name = "toolStripItemDelete";
+-            this.toolStripItemDelete.Size = new System.Drawing.Size(23, 22);
++            this.toolStripItemDelete.Size = new System.Drawing.Size(28, 35);
+             this.toolStripItemDelete.Text = "Delete";
+             this.toolStripItemDelete.Click += new System.EventHandler(this.toolStripItemDelete_Click);
+             // 
+@@ -548,7 +656,7 @@ private void InitializeComponent()
+             this.toolStripSeparator2.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+             this.toolStripSeparator2.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
+             this.toolStripSeparator2.Name = "toolStripSeparator2";
+-            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
++            this.toolStripSeparator2.Size = new System.Drawing.Size(6, 38);
+             // 
+             // btnChronological
+             // 
+@@ -557,7 +665,7 @@ private void InitializeComponent()
+             this.btnChronological.Image = ((System.Drawing.Image)(resources.GetObject("btnChronological.Image")));
+             this.btnChronological.ImageTransparentColor = System.Drawing.Color.Magenta;
+             this.btnChronological.Name = "btnChronological";
+-            this.btnChronological.Size = new System.Drawing.Size(23, 22);
++            this.btnChronological.Size = new System.Drawing.Size(28, 35);
+             this.btnChronological.Text = "Order Chronologically";
+             this.btnChronological.Click += new System.EventHandler(this.btnChronological_Click);
+             // 
+@@ -566,7 +674,7 @@ private void InitializeComponent()
+             this.toolStripSeparator4.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+             this.toolStripSeparator4.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
+             this.toolStripSeparator4.Name = "toolStripSeparator4";
+-            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
++            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 38);
+             // 
+             // toolStripItemCopy
+             // 
+@@ -576,7 +684,7 @@ private void InitializeComponent()
+             this.toolStripItemCopy.Image = ((System.Drawing.Image)(resources.GetObject("toolStripItemCopy.Image")));
+             this.toolStripItemCopy.ImageTransparentColor = System.Drawing.Color.Magenta;
+             this.toolStripItemCopy.Name = "toolStripItemCopy";
+-            this.toolStripItemCopy.Size = new System.Drawing.Size(23, 22);
++            this.toolStripItemCopy.Size = new System.Drawing.Size(28, 35);
+             this.toolStripItemCopy.Text = "Copy";
+             this.toolStripItemCopy.Click += new System.EventHandler(this.toolStripItemCopy_Click);
+             // 
+@@ -588,7 +696,7 @@ private void InitializeComponent()
+             this.toolStripItemPaste.Image = ((System.Drawing.Image)(resources.GetObject("toolStripItemPaste.Image")));
+             this.toolStripItemPaste.ImageTransparentColor = System.Drawing.Color.Magenta;
+             this.toolStripItemPaste.Name = "toolStripItemPaste";
+-            this.toolStripItemPaste.Size = new System.Drawing.Size(23, 22);
++            this.toolStripItemPaste.Size = new System.Drawing.Size(28, 35);
+             this.toolStripItemPaste.Text = "Paste";
+             this.toolStripItemPaste.Click += new System.EventHandler(this.toolStripItemPaste_Click);
+             // 
+@@ -597,7 +705,7 @@ private void InitializeComponent()
+             this.toolStripSeparator3.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+             this.toolStripSeparator3.Margin = new System.Windows.Forms.Padding(0, 0, 2, 0);
+             this.toolStripSeparator3.Name = "toolStripSeparator3";
+-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
++            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 38);
+             // 
+             // toolStripItemUndo
+             // 
+@@ -607,17 +715,28 @@ private void InitializeComponent()
+             this.toolStripItemUndo.Image = ((System.Drawing.Image)(resources.GetObject("toolStripItemUndo.Image")));
+             this.toolStripItemUndo.ImageTransparentColor = System.Drawing.Color.Magenta;
+             this.toolStripItemUndo.Name = "toolStripItemUndo";
+-            this.toolStripItemUndo.Size = new System.Drawing.Size(23, 22);
++            this.toolStripItemUndo.Size = new System.Drawing.Size(28, 35);
+             this.toolStripItemUndo.Text = "Undo";
+             this.toolStripItemUndo.Click += new System.EventHandler(this.toolStripItemUndo_Click);
+             // 
++            // btnEditRequirements
++            // 
++            this.btnEditRequirements.Location = new System.Drawing.Point(420, 23);
++            this.btnEditRequirements.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
++            this.btnEditRequirements.Name = "btnEditRequirements";
++            this.btnEditRequirements.Padding = new System.Windows.Forms.Padding(8);
++            this.btnEditRequirements.Size = new System.Drawing.Size(256, 35);
++            this.btnEditRequirements.TabIndex = 44;
++            this.btnEditRequirements.Text = "Edit Crafting Requirements";
++            this.btnEditRequirements.Click += new System.EventHandler(this.btnEditRequirements_Click);
++            // 
+             // FrmCrafts
+             // 
+-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
++            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
+             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+             this.AutoSize = true;
+             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+-            this.ClientSize = new System.Drawing.Size(508, 474);
++            this.ClientSize = new System.Drawing.Size(1041, 775);
+             this.ControlBox = false;
+             this.Controls.Add(this.toolStrip);
+             this.Controls.Add(this.pnlContainer);
+@@ -627,6 +746,7 @@ private void InitializeComponent()
+             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+             this.KeyPreview = true;
++            this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+             this.MaximizeBox = false;
+             this.MinimizeBox = false;
+             this.Name = "FrmCrafts";
+@@ -643,6 +763,7 @@ private void InitializeComponent()
+             ((System.ComponentModel.ISupportInitialize)(this.nudSpeed)).EndInit();
+             this.grpIngredients.ResumeLayout(false);
+             this.grpIngredients.PerformLayout();
++            ((System.ComponentModel.ISupportInitialize)(this.nudSuccessRate)).EndInit();
+             ((System.ComponentModel.ISupportInitialize)(this.nudQuantity)).EndInit();
+             this.toolStrip.ResumeLayout(false);
+             this.toolStrip.PerformLayout();
+@@ -692,5 +813,10 @@ private void InitializeComponent()
+         private System.Windows.Forms.Label lblFolder;
+         private DarkComboBox cmbFolder;
+         private System.Windows.Forms.ImageList imageList;
++        private DarkComboBox cmbCraftEvent;
++        private System.Windows.Forms.Label lblCraftEvent;
++        private DarkNumericUpDown nudSuccessRate;
++        private System.Windows.Forms.Label lblSuccessRate;
++        private DarkButton btnEditRequirements;
+     }
+-}
++}
+\ No newline at end of file
+diff --git a/Intersect.Editor/Forms/Editors/frmCrafts.cs b/Intersect.Editor/Forms/Editors/frmCrafts.cs
+index a77d63cb..d949e1ec 100644
+--- a/Intersect.Editor/Forms/Editors/frmCrafts.cs
++++ b/Intersect.Editor/Forms/Editors/frmCrafts.cs
+@@ -42,6 +42,10 @@ public FrmCrafts()
+             cmbIngredient.Items.Clear();
+             cmbIngredient.Items.Add(Strings.General.none);
+             cmbIngredient.Items.AddRange(ItemBase.Names);
++            //CraftEvent
++            cmbCraftEvent.Items.Clear();
++            cmbCraftEvent.Items.Add(Strings.General.none);
++            cmbCraftEvent.Items.AddRange(GameObjects.Events.EventBase.Names);
+         }
+ 
+         protected override void GameObjectUpdatedDelegate(GameObjectType type)
+@@ -78,6 +82,10 @@ private void UpdateEditor()
+                 nudQuantity.Hide();
+                 lblQuantity.Hide();
+                 lblIngredient.Hide();
++                //Success Rate
++                nudSuccessRate.Value = mEditorItem.SuccessRate;
++                //Craft Event
++                cmbCraftEvent.SelectedIndex = GameObjects.Events.EventBase.ListIndex(mEditorItem.CraftEventId) + 1;
+                 for (var i = 0; i < mEditorItem.Ingredients.Count; i++)
+                 {
+                     if (mEditorItem.Ingredients[i].ItemId != Guid.Empty)
+@@ -164,6 +172,11 @@ private void nudSpeed_ValueChanged(object sender, EventArgs e)
+             mEditorItem.Time = (int) nudSpeed.Value;
+         }
+ 
++        private void nudSuccessRate_ValueChanged(object sender, EventArgs e)
++        {
++            mEditorItem.SuccessRate = (int)nudSuccessRate.Value;
++        }
++
+         private void btnAdd_Click(object sender, EventArgs e)
+         {
+             mEditorItem.Ingredients.Add(new CraftIngredient(Guid.Empty, 1));
+@@ -312,6 +325,11 @@ private void form_KeyDown(object sender, KeyEventArgs e)
+             }
+         }
+ 
++        private void cmbCraftEvent_SelectedIndexChanged(object sender, EventArgs e)
++        {
++            mEditorItem.CraftEvent = GameObjects.Events.EventBase.Get(GameObjects.Events.EventBase.IdFromList(cmbCraftEvent.SelectedIndex - 1));
++        }
++
+         private void lstIngredients_SelectedIndexChanged(object sender, EventArgs e)
+         {
+             if (updatingIngedients)
+@@ -435,6 +453,14 @@ private void InitLocalization()
+ 
+             btnSave.Text = Strings.CraftsEditor.save;
+             btnCancel.Text = Strings.CraftsEditor.cancel;
++            lblCraftEvent.Text = Strings.CraftsEditor.craftevent;
++            lblSuccessRate.Text = Strings.CraftsEditor.successrate;
++            btnEditRequirements.Text = Strings.ItemEditor.craftrequirements;
++        }
++        private void btnEditRequirements_Click(object sender, EventArgs e)
++        {
++            var frm = new FrmDynamicRequirements(mEditorItem.CraftRequirements, RequirementType.Craft);
++            frm.ShowDialog();
+         }
+ 
+         private void nudCraftQuantity_ValueChanged(object sender, EventArgs e)
+diff --git a/Intersect.Editor/Forms/Editors/frmCrafts.resx b/Intersect.Editor/Forms/Editors/frmCrafts.resx
+index 09751cf8..a3788eaa 100644
+--- a/Intersect.Editor/Forms/Editors/frmCrafts.resx
++++ b/Intersect.Editor/Forms/Editors/frmCrafts.resx
+@@ -125,51 +125,51 @@
+         AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj00LjAuMC4w
+         LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
+         ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAAAY
+-        CwAAAk1TRnQBSQFMAgEBAgEAAXgBAQF4AQEBEAEAARABAAT/ASEBAAj/AUIBTQE2BwABNgMAASgDAAFA
++        CwAAAk1TRnQBSQFMAgEBAgEAAZgBAQGYAQEBEAEAARABAAT/ASEBAAj/AUIBTQE2BwABNgMAASgDAAFA
+         AwABEAMAAQEBAAEgBgABEFoAA/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2
+         Af8D9gH/A/YB/4wAAyEBMAMqAUADKgFAAyoBQAMqAUADKgFAAyoBQAMqAUADKgFAAyoBQAMqAUADKgFA
+-        AyoBQAMqAUAIAAP2Af8DOQH/AzkB/wM5Af8DOQH/AzkB/wM5Af8DOQH/AzkB/wM5Af8DOQH/AzkB/wP2
++        AyoBQAMqAUAIAAP2Af8DNQH/AzUB/wM1Af8DNQH/AzUB/wM1Af8DNQH/AzUB/wM1Af8DNQH/AzUB/wP2
+         Af+IAAMMARAB7gHyAfQB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/
+-        A/YB/wP2Af8IAAP2Af8DOQH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHx
+-        Ae8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AzkB/wP2Af+IAANAAXAByAHeAewB/wFLAbYB3AH/
+-        AUsBtgHcAf8BSwG2AdwB/wFLAbYB3AH/AUsBtgHcAf8BSwG2AdwB/wFLAbYB3AH/AUsBtgHcAf8BSwG2
+-        AdwB/wFLAbYB3AH/AbYB0wHmAf8BSwG2AdwB/wP2Af8IAAP2Af8DOQH/AfEB7wHwAf8B8QHvAfAB/wHx
+-        Ae8B8AH/AcUBxAHFAf8BhAKDAf8BxQHEAcUB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wM5Af8D9gH/
+-        iAADXAHfAZEBwgHhAf8BSwG2AdwB/wFLAbYB3AH/AUsBtgHcAf8BSwG2AdwB/wFLAbYB3AH/AUsBtgHc
+-        Af8BSwG2AdwB/wFLAbYB3AH/AUsBtgHcAf8BiQG9Ad8B/wHxAe8B8AH/AUsBtgHcAf8D9gH/CAAD9gH/
+-        AzkB/wHxAe8B8AH/AdsB2QHaAf8BcAJvAf8BmgKZAf8DOQH/AZoCmQH/AXACbwH/AdsB2QHaAf8B8QHv
+-        AfAB/wM5Af8D9gH/hAADKgFAAd8B6gHxAf8BSwG2AdwB/wFLAbYB3AH/AUsBtgHcAf8BSwG2AdwB/wFL
+-        AbYB3AH/AUsBtgHcAf8BSwG2AdwB/wFLAbYB3AH/AUsBtgHcAf8BSwG2AdwB/wHTAeEB6wH/AfEB7wHw
+-        Af8BSwG2AdwB/wP2Af8IAAP2Af8DOQH/AfEB7wHwAf8DOQH/AdsB2QHaAf8B8QHvAfAB/wM5Af8B8QHv
+-        AfAB/wHbAdkB2gH/AzkB/wHxAe8B8AH/AzkB/wP2Af+EAANRAZ8BqQHOAeYB/wFLAbYB3AH/AUsBtgHc
+-        Af8BSwG2AdwB/wFLAbYB3AH/AUsBtgHcAf8BSwG2AdwB/wFLAbYB3AH/AUsBtgHcAf8BSwG2AdwB/wGf
+-        AcgB4gH/AfEB7wHwAf8B8QHvAfAB/wFLAbYB3AH/A/YB/wgAA/YB/wM5Af8B8QHvAfAB/wM5Af8B8QHv
+-        AfAB/wHxAe8B8AH/AzkB/wHxAe8B8AH/AfEB7wHwAf8DOQH/AfEB7wHwAf8DOQH/A/YB/4QAA/YB/wGC
+-        AboB3gH/AUsBtgHcAf8BSwG2AdwB/wFLAbYB3AH/AUsBtgHcAf8BSwG2AdwB/wFLAbYB3AH/AUsBtgHc
+-        Af8BSwG2AdwB/wFLAbYB3AH/AeIB6AHuAf8B8QHvAfAB/wHxAe8B8AH/AUsBtgHcAf8D9gH/CAAD9gH/
+-        AzkB/wHxAe8B8AH/AzkB/wHFAcQBxQH/AWUBZAFlAf8BmgKZAf8BZQFkAWUB/wHFAcQBxQH/AzkB/wHx
+-        Ae8B8AH/AzkB/wP2Af+EAAP2Af8D9gH/AUsBtgHcAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHv
++        A/YB/wP2Af8IAAP2Af8DNQH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHx
++        Ae8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AzUB/wP2Af+IAANAAXAByAHeAewB/wFHAbYB3AH/
++        AUcBtgHcAf8BRwG2AdwB/wFHAbYB3AH/AUcBtgHcAf8BRwG2AdwB/wFHAbYB3AH/AUcBtgHcAf8BRwG2
++        AdwB/wFHAbYB3AH/AbYB0wHmAf8BRwG2AdwB/wP2Af8IAAP2Af8DNQH/AfEB7wHwAf8B8QHvAfAB/wHx
++        Ae8B8AH/AcUBxAHFAf8BhAKDAf8BxQHEAcUB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wM1Af8D9gH/
++        iAADXAHfAZEBwgHhAf8BRwG2AdwB/wFHAbYB3AH/AUcBtgHcAf8BRwG2AdwB/wFHAbYB3AH/AUcBtgHc
++        Af8BRwG2AdwB/wFHAbYB3AH/AUcBtgHcAf8BiQG9Ad8B/wHxAe8B8AH/AUcBtgHcAf8D9gH/CAAD9gH/
++        AzUB/wHxAe8B8AH/AdsB2QHaAf8BbAJrAf8BmgKZAf8DNQH/AZoCmQH/AWwCawH/AdsB2QHaAf8B8QHv
++        AfAB/wM1Af8D9gH/hAADKgFAAd8B6gHxAf8BRwG2AdwB/wFHAbYB3AH/AUcBtgHcAf8BRwG2AdwB/wFH
++        AbYB3AH/AUcBtgHcAf8BRwG2AdwB/wFHAbYB3AH/AUcBtgHcAf8BRwG2AdwB/wHTAeEB6wH/AfEB7wHw
++        Af8BRwG2AdwB/wP2Af8IAAP2Af8DNQH/AfEB7wHwAf8DNQH/AdsB2QHaAf8B8QHvAfAB/wM1Af8B8QHv
++        AfAB/wHbAdkB2gH/AzUB/wHxAe8B8AH/AzUB/wP2Af+EAANRAZ8BqQHOAeYB/wFHAbYB3AH/AUcBtgHc
++        Af8BRwG2AdwB/wFHAbYB3AH/AUcBtgHcAf8BRwG2AdwB/wFHAbYB3AH/AUcBtgHcAf8BRwG2AdwB/wGf
++        AcgB4gH/AfEB7wHwAf8B8QHvAfAB/wFHAbYB3AH/A/YB/wgAA/YB/wM1Af8B8QHvAfAB/wM1Af8B8QHv
++        AfAB/wHxAe8B8AH/AzUB/wHxAe8B8AH/AfEB7wHwAf8DNQH/AfEB7wHwAf8DNQH/A/YB/4QAA/YB/wGC
++        AboB3gH/AUcBtgHcAf8BRwG2AdwB/wFHAbYB3AH/AUcBtgHcAf8BRwG2AdwB/wFHAbYB3AH/AUcBtgHc
++        Af8BRwG2AdwB/wFHAbYB3AH/AeIB6AHuAf8B8QHvAfAB/wHxAe8B8AH/AUcBtgHcAf8D9gH/CAAD9gH/
++        AzUB/wHxAe8B8AH/AzUB/wHFAcQBxQH/AWEBYAFhAf8BmgKZAf8BYQFgAWEB/wHFAcQBxQH/AzUB/wHx
++        Ae8B8AH/AzUB/wP2Af+EAAP2Af8D9gH/AUcBtgHcAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHv
+         AfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
+-        AUsBtgHcAf8D9gH/CAAD9gH/AzkB/wHxAe8B8AH/AzkB/wFwAm8B/wHmAeQB5QH/AfEB7wHwAf8B5gHk
+-        AeUB/wFwAm8B/wM5Af8B8QHvAfAB/wM5Af8D9gH/iAAD9gH/AUsBtgHcAf8B8QHvAfAB/wHxAe8B8AH/
++        AUcBtgHcAf8D9gH/CAAD9gH/AzUB/wHxAe8B8AH/AzUB/wFsAmsB/wHmAeQB5QH/AfEB7wHwAf8B5gHk
++        AeUB/wFsAmsB/wM1Af8B8QHvAfAB/wM1Af8D9gH/iAAD9gH/AUcBtgHcAf8B8QHvAfAB/wHxAe8B8AH/
+         AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHv
+-        AfAB/wHxAe8B8AH/AUsBtgHcAf8D9gH/CAAD9gH/AzkB/wHxAe8B8AH/AdsB2QHaAf8BcAJvAf8BmgKZ
+-        Af8B2wHZAdoB/wGaApkB/wFwAm8B/wHbAdkB2gH/AfEB7wHwAf8DOQH/A/YB/4gAA/YB/wFLAbYB3AH/
++        AfAB/wHxAe8B8AH/AUcBtgHcAf8D9gH/CAAD9gH/AzUB/wHxAe8B8AH/AdsB2QHaAf8BbAJrAf8BmgKZ
++        Af8B2wHZAdoB/wGaApkB/wFsAmsB/wHbAdkB2gH/AfEB7wHwAf8DNQH/A/YB/4gAA/YB/wFHAbYB3AH/
+         AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHv
+-        AfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wFLAbYB3AH/A/YB/wgAA/YB/wM5Af8B8QHvAfAB/wHx
++        AfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wFHAbYB3AH/A/YB/wgAA/YB/wM1Af8B8QHvAfAB/wHx
+         Ae8B8AH/AfEB7wHwAf8BxQHEAcUB/wGEAoMB/wHFAcQBxQH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
+-        AzkB/wP2Af+IAAP2Af8BSwG2AdwB/wFLAbYB3AH/AUsBtgHcAf8BSwG2AdwB/wHiAegB7gH/AfEB7wHw
+-        Af8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8BSwG2AdwB/wP2
+-        Af8IAAP2Af8DOQH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
+-        AzkB/wM5Af8DOQH/A4YB/wOOAe+IAAP2Af8D9gH/A/YB/wP2Af8BigG+Ad8B/wGnAcsB5AH/AfEB7wHw
+-        Af8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8BSwG2AdwB/wP2
+-        Af8IAAP2Af8DOQH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
+-        AzkB/wM5Af8DhgH/A44B7wMhATCUAANcAd8ByAHeAewB/wFLAbYB3AH/AUsBtgHcAf8BSwG2AdwB/wFL
+-        AbYB3AH/AUsBtgHcAf8BSwG2AdwB/wFLAbYB3AH/AUsBtgHcAf8BSwG2AdwB/wP2Af8IAAP2Af8DOQH/
+-        AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AzkB/wOGAf8DjgHv
++        AzUB/wP2Af+IAAP2Af8BRwG2AdwB/wFHAbYB3AH/AUcBtgHcAf8BRwG2AdwB/wHiAegB7gH/AfEB7wHw
++        Af8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8BRwG2AdwB/wP2
++        Af8IAAP2Af8DNQH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
++        AzUB/wM1Af8DNQH/A4YB/wN7Ae+IAAP2Af8D9gH/A/YB/wP2Af8BigG+Ad8B/wGnAcsB5AH/AfEB7wHw
++        Af8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8BRwG2AdwB/wP2
++        Af8IAAP2Af8DNQH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/
++        AzUB/wM1Af8DhgH/A3sB7wMhATCUAANcAd8ByAHeAewB/wFHAbYB3AH/AUcBtgHcAf8BRwG2AdwB/wFH
++        AbYB3AH/AUcBtgHcAf8BRwG2AdwB/wFHAbYB3AH/AUcBtgHcAf8BRwG2AdwB/wP2Af8IAAP2Af8DNQH/
++        AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AfEB7wHwAf8B8QHvAfAB/wHxAe8B8AH/AzUB/wOGAf8DewHv
+         AyEBMJgAAzoBYAP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/A/YB/wP2Af8D9gH/CAAD9gH/
+-        AzkB/wM5Af8DOQH/AzkB/wM5Af8DOQH/AzkB/wOGAf8DjgHvAyEBMNQAA/YB/wP2Af8D9gH/A/YB/wP2
+-        Af8D9gH/A/YB/wP2Af8DjgHvAyEBMJAAAUIBTQE+BwABPgMAASgDAAFAAwABEAMAAQEBAAEBBQABgBcA
++        AzUB/wM1Af8DNQH/AzUB/wM1Af8DNQH/AzUB/wOGAf8DewHvAyEBMNQAA/YB/wP2Af8D9gH/A/YB/wP2
++        Af8D9gH/A/YB/wP2Af8DewHvAyEBMJAAAUIBTQE+BwABPgMAASgDAAFAAwABEAMAAQEBAAEBBQABgBcA
+         A/8BAAL/AcABAQQAAcABAAHAAQEEAAGAAQABwAEBBAABgAEAAcABAQQAAYABAAHAAQEGAAHAAQEGAAHA
+         AQEGAAHAAQEGAAHAAQEEAAGAAQABwAEBBAABgAEAAcABAQQAAYABAAHAAQEEAAGAAQABwAEBBAAB8AEA
+         AcABAwQAAfABAAHAAQcEAAL/AcABDwQACw==
+@@ -190,6 +190,13 @@
+         r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
+ </value>
+   </data>
++  <data name="cmbCraftEvent.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++    <value>
++        iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
++        MAAA6mAAADqYAAAXb5JfxUYAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAAvSURBVBhXY4iJiflPCDP8//8f
++        r0KQPFgRLoUwObgiEMamAIRRFIEwuoL///8zAAC5cW+geGnZqAAAAABJRU5ErkJggg==
++</value>
++  </data>
+   <data name="cmbIngredient.ButtonIcon" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+     <value>
+         iVBORw0KGgoAAAANSUhEUgAAAAkAAAAFCAYAAACXU8ZrAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1
+@@ -203,7 +210,7 @@
+   <data name="toolStripItemNew.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+     <value>
+         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAACMSURBVDhP7Y3BCYAwFEM7h1M4Q/fy2rUEp3AFT1UovSrR
++        YQUAAAAJcEhZcwAAFiUAABYlAUlSJPAAAACMSURBVDhP7Y3BCYAwFEM7h1M4Q/fy2rUEp3AFT1UovSrR
+         /22orQpeDTxqNS8aToxxVeTVu7A4dM35DKRyHxbzUyr1oASmsd8lBXf9JtVyUGCxdCd8CKEV9QgXaqK1
+         dsc5h3t5RKX8nP1yUh1BUcn/ng/wiOgpLKLIMoNv6Ih2zT+QBu54HHiD1L/EmA2wn/hWQ4oVCwAAAABJ
+         RU5ErkJggg==
+@@ -212,7 +219,7 @@
+   <data name="toolStripItemDelete.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+     <value>
+         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAFbSURBVDhPrZK9SgNBFIV9AcEHSJHKwkpIZZfOSkhtZeED
++        YQUAAAAJcEhZcwAAFiUAABYlAUlSJPAAAAFbSURBVDhPrZK9SgNBFIV9AcEHSJHKwkpIZZfOSkhtZeED
+         BPQBVh9A7S2CjaYQJI2VEEyRQoTFRhEEkUCCWExk/8rxfpOZxVlmY+OBC8Pcc879mVn5NxRF0cyyLJLo
+         KqXW7LUH7iXfkxgSotkzCTm0vz9n+un8zESSJO9VExF05rOpejw51h+jO53neVxycEV4sb5qYnx0AOGG
+         HCQ5n07jB33d3tCDnS2NUZqmm0YMqgYEVeQ+opvnfk9fthomMKIbK13AjYC7M4DMHd1UTLtW5oOFhEzc
+@@ -224,7 +231,7 @@
+   <data name="btnChronological.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+     <value>
+         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABrSURBVDhPnc9BCoAwDETR3rM37omyU1KcMFGJGQf+JtCH
++        YQUAAAAJcEhZcwAAFiUAABYlAUlSJPAAAABrSURBVDhPnc9BCoAwDETR3rM37omyU1KcMFGJGQf+JtCH
+         Dp+ZHdw+KvNHc87dHfsqAI8BgFUl0O0V2EdlANB17s8f8X8pBeAxALAqATioJSCpylj8DfAXKAWw1koA
+         wKoS6BbAQ1XGogaMcQIneCosACuo6QAAAABJRU5ErkJggg==
+ </value>
+@@ -232,7 +239,7 @@
+   <data name="toolStripItemCopy.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+     <value>
+         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAABVSURBVDhP7YxBCgAgCAR9m///S3XxWghGUWJLdGxhkHId
++        YQUAAAAJcEhZcwAAFiUAABYlAUlSJPAAAABVSURBVDhP7YxBCgAgCAR9m///S3XxWghGUWJLdGxhkHId
+         8iIiFcHqe3TJzCGQIKfi8l6gD4RQoJ8RkKAXVr5gHOjsXAlW7BwXWH3PM0HEUYBg9SlEDZN0dAOhJqHd
+         AAAAAElFTkSuQmCC
+ </value>
+@@ -240,7 +247,7 @@
+   <data name="toolStripItemPaste.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+     <value>
+         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAACKSURBVDhP7Y3LDYAgEEQpwVKsgSoojl4swSbUCwc0Aa7q
++        YQUAAAAJcEhZcwAAFiUAABYlAUlSJPAAAACKSURBVDhP7Y3LDYAgEEQpwVKsgSoojl4swSbUCwc0Aa7q
+         4BJN+IjGo5O8ZJndGVhKxpjWWts551aih0fre+0BLaVchRAezPB2NXSSV/gVwXGYPJiVUt6ns1ghCDjn
+         UQG86w3FToVgDcWCWS9Fvi/Ao0RVAcwUjwpyhzmf4n8BFApS5HZRwRuONGMbrIJ1JIN8O2QAAAAASUVO
+         RK5CYII=
+@@ -249,7 +256,7 @@
+   <data name="toolStripItemUndo.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+     <value>
+         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+-        YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAEfSURBVDhPjVK7DgFBFN0/4A/4AvEJfkAi0ZLoNArR6hUq
++        YQUAAAAJcEhZcwAAFiUAABYlAUlSJPAAAAEfSURBVDhPjVK7DgFBFN0/4A/4AvEJfkAi0ZLoNArR6hUq
+         tUgkElGJ1jYaDYVsI9Fq2EYyin2Ua864d9g1u/YkJ5nHOfcxcy2G53nVIAiEZBSGYdn3/TnviQJnuCPL
+         BzDf3aeoDNZaPFweo0J7EVnNmSLWOMMd9GR9AyaYIXQfT702kZKIWCUIwIJSd6XX9dE2sk9XRaz5HJWg
+         HbLHAzCn9pnbURklHQ6CdnBGdnMAsDXZKSF6lhkbqITvlIdhCvBthuZvAAO1WQhRlPv0FrKAIBCjIs7+
+diff --git a/Intersect.Editor/Forms/Editors/frmDynamicRequirements.cs b/Intersect.Editor/Forms/Editors/frmDynamicRequirements.cs
+index 4223a0c6..ba306a83 100644
+--- a/Intersect.Editor/Forms/Editors/frmDynamicRequirements.cs
++++ b/Intersect.Editor/Forms/Editors/frmDynamicRequirements.cs
+@@ -31,6 +31,8 @@ public enum RequirementType
+ 
+         NpcCanBeAttacked,
+ 
++        Craft,
++
+     }
+ 
+     public partial class FrmDynamicRequirements : Form
+@@ -93,6 +95,10 @@ private void InitLocalization(RequirementType type)
+                     break;
+                 case RequirementType.NpcCanBeAttacked:
+                     lblInstructions.Text = Strings.DynamicRequirements.instructionsnpccanbeattacked;
++                    
++                    break;
++                case RequirementType.Craft:
++                    lblInstructions.Text = Strings.DynamicRequirements.instructionscraft;
+ 
+                     break;
+                 default:
+diff --git a/Intersect.Editor/Localization/Strings.cs b/Intersect.Editor/Localization/Strings.cs
+index d21c0a94..34512dec 100644
+--- a/Intersect.Editor/Localization/Strings.cs
++++ b/Intersect.Editor/Localization/Strings.cs
+@@ -1056,6 +1056,10 @@ public struct CraftsEditor
+ 
+             public static LocalizedString undotitle = @"Undo Changes";
+ 
++            public static LocalizedString craftevent = @"Craft Event";
++
++            public static LocalizedString successrate = @"Success Rate";
++
+         }
+ 
+         public struct Directions
+@@ -1083,7 +1087,7 @@ public struct DynamicRequirements
+ 
+             public static LocalizedString conditioneditor = @"Add/Edit Condition";
+ 
+-            public static LocalizedString conditionlist = @"Conditiond";
++            public static LocalizedString conditionlist = @"Conditions";
+ 
+             public static LocalizedString conditionlists = @"Condition Lists";
+ 
+@@ -1114,6 +1118,9 @@ public struct DynamicRequirements
+             public static LocalizedString instructionsspell =
+                 @"Below are condition lists. If conditions are met on any of the lists then the player can use cast the spell.";
+ 
++            public static LocalizedString instructionscraft =
++                @"Below are condition lists. If conditions are met on any of the lists then the player can craft the item.";
++
+             public static LocalizedString listname = @"Desc:";
+ 
+             public static LocalizedString removecondition = @"Remove Condition";
+@@ -2849,6 +2856,8 @@ public struct ItemEditor
+ 
+             public static LocalizedString requirements = @"Edit Usage Requirements";
+ 
++            public static LocalizedString craftrequirements = @"Edit Craft Requirements";
++
+             public static LocalizedString save = @"Save";
+ 
+             public static LocalizedString scalingamount = @"Scaling Amount (%):";
+diff --git a/Intersect.Server/Entities/Player.cs b/Intersect.Server/Entities/Player.cs
+index feca3c02..483496a2 100644
+--- a/Intersect.Server/Entities/Player.cs
++++ b/Intersect.Server/Entities/Player.cs
+@@ -267,6 +267,7 @@ private void Logout()
+             QuestOffers.Clear();
+             CraftingTableId = Guid.Empty;
+             CraftId = Guid.Empty;
++            CraftRequestId = Guid.Empty;
+             CraftTimer = 0;
+             PartyRequester = null;
+             PartyRequests.Clear();
+@@ -331,6 +332,100 @@ public override void Update(long timeMs)
+                 }
+             }
+ 
++            if (CraftRequestId != Guid.Empty && CraftingTableId != Guid.Empty)
++            {
++                if (craftReqsMet(CraftRequestId))
++                {
++                    var b = CraftingTableBase.Get(CraftingTableId);
++                    if (b.Crafts.Contains(CraftRequestId))
++                    {
++                        if (CraftTimer + CraftBase.Get(CraftRequestId).Time < timeMs)
++                        {
++                            if (CraftingTableId != Guid.Empty)
++                            {
++                                var invbackup = new List<Item>();
++                                foreach (var item in Items)
++                                {
++                                    invbackup.Add(item.Clone());
++                                }
++
++                                //Quickly Look through the inventory and create a catalog of what items we have, and how many
++                                var itemdict = new Dictionary<Guid, int>();
++                                foreach (var item in Items)
++                                {
++                                    if (item != null)
++                                    {
++                                        if (itemdict.ContainsKey(item.ItemId))
++                                        {
++                                            itemdict[item.ItemId] += item.Quantity;
++                                        }
++                                        else
++                                        {
++                                            itemdict.Add(item.ItemId, item.Quantity);
++                                        }
++                                    }
++                                }
++
++                                //Check the player actually has the items
++                                foreach (var c in CraftBase.Get(CraftRequestId).Ingredients)
++                                {
++                                    if (itemdict.ContainsKey(c.ItemId))
++                                    {
++                                        if (itemdict[c.ItemId] >= c.Quantity)
++                                        {
++                                            itemdict[c.ItemId] -= c.Quantity;
++                                        }
++                                        else
++                                        {
++                                            PacketSender.SendChatMsg(
++                                            this, Strings.Crafting.noitems.ToString(ItemBase.GetName(CraftBase.Get(CraftRequestId).ItemId)),
++                                            CustomColors.Alerts.Error
++                                            );
++                                            CraftRequestId = Guid.Empty;
++                                            PacketSender.SendStartCraft(this);
++                                            return;
++                                        }
++                                    }
++                                    else
++                                    {
++                                        PacketSender.SendChatMsg(
++                                        this, Strings.Crafting.noitems.ToString(ItemBase.GetName(CraftBase.Get(CraftRequestId).ItemId)),
++                                        CustomColors.Alerts.Error
++                                        );
++                                        CraftRequestId = Guid.Empty;
++                                        PacketSender.SendStartCraft(this);
++                                        return;
++                                    }
++                                }
++                            }
++                            PacketSender.SendStartCraft(this, CraftRequestId);
++                            CraftRequestId = Guid.Empty;
++                        }
++                        else
++                        {
++                            if (!CheckCrafting(CraftRequestId))
++                            {
++                                CraftRequestId = Guid.Empty;
++                            }
++                        }
++                    }
++                    else
++                    {
++                        CraftRequestId = Guid.Empty;
++                    }
++                }
++                else
++                {
++                    PacketSender.SendChatMsg(
++                                    this, Strings.Crafting.reqnotmet.ToString(ItemBase.GetName(CraftBase.Get(CraftRequestId).ItemId)),
++                                    CustomColors.Alerts.Error
++                                    );
++                    CraftRequestId = Guid.Empty;
++                    PacketSender.SendStartCraft(this);
++                    return;
++                }
++            }
++
+             if (CraftingTableId != Guid.Empty && CraftId != Guid.Empty)
+             {
+                 var b = CraftingTableBase.Get(CraftingTableId);
+@@ -2310,6 +2405,18 @@ public void CloseCraftingTable()
+             }
+         }
+ 
++        public bool craftReqsMet(Guid id)
++        {
++            if (!Conditions.MeetsConditionLists(CraftBase.Get(id).CraftRequirements, this, null))
++            {
++                return false;
++            }
++            else
++            {
++                return true;
++            }
++        }
++
+         //Craft a new item
+         public void CraftItem(Guid id)
+         {
+@@ -2381,33 +2488,55 @@ public void CraftItem(Guid id)
+ 
+                 //Give them the craft
+                 var quantity = Math.Max(CraftBase.Get(id).Quantity, 1);
++                var successrate = Math.Max(CraftBase.Get(id).SuccessRate, 1);
+                 var itm = ItemBase.Get(CraftBase.Get(id).ItemId);
+                 if (itm == null || !itm.IsStackable)
+                 {
+                     quantity = 1;
+                 }
+-
+-                if (TryGiveItem(new Item(CraftBase.Get(id).ItemId, quantity)))
++                // Success Rate Check
++                var l = GetLuck()/10;
++                int rando = Randomization.Next(1, 101);
++                double result = rando - (((double)rando / 100) * l);
++                // Craft item if success rate is higher
++                if (result <= successrate)
+                 {
+-                    PacketSender.SendChatMsg(
+-                        this, Strings.Crafting.crafted.ToString(ItemBase.GetName(CraftBase.Get(id).ItemId)),
+-                        CustomColors.Alerts.Success
+-                    );
+-                }
+-                else
+-                {
+-                    for (var i = 0; i < invbackup.Count; i++)
++                    if (TryGiveItem(new Item(CraftBase.Get(id).ItemId, quantity)))
+                     {
+-                        Items[i].Set(invbackup[i]);
++                        PacketSender.SendChatMsg(
++                            this, Strings.Crafting.crafted.ToString(ItemBase.GetName(CraftBase.Get(id).ItemId)),
++                            CustomColors.Alerts.Success
++                        );
++                        // trigger craft event
++                        if (CraftBase.Get(id).CraftEventId != Guid.Empty)
++                        {
++                            StartCommonEvent(EventBase.Get(CraftBase.Get(id).CraftEventId), CommonEventTrigger.None);
++                        }
++
++
+                     }
++                    else
++                    {
++                        for (var i = 0; i < invbackup.Count; i++)
++                        {
++                            Items[i].Set(invbackup[i]);
++                        }
+ 
+-                    PacketSender.SendInventory(this);
++                        PacketSender.SendInventory(this);
++                        PacketSender.SendChatMsg(
++                            this, Strings.Crafting.nospace.ToString(ItemBase.GetName(CraftBase.Get(id).ItemId)),
++                            CustomColors.Alerts.Error
++                        );
++                    }
++                }
++                // Else send an craft failed message
++                else
++                {
+                     PacketSender.SendChatMsg(
+-                        this, Strings.Crafting.nospace.ToString(ItemBase.GetName(CraftBase.Get(id).ItemId)),
+-                        CustomColors.Alerts.Error
+-                    );
++                                this, Strings.Crafting.failed.ToString(ItemBase.GetName(CraftBase.Get(id).ItemId)),
++                                CustomColors.Alerts.Error
++                            );
+                 }
+-
+                 CraftId = Guid.Empty;
+             }
+         }
+@@ -5255,6 +5384,8 @@ public void HandleEventCollision(Event evt, int pageNum)
+ 
+         [NotMapped, JsonIgnore] public Guid CraftId = Guid.Empty;
+ 
++        [NotMapped, JsonIgnore] public Guid CraftRequestId = Guid.Empty;
++
+         [NotMapped, JsonIgnore] public long CraftTimer = 0;
+ 
+         #endregion
+diff --git a/Intersect.Server/Intersect.Server.csproj b/Intersect.Server/Intersect.Server.csproj
+index 1bbee3dc..a56aef18 100644
+--- a/Intersect.Server/Intersect.Server.csproj
++++ b/Intersect.Server/Intersect.Server.csproj
+@@ -480,6 +480,14 @@
+     <Compile Include="Entities\Pathfinding\SpatialAStar.cs" />
+     <Compile Include="Entities\Pathfinding\PathfinderTarget.cs" />
+     <Compile Include="Entities\Pathfinding\PriorityQueue.cs" />
++    <Compile Include="Migrations\Game\20200404164233_ExtendedCraftingNew.cs" />
++    <Compile Include="Migrations\Game\20200404164233_ExtendedCraftingNew.designer.cs">
++      <DependentUpon>20200404164233_ExtendedCraftingNew.cs</DependentUpon>
++    </Compile>
++    <Compile Include="Migrations\Game\20200404174804_CraftRequirementsv2.cs" />
++    <Compile Include="Migrations\Game\20200404174804_CraftRequirementsv2.designer.cs">
++      <DependentUpon>20200404174804_CraftRequirementsv2.cs</DependentUpon>
++    </Compile>
+     <Compile Include="Networking\Client.cs" />
+     <Compile Include="Entities\Npc.cs" />
+     <Compile Include="Networking\Helpers\NetDebug.cs" />
+diff --git a/Intersect.Server/Localization/Strings.cs b/Intersect.Server/Localization/Strings.cs
+index dc700404..ff2b5926 100644
+--- a/Intersect.Server/Localization/Strings.cs
++++ b/Intersect.Server/Localization/Strings.cs
+@@ -489,6 +489,14 @@ public sealed class CraftingNamespace : LocaleNamespace
+             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+             public readonly LocalizedString nospace = @"You do not have enough inventory space to craft {00}!";
+ 
++            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
++            public readonly LocalizedString noitems = @"You do not have the required items to craft {00}!";
++
++            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
++            public readonly LocalizedString failed = @"You failed to craft {00}!";
++
++            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
++            public readonly LocalizedString reqnotmet = @"You don't meet the requirements to craft {00}!";
+         }
+ 
+         public sealed class DatabaseNamespace : LocaleNamespace
+diff --git a/Intersect.Server/Migrations/Game/20200404164233_ExtendedCraftingNew.Designer.cs b/Intersect.Server/Migrations/Game/20200404164233_ExtendedCraftingNew.Designer.cs
+new file mode 100644
+index 00000000..1a836631
+--- /dev/null
++++ b/Intersect.Server/Migrations/Game/20200404164233_ExtendedCraftingNew.Designer.cs
+@@ -0,0 +1,1042 @@
++﻿// <auto-generated />
++using System;
++using Intersect.Server.Database.GameData;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Infrastructure;
++using Microsoft.EntityFrameworkCore.Migrations;
++using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
++
++namespace Intersect.Server.Migrations.Game
++{
++    [DbContext(typeof(GameContext))]
++    [Migration("20200404164233_ExtendedCraftingNew")]
++    partial class ExtendedCraftingNew
++    {
++        protected override void BuildTargetModel(ModelBuilder modelBuilder)
++        {
++#pragma warning disable 612, 618
++            modelBuilder
++                .HasAnnotation("ProductVersion", "2.1.3-rtm-32065");
++
++            modelBuilder.Entity("Intersect.GameObjects.AnimationBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<bool>("CompleteSound");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("Name");
++
++                    b.Property<string>("Sound");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Animations");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.ClassBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<Guid>("AttackAnimationId")
++                        .HasColumnName("AttackAnimation");
++
++                    b.Property<int>("AttackSpeedModifier");
++
++                    b.Property<int>("AttackSpeedValue");
++
++                    b.Property<long>("BaseExp");
++
++                    b.Property<int>("BasePoints");
++
++                    b.Property<int>("CritChance");
++
++                    b.Property<double>("CritMultiplier");
++
++                    b.Property<int>("Damage");
++
++                    b.Property<int>("DamageType");
++
++                    b.Property<long>("ExpIncrease");
++
++                    b.Property<string>("ExpOverridesJson")
++                        .HasColumnName("ExperienceOverrides");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<bool>("IncreasePercentage");
++
++                    b.Property<string>("JsonBaseStats")
++                        .HasColumnName("BaseStats");
++
++                    b.Property<string>("JsonBaseVitals")
++                        .HasColumnName("BaseVitals");
++
++                    b.Property<string>("JsonItems")
++                        .HasColumnName("Items");
++
++                    b.Property<string>("JsonSpells")
++                        .HasColumnName("Spells");
++
++                    b.Property<string>("JsonSprites")
++                        .HasColumnName("Sprites");
++
++                    b.Property<bool>("Locked");
++
++                    b.Property<string>("Name");
++
++                    b.Property<int>("PointIncrease");
++
++                    b.Property<string>("RegenJson")
++                        .HasColumnName("VitalRegen");
++
++                    b.Property<int>("Scaling");
++
++                    b.Property<int>("ScalingStat");
++
++                    b.Property<int>("SpawnDir");
++
++                    b.Property<Guid>("SpawnMapId")
++                        .HasColumnName("SpawnMap");
++
++                    b.Property<int>("SpawnX");
++
++                    b.Property<int>("SpawnY");
++
++                    b.Property<string>("StatIncreaseJson")
++                        .HasColumnName("StatIncreases");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.Property<string>("VitalIncreaseJson")
++                        .HasColumnName("VitalIncreases");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Classes");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.Crafting.CraftBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<Guid>("CraftEventId")
++                        .HasColumnName("CraftEvent");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("IngredientsJson")
++                        .HasColumnName("Ingredients");
++
++                    b.Property<Guid>("ItemId");
++
++                    b.Property<string>("Name");
++
++                    b.Property<int>("Quantity");
++
++                    b.Property<int>("SuccessRate")
++                        .HasColumnName("SuccessRate");
++
++                    b.Property<int>("Time");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Crafts");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.CraftingTableBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<string>("CraftsJson")
++                        .HasColumnName("Crafts");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("Name");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("CraftingTables");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.Events.EventBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<bool>("CommonEvent");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<bool>("Global");
++
++                    b.Property<Guid>("MapId");
++
++                    b.Property<string>("Name");
++
++                    b.Property<string>("PagesJson")
++                        .HasColumnName("Pages");
++
++                    b.Property<int>("SpawnX");
++
++                    b.Property<int>("SpawnY");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Events");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.ItemBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<Guid>("AnimationId")
++                        .HasColumnName("Animation");
++
++                    b.Property<Guid>("AttackAnimationId")
++                        .HasColumnName("AttackAnimation");
++
++                    b.Property<int>("AttackSpeedModifier");
++
++                    b.Property<int>("AttackSpeedValue");
++
++                    b.Property<bool>("Bound");
++
++                    b.Property<int>("Cooldown");
++
++                    b.Property<int>("CritChance");
++
++                    b.Property<double>("CritMultiplier");
++
++                    b.Property<int>("Damage");
++
++                    b.Property<int>("DamageType");
++
++                    b.Property<string>("Description");
++
++                    b.Property<bool>("DestroySpell");
++
++                    b.Property<Guid>("EquipmentAnimationId")
++                        .HasColumnName("EquipmentAnimation");
++
++                    b.Property<int>("EquipmentSlot");
++
++                    b.Property<Guid>("EventId")
++                        .HasColumnName("Event");
++
++                    b.Property<string>("FemalePaperdoll");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("Icon");
++
++                    b.Property<int>("ItemType");
++
++                    b.Property<string>("JsonUsageRequirements")
++                        .HasColumnName("UsageRequirements");
++
++                    b.Property<string>("MalePaperdoll");
++
++                    b.Property<string>("Name");
++
++                    b.Property<string>("PercentageStatsJson")
++                        .HasColumnName("PercentageStatsGiven");
++
++                    b.Property<string>("PercentageVitalsJson")
++                        .HasColumnName("PercentageVitalsGiven");
++
++                    b.Property<int>("Price");
++
++                    b.Property<Guid>("ProjectileId")
++                        .HasColumnName("Projectile");
++
++                    b.Property<bool>("QuickCast");
++
++                    b.Property<int>("Rarity");
++
++                    b.Property<int>("Scaling");
++
++                    b.Property<int>("ScalingStat");
++
++                    b.Property<int>("SlotCount");
++
++                    b.Property<int>("Speed");
++
++                    b.Property<Guid>("SpellId")
++                        .HasColumnName("Spell");
++
++                    b.Property<bool>("Stackable");
++
++                    b.Property<int>("StatGrowth");
++
++                    b.Property<string>("StatsJson")
++                        .HasColumnName("StatsGiven");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.Property<int>("Tool");
++
++                    b.Property<bool>("TwoHanded");
++
++                    b.Property<string>("VitalsJson")
++                        .HasColumnName("VitalsGiven");
++
++                    b.Property<string>("VitalsRegenJson")
++                        .HasColumnName("VitalsRegen");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Items");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.Maps.MapList.MapList", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<string>("JsonData")
++                        .HasColumnName("JsonData");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("MapFolders");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.NpcBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<bool>("Aggressive");
++
++                    b.Property<bool>("AttackAllies");
++
++                    b.Property<Guid>("AttackAnimationId")
++                        .HasColumnName("AttackAnimation");
++
++                    b.Property<string>("AttackOnSightConditionsJson")
++                        .HasColumnName("AttackOnSightConditions");
++
++                    b.Property<int>("AttackSpeedModifier");
++
++                    b.Property<int>("AttackSpeedValue");
++
++                    b.Property<string>("CraftsJson")
++                        .HasColumnName("Spells");
++
++                    b.Property<int>("CritChance");
++
++                    b.Property<double>("CritMultiplier");
++
++                    b.Property<int>("Damage");
++
++                    b.Property<int>("DamageType");
++
++                    b.Property<long>("Experience");
++
++                    b.Property<byte>("FleeHealthPercentage");
++
++                    b.Property<bool>("FocusHighestDamageDealer");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("JsonAggroList")
++                        .HasColumnName("AggroList");
++
++                    b.Property<string>("JsonDrops")
++                        .HasColumnName("Drops");
++
++                    b.Property<string>("JsonMaxVital")
++                        .HasColumnName("MaxVital");
++
++                    b.Property<string>("JsonStat")
++                        .HasColumnName("Stats");
++
++                    b.Property<int>("Level");
++
++                    b.Property<byte>("Movement");
++
++                    b.Property<string>("Name");
++
++                    b.Property<bool>("NpcVsNpcEnabled");
++
++                    b.Property<Guid>("OnDeathEventId")
++                        .HasColumnName("OnDeathEvent");
++
++                    b.Property<Guid>("OnDeathPartyEventId")
++                        .HasColumnName("OnDeathPartyEvent");
++
++                    b.Property<string>("PlayerCanAttackConditionsJson")
++                        .HasColumnName("PlayerCanAttackConditions");
++
++                    b.Property<string>("PlayerFriendConditionsJson")
++                        .HasColumnName("PlayerFriendConditions");
++
++                    b.Property<string>("RegenJson")
++                        .HasColumnName("VitalRegen");
++
++                    b.Property<int>("Scaling");
++
++                    b.Property<int>("ScalingStat");
++
++                    b.Property<int>("SightRange");
++
++                    b.Property<int>("SpawnDuration");
++
++                    b.Property<int>("SpellFrequency");
++
++                    b.Property<string>("Sprite");
++
++                    b.Property<bool>("Swarm");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Npcs");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.PlayerVariableBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("Name");
++
++                    b.Property<string>("TextId");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.Property<byte>("Type");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("PlayerVariables");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.ProjectileBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<Guid>("AmmoItemId")
++                        .HasColumnName("Ammo");
++
++                    b.Property<int>("AmmoRequired");
++
++                    b.Property<string>("AnimationsJson")
++                        .HasColumnName("Animations");
++
++                    b.Property<int>("Delay");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<bool>("GrappleHook");
++
++                    b.Property<bool>("IgnoreActiveResources");
++
++                    b.Property<bool>("IgnoreExhaustedResources");
++
++                    b.Property<bool>("IgnoreMapBlocks");
++
++                    b.Property<bool>("IgnoreZDimension");
++
++                    b.Property<int>("Knockback");
++
++                    b.Property<string>("Name");
++
++                    b.Property<bool>("PierceTarget");
++
++                    b.Property<int>("Quantity");
++
++                    b.Property<int>("Range");
++
++                    b.Property<string>("SpawnsJson")
++                        .HasColumnName("SpawnLocations");
++
++                    b.Property<int>("Speed");
++
++                    b.Property<Guid>("SpellId")
++                        .HasColumnName("Spell");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Projectiles");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.QuestBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<string>("BeforeDescription");
++
++                    b.Property<string>("EndDescription");
++
++                    b.Property<Guid>("EndEventId")
++                        .HasColumnName("EndEvent");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("InProgressDescription");
++
++                    b.Property<string>("JsonRequirements")
++                        .HasColumnName("Requirements");
++
++                    b.Property<bool>("LogAfterComplete");
++
++                    b.Property<bool>("LogBeforeOffer");
++
++                    b.Property<string>("Name");
++
++                    b.Property<bool>("Quitable");
++
++                    b.Property<bool>("Repeatable");
++
++                    b.Property<string>("StartDescription");
++
++                    b.Property<Guid>("StartEventId")
++                        .HasColumnName("StartEvent");
++
++                    b.Property<string>("TasksJson")
++                        .HasColumnName("Tasks");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Quests");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.ResourceBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<Guid>("AnimationId")
++                        .HasColumnName("Animation");
++
++                    b.Property<Guid>("EventId")
++                        .HasColumnName("Event");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("JsonDrops")
++                        .HasColumnName("Drops");
++
++                    b.Property<string>("JsonHarvestingRequirements")
++                        .HasColumnName("HarvestingRequirements");
++
++                    b.Property<int>("MaxHp");
++
++                    b.Property<int>("MinHp");
++
++                    b.Property<string>("Name");
++
++                    b.Property<int>("SpawnDuration");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.Property<int>("Tool");
++
++                    b.Property<int>("VitalRegen");
++
++                    b.Property<bool>("WalkableAfter");
++
++                    b.Property<bool>("WalkableBefore");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Resources");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.ServerVariableBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("Json")
++                        .HasColumnName("Value");
++
++                    b.Property<string>("Name");
++
++                    b.Property<string>("TextId");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.Property<byte>("Type");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("ServerVariables");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.ShopBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<bool>("BuyingWhitelist");
++
++                    b.Property<Guid>("DefaultCurrencyId")
++                        .HasColumnName("DefaultCurrency");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("JsonBuyingItems")
++                        .HasColumnName("BuyingItems");
++
++                    b.Property<string>("JsonSellingItems")
++                        .HasColumnName("SellingItems");
++
++                    b.Property<string>("Name");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Shops");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.SpellBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<bool>("Bound");
++
++                    b.Property<Guid>("CastAnimationId")
++                        .HasColumnName("CastAnimation");
++
++                    b.Property<int>("CastDuration");
++
++                    b.Property<int>("CooldownDuration");
++
++                    b.Property<string>("Description");
++
++                    b.Property<Guid>("EventId")
++                        .HasColumnName("Event");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<Guid>("HitAnimationId")
++                        .HasColumnName("HitAnimation");
++
++                    b.Property<string>("Icon");
++
++                    b.Property<string>("JsonCastRequirements")
++                        .HasColumnName("CastRequirements");
++
++                    b.Property<string>("Name");
++
++                    b.Property<int>("SpellType");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.Property<string>("VitalCostJson")
++                        .HasColumnName("VitalCost");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Spells");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.TilesetBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<string>("Name");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Tilesets");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.TimeBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<string>("DaylightHuesJson")
++                        .HasColumnName("DaylightHues");
++
++                    b.Property<int>("RangeInterval");
++
++                    b.Property<float>("Rate");
++
++                    b.Property<bool>("SyncTime");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Time");
++                });
++
++            modelBuilder.Entity("Intersect.Server.Maps.MapInstance", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<int>("AHue");
++
++                    b.Property<byte[]>("AttributeData")
++                        .HasColumnName("Attributes");
++
++                    b.Property<int>("BHue");
++
++                    b.Property<int>("Brightness");
++
++                    b.Property<Guid>("Down");
++
++                    b.Property<string>("EventIdsJson")
++                        .HasColumnName("Events");
++
++                    b.Property<string>("Fog");
++
++                    b.Property<int>("FogTransparency");
++
++                    b.Property<int>("FogXSpeed");
++
++                    b.Property<int>("FogYSpeed");
++
++                    b.Property<int>("GHue");
++
++                    b.Property<bool>("IsIndoors");
++
++                    b.Property<Guid>("Left");
++
++                    b.Property<string>("LightsJson")
++                        .HasColumnName("Lights");
++
++                    b.Property<string>("Music");
++
++                    b.Property<string>("Name");
++
++                    b.Property<string>("NpcSpawnsJson")
++                        .HasColumnName("NpcSpawns");
++
++                    b.Property<string>("OverlayGraphic");
++
++                    b.Property<string>("Panorama");
++
++                    b.Property<string>("PlayerLightColorJson")
++                        .HasColumnName("PlayerLightColor");
++
++                    b.Property<float>("PlayerLightExpand");
++
++                    b.Property<byte>("PlayerLightIntensity");
++
++                    b.Property<int>("PlayerLightSize");
++
++                    b.Property<int>("RHue");
++
++                    b.Property<int>("Revision");
++
++                    b.Property<Guid>("Right");
++
++                    b.Property<string>("Sound");
++
++                    b.Property<byte[]>("TileData");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.Property<Guid>("Up");
++
++                    b.Property<Guid>("WeatherAnimationId")
++                        .HasColumnName("WeatherAnimation");
++
++                    b.Property<int>("WeatherIntensity");
++
++                    b.Property<int>("WeatherXSpeed");
++
++                    b.Property<int>("WeatherYSpeed");
++
++                    b.Property<int>("ZoneType");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Maps");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.AnimationBase", b =>
++                {
++                    b.OwnsOne("Intersect.GameObjects.AnimationLayer", "Lower", b1 =>
++                        {
++                            b1.Property<Guid>("AnimationBaseId");
++
++                            b1.Property<bool>("AlternateRenderLayer");
++
++                            b1.Property<bool>("DisableRotations");
++
++                            b1.Property<int>("FrameCount");
++
++                            b1.Property<int>("FrameSpeed");
++
++                            b1.Property<string>("Light");
++
++                            b1.Property<int>("LoopCount");
++
++                            b1.Property<string>("Sprite");
++
++                            b1.Property<int>("XFrames");
++
++                            b1.Property<int>("YFrames");
++
++                            b1.ToTable("Animations");
++
++                            b1.HasOne("Intersect.GameObjects.AnimationBase")
++                                .WithOne("Lower")
++                                .HasForeignKey("Intersect.GameObjects.AnimationLayer", "AnimationBaseId")
++                                .OnDelete(DeleteBehavior.Cascade);
++                        });
++
++                    b.OwnsOne("Intersect.GameObjects.AnimationLayer", "Upper", b1 =>
++                        {
++                            b1.Property<Guid>("AnimationBaseId");
++
++                            b1.Property<bool>("AlternateRenderLayer");
++
++                            b1.Property<bool>("DisableRotations");
++
++                            b1.Property<int>("FrameCount");
++
++                            b1.Property<int>("FrameSpeed");
++
++                            b1.Property<string>("Light");
++
++                            b1.Property<int>("LoopCount");
++
++                            b1.Property<string>("Sprite");
++
++                            b1.Property<int>("XFrames");
++
++                            b1.Property<int>("YFrames");
++
++                            b1.ToTable("Animations");
++
++                            b1.HasOne("Intersect.GameObjects.AnimationBase")
++                                .WithOne("Upper")
++                                .HasForeignKey("Intersect.GameObjects.AnimationLayer", "AnimationBaseId")
++                                .OnDelete(DeleteBehavior.Cascade);
++                        });
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.ItemBase", b =>
++                {
++                    b.OwnsOne("Intersect.GameObjects.ConsumableData", "Consumable", b1 =>
++                        {
++                            b1.Property<Guid>("ItemBaseId");
++
++                            b1.Property<int>("Percentage");
++
++                            b1.Property<byte>("Type");
++
++                            b1.Property<int>("Value");
++
++                            b1.ToTable("Items");
++
++                            b1.HasOne("Intersect.GameObjects.ItemBase")
++                                .WithOne("Consumable")
++                                .HasForeignKey("Intersect.GameObjects.ConsumableData", "ItemBaseId")
++                                .OnDelete(DeleteBehavior.Cascade);
++                        });
++
++                    b.OwnsOne("Intersect.GameObjects.EffectData", "Effect", b1 =>
++                        {
++                            b1.Property<Guid>("ItemBaseId");
++
++                            b1.Property<int>("Percentage");
++
++                            b1.Property<byte>("Type");
++
++                            b1.ToTable("Items");
++
++                            b1.HasOne("Intersect.GameObjects.ItemBase")
++                                .WithOne("Effect")
++                                .HasForeignKey("Intersect.GameObjects.EffectData", "ItemBaseId")
++                                .OnDelete(DeleteBehavior.Cascade);
++                        });
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.ResourceBase", b =>
++                {
++                    b.OwnsOne("Intersect.GameObjects.ResourceState", "Exhausted", b1 =>
++                        {
++                            b1.Property<Guid>("ResourceBaseId");
++
++                            b1.Property<string>("Graphic");
++
++                            b1.Property<bool>("GraphicFromTileset");
++
++                            b1.Property<int>("Height");
++
++                            b1.Property<bool>("RenderBelowEntities");
++
++                            b1.Property<int>("Width");
++
++                            b1.Property<int>("X");
++
++                            b1.Property<int>("Y");
++
++                            b1.ToTable("Resources");
++
++                            b1.HasOne("Intersect.GameObjects.ResourceBase")
++                                .WithOne("Exhausted")
++                                .HasForeignKey("Intersect.GameObjects.ResourceState", "ResourceBaseId")
++                                .OnDelete(DeleteBehavior.Cascade);
++                        });
++
++                    b.OwnsOne("Intersect.GameObjects.ResourceState", "Initial", b1 =>
++                        {
++                            b1.Property<Guid>("ResourceBaseId");
++
++                            b1.Property<string>("Graphic");
++
++                            b1.Property<bool>("GraphicFromTileset");
++
++                            b1.Property<int>("Height");
++
++                            b1.Property<bool>("RenderBelowEntities");
++
++                            b1.Property<int>("Width");
++
++                            b1.Property<int>("X");
++
++                            b1.Property<int>("Y");
++
++                            b1.ToTable("Resources");
++
++                            b1.HasOne("Intersect.GameObjects.ResourceBase")
++                                .WithOne("Initial")
++                                .HasForeignKey("Intersect.GameObjects.ResourceState", "ResourceBaseId")
++                                .OnDelete(DeleteBehavior.Cascade);
++                        });
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.SpellBase", b =>
++                {
++                    b.OwnsOne("Intersect.GameObjects.SpellCombatData", "Combat", b1 =>
++                        {
++                            b1.Property<Guid>("SpellBaseId");
++
++                            b1.Property<int>("CastRange");
++
++                            b1.Property<int>("CritChance");
++
++                            b1.Property<double>("CritMultiplier");
++
++                            b1.Property<int>("DamageType");
++
++                            b1.Property<int>("Duration");
++
++                            b1.Property<int>("Effect");
++
++                            b1.Property<bool>("Friendly");
++
++                            b1.Property<int>("HitRadius");
++
++                            b1.Property<bool>("HoTDoT");
++
++                            b1.Property<int>("HotDotInterval");
++
++                            b1.Property<int>("OnHitDuration")
++                                .HasColumnName("OnHit");
++
++                            b1.Property<string>("PercentageStatDiffJson")
++                                .HasColumnName("PercentageStatDiff");
++
++                            b1.Property<Guid>("ProjectileId")
++                                .HasColumnName("Projectile");
++
++                            b1.Property<int>("Scaling");
++
++                            b1.Property<int>("ScalingStat");
++
++                            b1.Property<string>("StatDiffJson")
++                                .HasColumnName("StatDiff");
++
++                            b1.Property<int>("TargetType");
++
++                            b1.Property<string>("TransformSprite");
++
++                            b1.Property<int>("TrapDuration")
++                                .HasColumnName("Trap");
++
++                            b1.Property<string>("VitalDiffJson")
++                                .HasColumnName("VitalDiff");
++
++                            b1.ToTable("Spells");
++
++                            b1.HasOne("Intersect.GameObjects.SpellBase")
++                                .WithOne("Combat")
++                                .HasForeignKey("Intersect.GameObjects.SpellCombatData", "SpellBaseId")
++                                .OnDelete(DeleteBehavior.Cascade);
++                        });
++
++                    b.OwnsOne("Intersect.GameObjects.SpellDashOpts", "Dash", b1 =>
++                        {
++                            b1.Property<Guid>("SpellBaseId");
++
++                            b1.Property<bool>("IgnoreActiveResources");
++
++                            b1.Property<bool>("IgnoreInactiveResources");
++
++                            b1.Property<bool>("IgnoreMapBlocks");
++
++                            b1.Property<bool>("IgnoreZDimensionAttributes");
++
++                            b1.ToTable("Spells");
++
++                            b1.HasOne("Intersect.GameObjects.SpellBase")
++                                .WithOne("Dash")
++                                .HasForeignKey("Intersect.GameObjects.SpellDashOpts", "SpellBaseId")
++                                .OnDelete(DeleteBehavior.Cascade);
++                        });
++
++                    b.OwnsOne("Intersect.GameObjects.SpellWarpData", "Warp", b1 =>
++                        {
++                            b1.Property<Guid>("SpellBaseId");
++
++                            b1.Property<int>("Dir");
++
++                            b1.Property<Guid>("MapId");
++
++                            b1.Property<int>("X");
++
++                            b1.Property<int>("Y");
++
++                            b1.ToTable("Spells");
++
++                            b1.HasOne("Intersect.GameObjects.SpellBase")
++                                .WithOne("Warp")
++                                .HasForeignKey("Intersect.GameObjects.SpellWarpData", "SpellBaseId")
++                                .OnDelete(DeleteBehavior.Cascade);
++                        });
++                });
++#pragma warning restore 612, 618
++        }
++    }
++}
+diff --git a/Intersect.Server/Migrations/Game/20200404164233_ExtendedCraftingNew.cs b/Intersect.Server/Migrations/Game/20200404164233_ExtendedCraftingNew.cs
+new file mode 100644
+index 00000000..5fb2e149
+--- /dev/null
++++ b/Intersect.Server/Migrations/Game/20200404164233_ExtendedCraftingNew.cs
+@@ -0,0 +1,34 @@
++﻿using System;
++using Microsoft.EntityFrameworkCore.Migrations;
++
++namespace Intersect.Server.Migrations.Game
++{
++    public partial class ExtendedCraftingNew : Migration
++    {
++        protected override void Up(MigrationBuilder migrationBuilder)
++        {
++            migrationBuilder.AddColumn<Guid>(
++                name: "CraftEvent",
++                table: "Crafts",
++                nullable: false,
++                defaultValue: new Guid("00000000-0000-0000-0000-000000000000"));
++
++            migrationBuilder.AddColumn<int>(
++                name: "SuccessRate",
++                table: "Crafts",
++                nullable: false,
++                defaultValue: 100);
++        }
++
++        protected override void Down(MigrationBuilder migrationBuilder)
++        {
++            migrationBuilder.DropColumn(
++                name: "CraftEvent",
++                table: "Crafts");
++
++            migrationBuilder.DropColumn(
++                name: "SuccessRate",
++                table: "Crafts");
++        }
++    }
++}
+diff --git a/Intersect.Server/Migrations/Game/20200404174804_CraftRequirementsv2.Designer.cs b/Intersect.Server/Migrations/Game/20200404174804_CraftRequirementsv2.Designer.cs
+new file mode 100644
+index 00000000..cdc5b2e7
+--- /dev/null
++++ b/Intersect.Server/Migrations/Game/20200404174804_CraftRequirementsv2.Designer.cs
+@@ -0,0 +1,1045 @@
++﻿// <auto-generated />
++using System;
++using Intersect.Server.Database.GameData;
++using Microsoft.EntityFrameworkCore;
++using Microsoft.EntityFrameworkCore.Infrastructure;
++using Microsoft.EntityFrameworkCore.Migrations;
++using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
++
++namespace Intersect.Server.Migrations.Game
++{
++    [DbContext(typeof(GameContext))]
++    [Migration("20200404174804_CraftRequirementsv2")]
++    partial class CraftRequirementsv2
++    {
++        protected override void BuildTargetModel(ModelBuilder modelBuilder)
++        {
++#pragma warning disable 612, 618
++            modelBuilder
++                .HasAnnotation("ProductVersion", "2.1.3-rtm-32065");
++
++            modelBuilder.Entity("Intersect.GameObjects.AnimationBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<bool>("CompleteSound");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("Name");
++
++                    b.Property<string>("Sound");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Animations");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.ClassBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<Guid>("AttackAnimationId")
++                        .HasColumnName("AttackAnimation");
++
++                    b.Property<int>("AttackSpeedModifier");
++
++                    b.Property<int>("AttackSpeedValue");
++
++                    b.Property<long>("BaseExp");
++
++                    b.Property<int>("BasePoints");
++
++                    b.Property<int>("CritChance");
++
++                    b.Property<double>("CritMultiplier");
++
++                    b.Property<int>("Damage");
++
++                    b.Property<int>("DamageType");
++
++                    b.Property<long>("ExpIncrease");
++
++                    b.Property<string>("ExpOverridesJson")
++                        .HasColumnName("ExperienceOverrides");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<bool>("IncreasePercentage");
++
++                    b.Property<string>("JsonBaseStats")
++                        .HasColumnName("BaseStats");
++
++                    b.Property<string>("JsonBaseVitals")
++                        .HasColumnName("BaseVitals");
++
++                    b.Property<string>("JsonItems")
++                        .HasColumnName("Items");
++
++                    b.Property<string>("JsonSpells")
++                        .HasColumnName("Spells");
++
++                    b.Property<string>("JsonSprites")
++                        .HasColumnName("Sprites");
++
++                    b.Property<bool>("Locked");
++
++                    b.Property<string>("Name");
++
++                    b.Property<int>("PointIncrease");
++
++                    b.Property<string>("RegenJson")
++                        .HasColumnName("VitalRegen");
++
++                    b.Property<int>("Scaling");
++
++                    b.Property<int>("ScalingStat");
++
++                    b.Property<int>("SpawnDir");
++
++                    b.Property<Guid>("SpawnMapId")
++                        .HasColumnName("SpawnMap");
++
++                    b.Property<int>("SpawnX");
++
++                    b.Property<int>("SpawnY");
++
++                    b.Property<string>("StatIncreaseJson")
++                        .HasColumnName("StatIncreases");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.Property<string>("VitalIncreaseJson")
++                        .HasColumnName("VitalIncreases");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Classes");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.Crafting.CraftBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<Guid>("CraftEventId")
++                        .HasColumnName("CraftEvent");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("IngredientsJson")
++                        .HasColumnName("Ingredients");
++
++                    b.Property<Guid>("ItemId");
++
++                    b.Property<string>("JsonCraftRequirements")
++                        .HasColumnName("CraftRequirements");
++
++                    b.Property<string>("Name");
++
++                    b.Property<int>("Quantity");
++
++                    b.Property<int>("SuccessRate")
++                        .HasColumnName("SuccessRate");
++
++                    b.Property<int>("Time");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Crafts");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.CraftingTableBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<string>("CraftsJson")
++                        .HasColumnName("Crafts");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("Name");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("CraftingTables");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.Events.EventBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<bool>("CommonEvent");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<bool>("Global");
++
++                    b.Property<Guid>("MapId");
++
++                    b.Property<string>("Name");
++
++                    b.Property<string>("PagesJson")
++                        .HasColumnName("Pages");
++
++                    b.Property<int>("SpawnX");
++
++                    b.Property<int>("SpawnY");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Events");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.ItemBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<Guid>("AnimationId")
++                        .HasColumnName("Animation");
++
++                    b.Property<Guid>("AttackAnimationId")
++                        .HasColumnName("AttackAnimation");
++
++                    b.Property<int>("AttackSpeedModifier");
++
++                    b.Property<int>("AttackSpeedValue");
++
++                    b.Property<bool>("Bound");
++
++                    b.Property<int>("Cooldown");
++
++                    b.Property<int>("CritChance");
++
++                    b.Property<double>("CritMultiplier");
++
++                    b.Property<int>("Damage");
++
++                    b.Property<int>("DamageType");
++
++                    b.Property<string>("Description");
++
++                    b.Property<bool>("DestroySpell");
++
++                    b.Property<Guid>("EquipmentAnimationId")
++                        .HasColumnName("EquipmentAnimation");
++
++                    b.Property<int>("EquipmentSlot");
++
++                    b.Property<Guid>("EventId")
++                        .HasColumnName("Event");
++
++                    b.Property<string>("FemalePaperdoll");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("Icon");
++
++                    b.Property<int>("ItemType");
++
++                    b.Property<string>("JsonUsageRequirements")
++                        .HasColumnName("UsageRequirements");
++
++                    b.Property<string>("MalePaperdoll");
++
++                    b.Property<string>("Name");
++
++                    b.Property<string>("PercentageStatsJson")
++                        .HasColumnName("PercentageStatsGiven");
++
++                    b.Property<string>("PercentageVitalsJson")
++                        .HasColumnName("PercentageVitalsGiven");
++
++                    b.Property<int>("Price");
++
++                    b.Property<Guid>("ProjectileId")
++                        .HasColumnName("Projectile");
++
++                    b.Property<bool>("QuickCast");
++
++                    b.Property<int>("Rarity");
++
++                    b.Property<int>("Scaling");
++
++                    b.Property<int>("ScalingStat");
++
++                    b.Property<int>("SlotCount");
++
++                    b.Property<int>("Speed");
++
++                    b.Property<Guid>("SpellId")
++                        .HasColumnName("Spell");
++
++                    b.Property<bool>("Stackable");
++
++                    b.Property<int>("StatGrowth");
++
++                    b.Property<string>("StatsJson")
++                        .HasColumnName("StatsGiven");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.Property<int>("Tool");
++
++                    b.Property<bool>("TwoHanded");
++
++                    b.Property<string>("VitalsJson")
++                        .HasColumnName("VitalsGiven");
++
++                    b.Property<string>("VitalsRegenJson")
++                        .HasColumnName("VitalsRegen");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Items");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.Maps.MapList.MapList", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<string>("JsonData")
++                        .HasColumnName("JsonData");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("MapFolders");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.NpcBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<bool>("Aggressive");
++
++                    b.Property<bool>("AttackAllies");
++
++                    b.Property<Guid>("AttackAnimationId")
++                        .HasColumnName("AttackAnimation");
++
++                    b.Property<string>("AttackOnSightConditionsJson")
++                        .HasColumnName("AttackOnSightConditions");
++
++                    b.Property<int>("AttackSpeedModifier");
++
++                    b.Property<int>("AttackSpeedValue");
++
++                    b.Property<string>("CraftsJson")
++                        .HasColumnName("Spells");
++
++                    b.Property<int>("CritChance");
++
++                    b.Property<double>("CritMultiplier");
++
++                    b.Property<int>("Damage");
++
++                    b.Property<int>("DamageType");
++
++                    b.Property<long>("Experience");
++
++                    b.Property<byte>("FleeHealthPercentage");
++
++                    b.Property<bool>("FocusHighestDamageDealer");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("JsonAggroList")
++                        .HasColumnName("AggroList");
++
++                    b.Property<string>("JsonDrops")
++                        .HasColumnName("Drops");
++
++                    b.Property<string>("JsonMaxVital")
++                        .HasColumnName("MaxVital");
++
++                    b.Property<string>("JsonStat")
++                        .HasColumnName("Stats");
++
++                    b.Property<int>("Level");
++
++                    b.Property<byte>("Movement");
++
++                    b.Property<string>("Name");
++
++                    b.Property<bool>("NpcVsNpcEnabled");
++
++                    b.Property<Guid>("OnDeathEventId")
++                        .HasColumnName("OnDeathEvent");
++
++                    b.Property<Guid>("OnDeathPartyEventId")
++                        .HasColumnName("OnDeathPartyEvent");
++
++                    b.Property<string>("PlayerCanAttackConditionsJson")
++                        .HasColumnName("PlayerCanAttackConditions");
++
++                    b.Property<string>("PlayerFriendConditionsJson")
++                        .HasColumnName("PlayerFriendConditions");
++
++                    b.Property<string>("RegenJson")
++                        .HasColumnName("VitalRegen");
++
++                    b.Property<int>("Scaling");
++
++                    b.Property<int>("ScalingStat");
++
++                    b.Property<int>("SightRange");
++
++                    b.Property<int>("SpawnDuration");
++
++                    b.Property<int>("SpellFrequency");
++
++                    b.Property<string>("Sprite");
++
++                    b.Property<bool>("Swarm");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Npcs");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.PlayerVariableBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("Name");
++
++                    b.Property<string>("TextId");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.Property<byte>("Type");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("PlayerVariables");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.ProjectileBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<Guid>("AmmoItemId")
++                        .HasColumnName("Ammo");
++
++                    b.Property<int>("AmmoRequired");
++
++                    b.Property<string>("AnimationsJson")
++                        .HasColumnName("Animations");
++
++                    b.Property<int>("Delay");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<bool>("GrappleHook");
++
++                    b.Property<bool>("IgnoreActiveResources");
++
++                    b.Property<bool>("IgnoreExhaustedResources");
++
++                    b.Property<bool>("IgnoreMapBlocks");
++
++                    b.Property<bool>("IgnoreZDimension");
++
++                    b.Property<int>("Knockback");
++
++                    b.Property<string>("Name");
++
++                    b.Property<bool>("PierceTarget");
++
++                    b.Property<int>("Quantity");
++
++                    b.Property<int>("Range");
++
++                    b.Property<string>("SpawnsJson")
++                        .HasColumnName("SpawnLocations");
++
++                    b.Property<int>("Speed");
++
++                    b.Property<Guid>("SpellId")
++                        .HasColumnName("Spell");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Projectiles");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.QuestBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<string>("BeforeDescription");
++
++                    b.Property<string>("EndDescription");
++
++                    b.Property<Guid>("EndEventId")
++                        .HasColumnName("EndEvent");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("InProgressDescription");
++
++                    b.Property<string>("JsonRequirements")
++                        .HasColumnName("Requirements");
++
++                    b.Property<bool>("LogAfterComplete");
++
++                    b.Property<bool>("LogBeforeOffer");
++
++                    b.Property<string>("Name");
++
++                    b.Property<bool>("Quitable");
++
++                    b.Property<bool>("Repeatable");
++
++                    b.Property<string>("StartDescription");
++
++                    b.Property<Guid>("StartEventId")
++                        .HasColumnName("StartEvent");
++
++                    b.Property<string>("TasksJson")
++                        .HasColumnName("Tasks");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Quests");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.ResourceBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<Guid>("AnimationId")
++                        .HasColumnName("Animation");
++
++                    b.Property<Guid>("EventId")
++                        .HasColumnName("Event");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("JsonDrops")
++                        .HasColumnName("Drops");
++
++                    b.Property<string>("JsonHarvestingRequirements")
++                        .HasColumnName("HarvestingRequirements");
++
++                    b.Property<int>("MaxHp");
++
++                    b.Property<int>("MinHp");
++
++                    b.Property<string>("Name");
++
++                    b.Property<int>("SpawnDuration");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.Property<int>("Tool");
++
++                    b.Property<int>("VitalRegen");
++
++                    b.Property<bool>("WalkableAfter");
++
++                    b.Property<bool>("WalkableBefore");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Resources");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.ServerVariableBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("Json")
++                        .HasColumnName("Value");
++
++                    b.Property<string>("Name");
++
++                    b.Property<string>("TextId");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.Property<byte>("Type");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("ServerVariables");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.ShopBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<bool>("BuyingWhitelist");
++
++                    b.Property<Guid>("DefaultCurrencyId")
++                        .HasColumnName("DefaultCurrency");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<string>("JsonBuyingItems")
++                        .HasColumnName("BuyingItems");
++
++                    b.Property<string>("JsonSellingItems")
++                        .HasColumnName("SellingItems");
++
++                    b.Property<string>("Name");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Shops");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.SpellBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<bool>("Bound");
++
++                    b.Property<Guid>("CastAnimationId")
++                        .HasColumnName("CastAnimation");
++
++                    b.Property<int>("CastDuration");
++
++                    b.Property<int>("CooldownDuration");
++
++                    b.Property<string>("Description");
++
++                    b.Property<Guid>("EventId")
++                        .HasColumnName("Event");
++
++                    b.Property<string>("Folder");
++
++                    b.Property<Guid>("HitAnimationId")
++                        .HasColumnName("HitAnimation");
++
++                    b.Property<string>("Icon");
++
++                    b.Property<string>("JsonCastRequirements")
++                        .HasColumnName("CastRequirements");
++
++                    b.Property<string>("Name");
++
++                    b.Property<int>("SpellType");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.Property<string>("VitalCostJson")
++                        .HasColumnName("VitalCost");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Spells");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.TilesetBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<string>("Name");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Tilesets");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.TimeBase", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<string>("DaylightHuesJson")
++                        .HasColumnName("DaylightHues");
++
++                    b.Property<int>("RangeInterval");
++
++                    b.Property<float>("Rate");
++
++                    b.Property<bool>("SyncTime");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Time");
++                });
++
++            modelBuilder.Entity("Intersect.Server.Maps.MapInstance", b =>
++                {
++                    b.Property<Guid>("Id")
++                        .ValueGeneratedOnAdd();
++
++                    b.Property<int>("AHue");
++
++                    b.Property<byte[]>("AttributeData")
++                        .HasColumnName("Attributes");
++
++                    b.Property<int>("BHue");
++
++                    b.Property<int>("Brightness");
++
++                    b.Property<Guid>("Down");
++
++                    b.Property<string>("EventIdsJson")
++                        .HasColumnName("Events");
++
++                    b.Property<string>("Fog");
++
++                    b.Property<int>("FogTransparency");
++
++                    b.Property<int>("FogXSpeed");
++
++                    b.Property<int>("FogYSpeed");
++
++                    b.Property<int>("GHue");
++
++                    b.Property<bool>("IsIndoors");
++
++                    b.Property<Guid>("Left");
++
++                    b.Property<string>("LightsJson")
++                        .HasColumnName("Lights");
++
++                    b.Property<string>("Music");
++
++                    b.Property<string>("Name");
++
++                    b.Property<string>("NpcSpawnsJson")
++                        .HasColumnName("NpcSpawns");
++
++                    b.Property<string>("OverlayGraphic");
++
++                    b.Property<string>("Panorama");
++
++                    b.Property<string>("PlayerLightColorJson")
++                        .HasColumnName("PlayerLightColor");
++
++                    b.Property<float>("PlayerLightExpand");
++
++                    b.Property<byte>("PlayerLightIntensity");
++
++                    b.Property<int>("PlayerLightSize");
++
++                    b.Property<int>("RHue");
++
++                    b.Property<int>("Revision");
++
++                    b.Property<Guid>("Right");
++
++                    b.Property<string>("Sound");
++
++                    b.Property<byte[]>("TileData");
++
++                    b.Property<long>("TimeCreated");
++
++                    b.Property<Guid>("Up");
++
++                    b.Property<Guid>("WeatherAnimationId")
++                        .HasColumnName("WeatherAnimation");
++
++                    b.Property<int>("WeatherIntensity");
++
++                    b.Property<int>("WeatherXSpeed");
++
++                    b.Property<int>("WeatherYSpeed");
++
++                    b.Property<int>("ZoneType");
++
++                    b.HasKey("Id");
++
++                    b.ToTable("Maps");
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.AnimationBase", b =>
++                {
++                    b.OwnsOne("Intersect.GameObjects.AnimationLayer", "Lower", b1 =>
++                        {
++                            b1.Property<Guid>("AnimationBaseId");
++
++                            b1.Property<bool>("AlternateRenderLayer");
++
++                            b1.Property<bool>("DisableRotations");
++
++                            b1.Property<int>("FrameCount");
++
++                            b1.Property<int>("FrameSpeed");
++
++                            b1.Property<string>("Light");
++
++                            b1.Property<int>("LoopCount");
++
++                            b1.Property<string>("Sprite");
++
++                            b1.Property<int>("XFrames");
++
++                            b1.Property<int>("YFrames");
++
++                            b1.ToTable("Animations");
++
++                            b1.HasOne("Intersect.GameObjects.AnimationBase")
++                                .WithOne("Lower")
++                                .HasForeignKey("Intersect.GameObjects.AnimationLayer", "AnimationBaseId")
++                                .OnDelete(DeleteBehavior.Cascade);
++                        });
++
++                    b.OwnsOne("Intersect.GameObjects.AnimationLayer", "Upper", b1 =>
++                        {
++                            b1.Property<Guid>("AnimationBaseId");
++
++                            b1.Property<bool>("AlternateRenderLayer");
++
++                            b1.Property<bool>("DisableRotations");
++
++                            b1.Property<int>("FrameCount");
++
++                            b1.Property<int>("FrameSpeed");
++
++                            b1.Property<string>("Light");
++
++                            b1.Property<int>("LoopCount");
++
++                            b1.Property<string>("Sprite");
++
++                            b1.Property<int>("XFrames");
++
++                            b1.Property<int>("YFrames");
++
++                            b1.ToTable("Animations");
++
++                            b1.HasOne("Intersect.GameObjects.AnimationBase")
++                                .WithOne("Upper")
++                                .HasForeignKey("Intersect.GameObjects.AnimationLayer", "AnimationBaseId")
++                                .OnDelete(DeleteBehavior.Cascade);
++                        });
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.ItemBase", b =>
++                {
++                    b.OwnsOne("Intersect.GameObjects.ConsumableData", "Consumable", b1 =>
++                        {
++                            b1.Property<Guid>("ItemBaseId");
++
++                            b1.Property<int>("Percentage");
++
++                            b1.Property<byte>("Type");
++
++                            b1.Property<int>("Value");
++
++                            b1.ToTable("Items");
++
++                            b1.HasOne("Intersect.GameObjects.ItemBase")
++                                .WithOne("Consumable")
++                                .HasForeignKey("Intersect.GameObjects.ConsumableData", "ItemBaseId")
++                                .OnDelete(DeleteBehavior.Cascade);
++                        });
++
++                    b.OwnsOne("Intersect.GameObjects.EffectData", "Effect", b1 =>
++                        {
++                            b1.Property<Guid>("ItemBaseId");
++
++                            b1.Property<int>("Percentage");
++
++                            b1.Property<byte>("Type");
++
++                            b1.ToTable("Items");
++
++                            b1.HasOne("Intersect.GameObjects.ItemBase")
++                                .WithOne("Effect")
++                                .HasForeignKey("Intersect.GameObjects.EffectData", "ItemBaseId")
++                                .OnDelete(DeleteBehavior.Cascade);
++                        });
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.ResourceBase", b =>
++                {
++                    b.OwnsOne("Intersect.GameObjects.ResourceState", "Exhausted", b1 =>
++                        {
++                            b1.Property<Guid>("ResourceBaseId");
++
++                            b1.Property<string>("Graphic");
++
++                            b1.Property<bool>("GraphicFromTileset");
++
++                            b1.Property<int>("Height");
++
++                            b1.Property<bool>("RenderBelowEntities");
++
++                            b1.Property<int>("Width");
++
++                            b1.Property<int>("X");
++
++                            b1.Property<int>("Y");
++
++                            b1.ToTable("Resources");
++
++                            b1.HasOne("Intersect.GameObjects.ResourceBase")
++                                .WithOne("Exhausted")
++                                .HasForeignKey("Intersect.GameObjects.ResourceState", "ResourceBaseId")
++                                .OnDelete(DeleteBehavior.Cascade);
++                        });
++
++                    b.OwnsOne("Intersect.GameObjects.ResourceState", "Initial", b1 =>
++                        {
++                            b1.Property<Guid>("ResourceBaseId");
++
++                            b1.Property<string>("Graphic");
++
++                            b1.Property<bool>("GraphicFromTileset");
++
++                            b1.Property<int>("Height");
++
++                            b1.Property<bool>("RenderBelowEntities");
++
++                            b1.Property<int>("Width");
++
++                            b1.Property<int>("X");
++
++                            b1.Property<int>("Y");
++
++                            b1.ToTable("Resources");
++
++                            b1.HasOne("Intersect.GameObjects.ResourceBase")
++                                .WithOne("Initial")
++                                .HasForeignKey("Intersect.GameObjects.ResourceState", "ResourceBaseId")
++                                .OnDelete(DeleteBehavior.Cascade);
++                        });
++                });
++
++            modelBuilder.Entity("Intersect.GameObjects.SpellBase", b =>
++                {
++                    b.OwnsOne("Intersect.GameObjects.SpellCombatData", "Combat", b1 =>
++                        {
++                            b1.Property<Guid>("SpellBaseId");
++
++                            b1.Property<int>("CastRange");
++
++                            b1.Property<int>("CritChance");
++
++                            b1.Property<double>("CritMultiplier");
++
++                            b1.Property<int>("DamageType");
++
++                            b1.Property<int>("Duration");
++
++                            b1.Property<int>("Effect");
++
++                            b1.Property<bool>("Friendly");
++
++                            b1.Property<int>("HitRadius");
++
++                            b1.Property<bool>("HoTDoT");
++
++                            b1.Property<int>("HotDotInterval");
++
++                            b1.Property<int>("OnHitDuration")
++                                .HasColumnName("OnHit");
++
++                            b1.Property<string>("PercentageStatDiffJson")
++                                .HasColumnName("PercentageStatDiff");
++
++                            b1.Property<Guid>("ProjectileId")
++                                .HasColumnName("Projectile");
++
++                            b1.Property<int>("Scaling");
++
++                            b1.Property<int>("ScalingStat");
++
++                            b1.Property<string>("StatDiffJson")
++                                .HasColumnName("StatDiff");
++
++                            b1.Property<int>("TargetType");
++
++                            b1.Property<string>("TransformSprite");
++
++                            b1.Property<int>("TrapDuration")
++                                .HasColumnName("Trap");
++
++                            b1.Property<string>("VitalDiffJson")
++                                .HasColumnName("VitalDiff");
++
++                            b1.ToTable("Spells");
++
++                            b1.HasOne("Intersect.GameObjects.SpellBase")
++                                .WithOne("Combat")
++                                .HasForeignKey("Intersect.GameObjects.SpellCombatData", "SpellBaseId")
++                                .OnDelete(DeleteBehavior.Cascade);
++                        });
++
++                    b.OwnsOne("Intersect.GameObjects.SpellDashOpts", "Dash", b1 =>
++                        {
++                            b1.Property<Guid>("SpellBaseId");
++
++                            b1.Property<bool>("IgnoreActiveResources");
++
++                            b1.Property<bool>("IgnoreInactiveResources");
++
++                            b1.Property<bool>("IgnoreMapBlocks");
++
++                            b1.Property<bool>("IgnoreZDimensionAttributes");
++
++                            b1.ToTable("Spells");
++
++                            b1.HasOne("Intersect.GameObjects.SpellBase")
++                                .WithOne("Dash")
++                                .HasForeignKey("Intersect.GameObjects.SpellDashOpts", "SpellBaseId")
++                                .OnDelete(DeleteBehavior.Cascade);
++                        });
++
++                    b.OwnsOne("Intersect.GameObjects.SpellWarpData", "Warp", b1 =>
++                        {
++                            b1.Property<Guid>("SpellBaseId");
++
++                            b1.Property<int>("Dir");
++
++                            b1.Property<Guid>("MapId");
++
++                            b1.Property<int>("X");
++
++                            b1.Property<int>("Y");
++
++                            b1.ToTable("Spells");
++
++                            b1.HasOne("Intersect.GameObjects.SpellBase")
++                                .WithOne("Warp")
++                                .HasForeignKey("Intersect.GameObjects.SpellWarpData", "SpellBaseId")
++                                .OnDelete(DeleteBehavior.Cascade);
++                        });
++                });
++#pragma warning restore 612, 618
++        }
++    }
++}
+diff --git a/Intersect.Server/Migrations/Game/20200404174804_CraftRequirementsv2.cs b/Intersect.Server/Migrations/Game/20200404174804_CraftRequirementsv2.cs
+new file mode 100644
+index 00000000..9771f1cb
+--- /dev/null
++++ b/Intersect.Server/Migrations/Game/20200404174804_CraftRequirementsv2.cs
+@@ -0,0 +1,22 @@
++﻿using Microsoft.EntityFrameworkCore.Migrations;
++
++namespace Intersect.Server.Migrations.Game
++{
++    public partial class CraftRequirementsv2 : Migration
++    {
++        protected override void Up(MigrationBuilder migrationBuilder)
++        {
++            migrationBuilder.AddColumn<string>(
++                name: "CraftRequirements",
++                table: "Crafts",
++                nullable: true);
++        }
++
++        protected override void Down(MigrationBuilder migrationBuilder)
++        {
++            migrationBuilder.DropColumn(
++                name: "CraftRequirements",
++                table: "Crafts");
++        }
++    }
++}
+diff --git a/Intersect.Server/Migrations/Game/GameContextModelSnapshot.cs b/Intersect.Server/Migrations/Game/GameContextModelSnapshot.cs
+index fbfd65a8..52e3a683 100644
+--- a/Intersect.Server/Migrations/Game/GameContextModelSnapshot.cs
++++ b/Intersect.Server/Migrations/Game/GameContextModelSnapshot.cs
+@@ -124,6 +124,9 @@ protected override void BuildModel(ModelBuilder modelBuilder)
+                     b.Property<Guid>("Id")
+                         .ValueGeneratedOnAdd();
+ 
++                    b.Property<Guid>("CraftEventId")
++                        .HasColumnName("CraftEvent");
++
+                     b.Property<string>("Folder");
+ 
+                     b.Property<string>("IngredientsJson")
+@@ -131,10 +134,16 @@ protected override void BuildModel(ModelBuilder modelBuilder)
+ 
+                     b.Property<Guid>("ItemId");
+ 
++                    b.Property<string>("JsonCraftRequirements")
++                        .HasColumnName("CraftRequirements");
++
+                     b.Property<string>("Name");
+ 
+                     b.Property<int>("Quantity");
+ 
++                    b.Property<int>("SuccessRate")
++                        .HasColumnName("SuccessRate");
++
+                     b.Property<int>("Time");
+ 
+                     b.Property<long>("TimeCreated");
+diff --git a/Intersect.Server/Networking/PacketHandler.cs b/Intersect.Server/Networking/PacketHandler.cs
+index 831504ca..fb447344 100644
+--- a/Intersect.Server/Networking/PacketHandler.cs
++++ b/Intersect.Server/Networking/PacketHandler.cs
+@@ -1394,6 +1394,17 @@ public void HandlePacket(Client client, Player player, CraftItemPacket packet)
+             player.CraftTimer = Globals.Timing.TimeMs;
+         }
+ 
++        //CraftRequestPacket
++        public void HandlePacket(Client client, Player player, CraftRequestPacket packet)
++        {
++            if (player == null)
++            {
++                return;
++            }
++
++            player.CraftRequestId = packet.CraftId;
++        }
++
+         //CloseBankPacket
+         public void HandlePacket(Client client, Player player, CloseBankPacket packet)
+         {
+diff --git a/Intersect.Server/Networking/PacketSender.cs b/Intersect.Server/Networking/PacketSender.cs
+index 9c1f7b58..f8010111 100644
+--- a/Intersect.Server/Networking/PacketSender.cs
++++ b/Intersect.Server/Networking/PacketSender.cs
+@@ -32,6 +32,9 @@ public static class PacketSender
+         //Cached GameDataPacket that gets sent to clients
+         public static GameDataPacket CachedGameDataPacket = null;
+ 
++        //reqcheck
++        public static string reqcheck;
++
+         //PingPacket
+         public static void SendPing(Client client, bool request = true)
+         {
+@@ -1280,14 +1283,36 @@ public static void SendOpenCraftingTable(Player player, CraftingTableBase table)
+         {
+             if (table != null)
+             {
+-                player.SendPacket(new CraftingTablePacket(table.JsonData, false));
++                reqcheck = "";
++                for (var i = 0; i < table?.Crafts?.Count; ++i) {                    
++                    if (!Conditions.MeetsConditionLists(CraftBase.Get(table.Crafts[i]).CraftRequirements, player, null))
++                    {
++                        reqcheck += i + "-";
++                    }
++                }
++                player.SendPacket(new CraftingTablePacket(table.JsonData, false, reqcheck));
+             }
+         }
+ 
+         //CraftingTablePacket
+         public static void SendCloseCraftingTable(Player player)
+         {
+-            player.SendPacket(new CraftingTablePacket(null, true));
++            player.SendPacket(new CraftingTablePacket(null, true, null));
++        }
++
++        //CraftStartPacket
++        public static void SendStartCraft(Player player, Guid craft)
++        {
++            if (craft != null)
++            {
++                player.SendPacket(new CraftStartPacket(craft, true));
++            }
++        }
++
++        //CraftStartPacket
++        public static void SendStartCraft(Player player)
++        {
++            player.SendPacket(new CraftStartPacket(Guid.Empty, false));
+         }
+ 
+         //BankUpdatePacket
+-- 
+2.13.3.windows.1
+
