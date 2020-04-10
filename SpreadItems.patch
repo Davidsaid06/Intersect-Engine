@@ -1,0 +1,92 @@
+From c2853a7a77519a5c9004504568c6ad326708d4c5 Mon Sep 17 00:00:00 2001
+From: Joyce <azurebeats@hotmail.nl>
+Date: Mon, 6 Apr 2020 09:50:07 +0200
+Subject: [PATCH] Updated the patch for new builds.
+
+And added a configurable drop range!
+---
+ Intersect (Core)/Config/CombatOptions.cs |  3 ++
+ Intersect (Core)/Config/Options.cs       |  2 ++
+ Intersect.Server/Entities/Entity.cs      | 35 ++++++++++++++++++++++--
+ 3 files changed, 38 insertions(+), 2 deletions(-)
+
+diff --git a/Intersect (Core)/Config/CombatOptions.cs b/Intersect (Core)/Config/CombatOptions.cs
+index 654acde9..34afd3b9 100644
+--- a/Intersect (Core)/Config/CombatOptions.cs	
++++ b/Intersect (Core)/Config/CombatOptions.cs	
+@@ -17,6 +17,9 @@ public class CombatOptions
+         //Combat
+         public int RegenTime = 3000; //3 seconds
+ 
++        // Item Drop Range
++        public int ItemDropRange = 2; //2 Tiles
++
+     }
+ 
+ }
+diff --git a/Intersect (Core)/Config/Options.cs b/Intersect (Core)/Config/Options.cs
+index c3ad1b7c..26ad91e2 100644
+--- a/Intersect (Core)/Config/Options.cs	
++++ b/Intersect (Core)/Config/Options.cs	
+@@ -99,6 +99,8 @@ public class Options
+ 
+         public static int CombatTime => Instance.CombatOpts.CombatTime;
+ 
++        public static int ItemDropRange => Instance.CombatOpts.ItemDropRange;
++
+         public static int MinAttackRate => Instance.CombatOpts.MinAttackRate;
+ 
+         public static int MaxAttackRate => Instance.CombatOpts.MaxAttackRate;
+diff --git a/Intersect.Server/Entities/Entity.cs b/Intersect.Server/Entities/Entity.cs
+index 5d9812f4..3a276976 100644
+--- a/Intersect.Server/Entities/Entity.cs
++++ b/Intersect.Server/Entities/Entity.cs
+@@ -2417,6 +2417,28 @@ public virtual void Die(int dropitems = 0, Entity killer = null)
+ 
+             if (dropitems > 0)
+             {
++                //Find tiles to spawn items
++                var tiles = new List<TileHelper>();
++                for (var x = X - Options.ItemDropRange; x <= X + Options.ItemDropRange; x++)
++                {
++                    for (var y = Y - Options.ItemDropRange; y <= Y + Options.ItemDropRange; y++)
++                    {
++                        var tileHelper = new TileHelper(MapId, x, y);
++                        if (tileHelper.TryFix())
++                        {
++                            //Tile is valid.. let's see if its open
++                            var map = MapInstance.Get(tileHelper.GetMapId());
++                            if (map != null)
++                            {
++                                if (!map.TileBlocked(tileHelper.GetX(), tileHelper.GetY()))
++                                {
++                                    tiles.Add(tileHelper);
++                                }
++                            }
++                        }
++                    }
++                }   
++
+                 // Drop items
+                 for (var n = 0; n < Items.Count; n++)
+                 {
+@@ -2457,8 +2479,17 @@ public virtual void Die(int dropitems = 0, Entity killer = null)
+                         continue;
+                     }
+ 
+-                    var map = MapInstance.Get(MapId);
+-                    map?.SpawnItem(X, Y, item, item.Quantity);
++                    if (tiles.Count > 0)
++                    {
++                        var tile = tiles[Randomization.Next(tiles.Count)];
++                        var map = MapInstance.Get(tile.GetMapId());
++                        map?.SpawnItem(tile.GetX(), tile.GetY(), item, item.Quantity);
++                    }
++                    else
++                    {
++                        var map = MapInstance.Get(MapId);
++                        map?.SpawnItem(X, Y, item, item.Quantity);
++                    }
+ 
+                     var player = this as Player;
+                     player?.TakeItemsBySlot(n, item.Quantity);

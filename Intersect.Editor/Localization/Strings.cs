@@ -886,6 +886,17 @@ Tick timer saved in server config.json.";
                 {0, @"Physical"},
                 {1, @"Magic"},
                 {2, @"True"},
+                {3, @"Faith"},
+                {4, @"Fire"},
+                {5, @"Ice"},
+                {6, @"Thunder"},
+                {7, @"Earth"},
+                {8, @"Wind"},
+                {9, @"Water"},
+                {10, @"Nature"},
+                {11, @"Light"},
+                {12, @"Dark"},
+
             };
 
             public static LocalizedString exp = @"Experience";
@@ -897,6 +908,17 @@ Tick timer saved in server config.json.";
                 {2, @"Defense"},
                 {3, @"Magic Resist"},
                 {4, @"Speed"},
+                {5, @"Faith"},
+                {6, @"Fire"},
+                {7, @"Ice"},
+                {8, @"Thunder"},
+                {9, @"Earth"},
+                {10, @"Wind"},
+                {11, @"Water"},
+                {12, @"Nature"},
+                {13, @"Light"},
+                {14, @"Dark"},
+                {15, @"Capacity"},
             };
 
             public static Dictionary<int, LocalizedString> vitals = new Dictionary<int, LocalizedString>
@@ -1060,6 +1082,10 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString undotitle = @"Undo Changes";
 
+            public static LocalizedString craftevent = @"Craft Event";
+
+            public static LocalizedString successrate = @"Success Rate";
+
         }
 
         public struct Directions
@@ -1087,7 +1113,7 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString conditioneditor = @"Add/Edit Condition";
 
-            public static LocalizedString conditionlist = @"Conditiond";
+            public static LocalizedString conditionlist = @"Conditions";
 
             public static LocalizedString conditionlists = @"Condition Lists";
 
@@ -1117,6 +1143,9 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString instructionsspell =
                 @"Below are condition lists. If conditions are met on any of the lists then the player can use cast the spell.";
+
+            public static LocalizedString instructionscraft =
+                @"Below are condition lists. If conditions are met on any of the lists then the player can craft the item.";
 
             public static LocalizedString listname = @"Desc:";
 
@@ -2799,6 +2828,10 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString defensebonus = @"Defense:";
 
+            public static LocalizedString faithbonus = @"Faith:";
+
+            public static LocalizedString capacitybonus = @"Capacity:";
+
             public static LocalizedString delete = @"Delete Item";
 
             public static LocalizedString deleteprompt =
@@ -2868,6 +2901,8 @@ Tick timer saved in server config.json.";
             public static LocalizedString projectile = @"Projectile:";
 
             public static LocalizedString requirements = @"Edit Usage Requirements";
+
+            public static LocalizedString craftrequirements = @"Edit Craft Requirements";
 
             public static LocalizedString save = @"Save";
 
@@ -3404,8 +3439,12 @@ Tick timer saved in server config.json.";
             public static LocalizedString critmultiplier = @"Crit Multiplier (Default 1.5x):";
 
             public static LocalizedString damagetype = @"Damage Type:";
-
+            
             public static LocalizedString defense = @"Defense:";
+
+            public static LocalizedString faith = @"Faith:";
+
+            public static LocalizedString capacity = @"Capacity:";
 
             public static LocalizedString delete = @"Delete Npc";
 
@@ -4000,6 +4039,10 @@ Tick timer saved in server config.json.";
             public static LocalizedString dashrange = @"Dash Range (tiles): {00}";
 
             public static LocalizedString defense = @"Defense:";
+
+            public static LocalizedString faith = @"Faith:";
+
+            public static LocalizedString capacity = @"Capacity:";
 
             public static LocalizedString delete = @"Delete Spell";
 

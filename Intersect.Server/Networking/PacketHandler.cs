@@ -789,6 +789,22 @@ namespace Intersect.Server.Networking
                     attackingTile.Translate(1, 0);
 
                     break;
+                case 4:
+                    attackingTile.Translate(-1, -1); // UpLeft
+
+                    break;
+                case 5:
+                    attackingTile.Translate(1, -1); // UpRight
+
+                    break;
+                case 6:
+                    attackingTile.Translate(-1, 1); // DownLeft
+
+                    break;
+                case 7:
+                    attackingTile.Translate(1, 1); // DownRight
+
+                    break;
             }
 
             PacketSender.SendEntityAttack(player, player.CalculateAttackTime());
@@ -1398,6 +1414,17 @@ namespace Intersect.Server.Networking
 
             player.CraftId = packet.CraftId;
             player.CraftTimer = Globals.Timing.TimeMs;
+        }
+
+        //CraftRequestPacket
+        public void HandlePacket(Client client, Player player, CraftRequestPacket packet)
+        {
+            if (player == null)
+            {
+                return;
+            }
+
+            player.CraftRequestId = packet.CraftId;
         }
 
         //CloseBankPacket

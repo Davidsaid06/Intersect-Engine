@@ -337,7 +337,18 @@ namespace Intersect.Server.Localization
                     {1, @"Ability Power"},
                     {2, @"Defense"},
                     {3, @"Magic Resist"},
-                    {4, @"Speed"}
+                    {4, @"Speed"},
+                    {5, @"Faith"},
+                    {6, @"Fire"},
+                    {7, @"Ice"},
+                    {8, @"Thunder"},
+                    {9, @"Earth"},
+                    {10, @"Wind"},
+                    {11, @"Water"},
+                    {12, @"Nature"},
+                    {13, @"Light"},
+                    {14, @"Dark"},
+                    {15, @"Capacity"}
                 }
             );
 
@@ -489,6 +500,14 @@ namespace Intersect.Server.Localization
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString nospace = @"You do not have enough inventory space to craft {00}!";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString noitems = @"You do not have the required items to craft {00}!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString failed = @"You failed to craft {00}!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString reqnotmet = @"You don't meet the requirements to craft {00}!";
         }
 
         public sealed class DatabaseNamespace : LocaleNamespace
