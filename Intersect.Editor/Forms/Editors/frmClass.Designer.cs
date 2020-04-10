@@ -165,6 +165,10 @@ namespace Intersect.Editor.Forms.Editors
             this.lblExpIncrease = new System.Windows.Forms.Label();
             this.lblBaseExp = new System.Windows.Forms.Label();
             this.grpLevelBoosts = new DarkUI.Controls.DarkGroupBox();
+            this.nudCapacityIncrease = new DarkUI.Controls.DarkNumericUpDown();
+            this.label2 = new System.Windows.Forms.Label();
+            this.nudFaithIncrease = new DarkUI.Controls.DarkNumericUpDown();
+            this.label1 = new System.Windows.Forms.Label();
             this.nudHpIncrease = new DarkUI.Controls.DarkNumericUpDown();
             this.nudMpIncrease = new DarkUI.Controls.DarkNumericUpDown();
             this.nudPointsIncrease = new DarkUI.Controls.DarkNumericUpDown();
@@ -198,10 +202,6 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
             this.mnuExpGrid = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.btnExpPaste = new System.Windows.Forms.ToolStripMenuItem();
-            this.nudFaithIncrease = new DarkUI.Controls.DarkNumericUpDown();
-            this.label1 = new System.Windows.Forms.Label();
-            this.nudCapacityIncrease = new DarkUI.Controls.DarkNumericUpDown();
-            this.label2 = new System.Windows.Forms.Label();
             this.grpClasses.SuspendLayout();
             this.grpBaseStats.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudCapacity)).BeginInit();
@@ -253,6 +253,8 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.nudBaseExp)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudExpIncrease)).BeginInit();
             this.grpLevelBoosts.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudCapacityIncrease)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFaithIncrease)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudHpIncrease)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMpIncrease)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudPointsIncrease)).BeginInit();
@@ -263,8 +265,6 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.nudStrengthIncrease)).BeginInit();
             this.toolStrip.SuspendLayout();
             this.mnuExpGrid.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudFaithIncrease)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudCapacityIncrease)).BeginInit();
             this.SuspendLayout();
             // 
             // grpClasses
@@ -1376,7 +1376,7 @@ namespace Intersect.Editor.Forms.Editors
             this.darkGroupBox1.Controls.Add(this.nudWind);
             this.darkGroupBox1.Controls.Add(this.nudEarth);
             this.darkGroupBox1.ForeColor = System.Drawing.Color.Gainsboro;
-            this.darkGroupBox1.Location = new System.Drawing.Point(6, 392);
+            this.darkGroupBox1.Location = new System.Drawing.Point(6, 393);
             this.darkGroupBox1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.darkGroupBox1.Name = "darkGroupBox1";
             this.darkGroupBox1.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -2302,6 +2302,66 @@ namespace Intersect.Editor.Forms.Editors
             this.grpLevelBoosts.TabStop = false;
             this.grpLevelBoosts.Text = "Level Up Boosts";
             // 
+            // nudCapacityIncrease
+            // 
+            this.nudCapacityIncrease.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudCapacityIncrease.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudCapacityIncrease.Location = new System.Drawing.Point(440, 58);
+            this.nudCapacityIncrease.Margin = new System.Windows.Forms.Padding(4);
+            this.nudCapacityIncrease.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.nudCapacityIncrease.Name = "nudCapacityIncrease";
+            this.nudCapacityIncrease.Size = new System.Drawing.Size(93, 22);
+            this.nudCapacityIncrease.TabIndex = 40;
+            this.nudCapacityIncrease.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudCapacityIncrease.ValueChanged += new System.EventHandler(this.nudCapacityIncrease_ValueChanged);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(436, 38);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(66, 17);
+            this.label2.TabIndex = 39;
+            this.label2.Text = "Capacity:";
+            // 
+            // nudFaithIncrease
+            // 
+            this.nudFaithIncrease.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudFaithIncrease.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudFaithIncrease.Location = new System.Drawing.Point(331, 111);
+            this.nudFaithIncrease.Margin = new System.Windows.Forms.Padding(4);
+            this.nudFaithIncrease.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.nudFaithIncrease.Name = "nudFaithIncrease";
+            this.nudFaithIncrease.Size = new System.Drawing.Size(93, 22);
+            this.nudFaithIncrease.TabIndex = 38;
+            this.nudFaithIncrease.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudFaithIncrease.ValueChanged += new System.EventHandler(this.nudFaithIncrease_ValueChanged);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(327, 95);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(43, 17);
+            this.label1.TabIndex = 37;
+            this.label1.Text = "Faith:";
+            // 
             // nudHpIncrease
             // 
             this.nudHpIncrease.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
@@ -2730,66 +2790,6 @@ namespace Intersect.Editor.Forms.Editors
             this.btnExpPaste.Text = "Paste";
             this.btnExpPaste.Click += new System.EventHandler(this.btnPaste_Click);
             // 
-            // nudFaithIncrease
-            // 
-            this.nudFaithIncrease.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudFaithIncrease.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudFaithIncrease.Location = new System.Drawing.Point(331, 111);
-            this.nudFaithIncrease.Margin = new System.Windows.Forms.Padding(4);
-            this.nudFaithIncrease.Maximum = new decimal(new int[] {
-            255,
-            0,
-            0,
-            0});
-            this.nudFaithIncrease.Name = "nudFaithIncrease";
-            this.nudFaithIncrease.Size = new System.Drawing.Size(93, 22);
-            this.nudFaithIncrease.TabIndex = 38;
-            this.nudFaithIncrease.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.nudFaithIncrease.ValueChanged += new System.EventHandler(this.nudFaithIncrease_ValueChanged);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(327, 95);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(43, 17);
-            this.label1.TabIndex = 37;
-            this.label1.Text = "Faith:";
-            // 
-            // nudCapacityIncrease
-            // 
-            this.nudCapacityIncrease.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudCapacityIncrease.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudCapacityIncrease.Location = new System.Drawing.Point(440, 58);
-            this.nudCapacityIncrease.Margin = new System.Windows.Forms.Padding(4);
-            this.nudCapacityIncrease.Maximum = new decimal(new int[] {
-            255,
-            0,
-            0,
-            0});
-            this.nudCapacityIncrease.Name = "nudCapacityIncrease";
-            this.nudCapacityIncrease.Size = new System.Drawing.Size(93, 22);
-            this.nudCapacityIncrease.TabIndex = 40;
-            this.nudCapacityIncrease.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.nudCapacityIncrease.ValueChanged += new System.EventHandler(this.nudCapacityIncrease_ValueChanged);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(436, 38);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(66, 17);
-            this.label2.TabIndex = 39;
-            this.label2.Text = "Capacity:";
-            // 
             // FrmClass
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -2878,6 +2878,8 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.nudExpIncrease)).EndInit();
             this.grpLevelBoosts.ResumeLayout(false);
             this.grpLevelBoosts.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudCapacityIncrease)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFaithIncrease)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudHpIncrease)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMpIncrease)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudPointsIncrease)).EndInit();
@@ -2889,8 +2891,6 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
             this.mnuExpGrid.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.nudFaithIncrease)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudCapacityIncrease)).EndInit();
             this.ResumeLayout(false);
 
         }
