@@ -1504,7 +1504,7 @@ namespace Intersect.Editor.Forms.Editors
             mEditorItem.CustomSpriteLayers[CustomSpriteLayers.Hair].RemoveAt(lstHair.SelectedIndex);
             lstHair.Items.RemoveAt(lstHair.SelectedIndex);
 
-            RefreshSpriteList(false);
+            RefreshHairList(false);
 
             if (lstHair.Items.Count > 0) {
                 lstHair.SelectedIndex = 0;
