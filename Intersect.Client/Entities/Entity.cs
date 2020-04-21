@@ -450,6 +450,7 @@ namespace Intersect.Client.Entities
         public virtual float GetMovementTime()
         {
             var time = 1000f / (float) (1 + Math.Log(Stat[(int) Stats.Speed]));
+
             if (Blocking)
             {
                 time += time * (float) Options.BlockingSlow;
@@ -1067,11 +1068,13 @@ namespace Intersect.Client.Entities
                                 }
                                 else
                                 {
+                                    
                                     // Render a hairstyle here if we're currently rendering the desired hair slot without any equipment in it.
                                     if (this is Player && paperdoll == Options.EquipmentSlots[Options.EquipmentSlots.IndexOf(Options.Equipment.HairSlot)])
                                     {
                                             ((Player)this).DrawCustomSpriteLayer(CustomSpriteLayers.Hair, GameContentManager.TextureType.Hair, alpha);
                                     }
+                                    
                                 }
                             }
                         }

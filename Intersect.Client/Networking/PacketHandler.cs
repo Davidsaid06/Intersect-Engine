@@ -863,7 +863,7 @@ namespace Intersect.Client.Networking
         {
             if (Globals.Me != null)
             {
-                Globals.Me.Inventory[packet.Slot].Load(packet.ItemId, packet.Quantity, packet.BagId, packet.StatBuffs);
+                Globals.Me.Inventory[packet.Slot].Load(packet.ItemId, packet.Quantity, packet.BagId, packet.StatBuffs,packet.MaxDurability,packet.MaxWeaponSkillsPoint,packet.CurrentDurability,packet.CurrentWeaponSkillPoint);
                 if (Globals.Me.InventoryUpdatedDelegate != null)
                 {
                     Globals.Me.InventoryUpdatedDelegate();

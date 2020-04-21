@@ -4279,6 +4279,16 @@ namespace Intersect.Server.Entities
             }
         }
 
+        public void AddStat(int statIndex,int amount)
+        {
+            if (Stat[statIndex].BaseStat + StatPointAllocations[statIndex] < Options.MaxStatValue && StatPoints > 0)
+            {
+                StatPointAllocations[statIndex]= StatPointAllocations[statIndex]+amount;
+                PacketSender.SendEntityStats(this);
+            }
+        }
+
+
         //HotbarSlot
         public void HotbarChange(int index, int type, int slot)
         {

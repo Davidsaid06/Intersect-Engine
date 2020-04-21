@@ -611,6 +611,10 @@ namespace Intersect.Editor.Forms.Editors.Events
                     tmpCommand = new ChangeNameColorCommand();
 
                     break;
+                case EventCommandType.ChangeStat:
+                    tmpCommand = new ChangeStatCommand();
+
+                    break;
                 case EventCommandType.PlayerLabel:
                     tmpCommand = new ChangePlayerLabelCommand();
 
@@ -1159,6 +1163,11 @@ namespace Intersect.Editor.Forms.Editors.Events
                     cmdWindow = new EventCommandChangeLevel((ChangeLevelCommand) command, this);
 
                     break;
+                case EventCommandType.ChangeStat:
+                    cmdWindow = new EventCommandChangeStat((ChangeStatCommand)command, this);
+
+                    break;
+
                 case EventCommandType.ChangeSpells:
                     cmdWindow = new EventCommandChangeSpells((ChangeSpellsCommand) command, CurrentPage, this);
 

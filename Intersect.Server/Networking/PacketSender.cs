@@ -906,7 +906,7 @@ namespace Intersect.Server.Networking
             {
                 invItems[i] = new InventoryUpdatePacket(
                     i, player.Items[i].ItemId, player.Items[i].Quantity, player.Items[i].BagId,
-                    player.Items[i].StatBuffs
+                    player.Items[i].StatBuffs, player.Items[i].MaxDurability, player.Items[i].MaxWeaponSkillsPoint, player.Items[i].currentDurability, player.Items[i].currentWeaponSkillPoint
                 );
             }
 
@@ -924,7 +924,7 @@ namespace Intersect.Server.Networking
             player.SendPacket(
                 new InventoryUpdatePacket(
                     slot, player.Items[slot].ItemId, player.Items[slot].Quantity, player.Items[slot].BagId,
-                    player.Items[slot].StatBuffs
+                    player.Items[slot].StatBuffs,  player.Items[slot].MaxDurability, player.Items[slot].MaxWeaponSkillsPoint, player.Items[slot].currentDurability, player.Items[slot].currentWeaponSkillPoint
                 )
             );
         }

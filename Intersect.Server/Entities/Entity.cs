@@ -1280,7 +1280,12 @@ namespace Intersect.Server.Entities
             var stats = new int[(int) Stats.StatCount];
             for (var i = 0; i < (int) Stats.StatCount; i++)
             {
-                stats[i] = Stat[i].Value();
+                if(i>=6 && i <= 14)
+                {
+                    stats[i] = Stat[i].ValueElement();
+                }
+                else { stats[i] = Stat[i].Value(); }
+
             }
 
             return stats;
@@ -1764,6 +1769,19 @@ namespace Intersect.Server.Entities
                 return;
             }
 
+            if (this is Player player)
+            {
+                InventorySlot weapon = null;
+                if (Options.WeaponIndex > -1 &&
+                    Options.WeaponIndex < player.Equipment.Length &&
+                    player.Equipment[Options.WeaponIndex] >= 0)
+                {
+
+                    weapon = player.Items[player.Equipment[Options.WeaponIndex]];
+
+                }
+            }
+
             //Check for enemy statuses
             var statuses = enemy.Statuses.Values.ToArray();
             foreach (var status in statuses)
@@ -1901,6 +1919,7 @@ namespace Intersect.Server.Entities
 
                             break;
                     }
+
 
                     foreach (var status in statuses)
                     {

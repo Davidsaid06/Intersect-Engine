@@ -10,6 +10,14 @@ namespace Intersect.Client.Items
 
         public int Y;
 
+        public int MaxDurability { get; private set; }
+
+        public int CurrentDurability { get; private set; }
+
+        public int MaxWeaponSkillsPoint { get; private set; }
+
+        public int CurrentWeaponSkillPoint { get; private set; }
+
         public MapItemInstance() : base()
         {
         }
@@ -17,6 +25,7 @@ namespace Intersect.Client.Items
         public MapItemInstance(string data) : base()
         {
             JsonConvert.PopulateObject(data, this);
+
         }
 
     }

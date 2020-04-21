@@ -35,9 +35,6 @@ namespace Intersect.Editor.Forms.Editors
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
             this.grpClasses = new DarkUI.Controls.DarkGroupBox();
             this.btnClearSearch = new DarkUI.Controls.DarkButton();
             this.txtSearch = new DarkUI.Controls.DarkTextBox();
@@ -107,16 +104,6 @@ namespace Intersect.Editor.Forms.Editors
             this.lblX = new System.Windows.Forms.Label();
             this.lblMap = new System.Windows.Forms.Label();
             this.pnlContainer = new System.Windows.Forms.Panel();
-            this.darkGroupBox1 = new DarkUI.Controls.DarkGroupBox();
-            this.lblDark = new System.Windows.Forms.Label();
-            this.lblWind = new System.Windows.Forms.Label();
-            this.lblThunder = new System.Windows.Forms.Label();
-            this.lblFire = new System.Windows.Forms.Label();
-            this.lblLight = new System.Windows.Forms.Label();
-            this.lblNature = new System.Windows.Forms.Label();
-            this.lblWater = new System.Windows.Forms.Label();
-            this.lblEarth = new System.Windows.Forms.Label();
-            this.lblIce = new System.Windows.Forms.Label();
             this.grpHair = new DarkUI.Controls.DarkGroupBox();
             this.lblHair = new System.Windows.Forms.Label();
             this.picHair = new System.Windows.Forms.PictureBox();
@@ -127,6 +114,16 @@ namespace Intersect.Editor.Forms.Editors
             this.BtnAddHair = new DarkUI.Controls.DarkButton();
             this.btnRemoveHair = new DarkUI.Controls.DarkButton();
             this.lstHair = new System.Windows.Forms.ListBox();
+            this.darkGroupBox1 = new DarkUI.Controls.DarkGroupBox();
+            this.lblDark = new System.Windows.Forms.Label();
+            this.lblWind = new System.Windows.Forms.Label();
+            this.lblThunder = new System.Windows.Forms.Label();
+            this.lblFire = new System.Windows.Forms.Label();
+            this.lblLight = new System.Windows.Forms.Label();
+            this.lblNature = new System.Windows.Forms.Label();
+            this.lblWater = new System.Windows.Forms.Label();
+            this.lblEarth = new System.Windows.Forms.Label();
+            this.lblIce = new System.Windows.Forms.Label();
             this.grpSpawnItems = new DarkUI.Controls.DarkGroupBox();
             this.btnSpawnItemRemove = new DarkUI.Controls.DarkButton();
             this.btnSpawnItemAdd = new DarkUI.Controls.DarkButton();
@@ -178,6 +175,10 @@ namespace Intersect.Editor.Forms.Editors
             this.lblExpIncrease = new System.Windows.Forms.Label();
             this.lblBaseExp = new System.Windows.Forms.Label();
             this.grpLevelBoosts = new DarkUI.Controls.DarkGroupBox();
+            this.nudCapacityIncrease = new DarkUI.Controls.DarkNumericUpDown();
+            this.label2 = new System.Windows.Forms.Label();
+            this.nudFaithIncrease = new DarkUI.Controls.DarkNumericUpDown();
+            this.label1 = new System.Windows.Forms.Label();
             this.nudHpIncrease = new DarkUI.Controls.DarkNumericUpDown();
             this.nudMpIncrease = new DarkUI.Controls.DarkNumericUpDown();
             this.nudPointsIncrease = new DarkUI.Controls.DarkNumericUpDown();
@@ -211,10 +212,6 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
             this.mnuExpGrid = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.btnExpPaste = new System.Windows.Forms.ToolStripMenuItem();
-            this.nudFaithIncrease = new DarkUI.Controls.DarkNumericUpDown();
-            this.label1 = new System.Windows.Forms.Label();
-            this.nudCapacityIncrease = new DarkUI.Controls.DarkNumericUpDown();
-            this.label2 = new System.Windows.Forms.Label();
             this.grpClasses.SuspendLayout();
             this.grpBaseStats.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudCapacity)).BeginInit();
@@ -269,6 +266,8 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.nudBaseExp)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudExpIncrease)).BeginInit();
             this.grpLevelBoosts.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudCapacityIncrease)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFaithIncrease)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudHpIncrease)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMpIncrease)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudPointsIncrease)).BeginInit();
@@ -279,8 +278,6 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.nudStrengthIncrease)).BeginInit();
             this.toolStrip.SuspendLayout();
             this.mnuExpGrid.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.nudFaithIncrease)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudCapacityIncrease)).BeginInit();
             this.SuspendLayout();
             // 
             // grpClasses
@@ -303,7 +300,7 @@ namespace Intersect.Editor.Forms.Editors
             // btnClearSearch
             // 
             this.btnClearSearch.Location = new System.Drawing.Point(149, 23);
-            this.btnClearSearch.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnClearSearch.Margin = new System.Windows.Forms.Padding(4);
             this.btnClearSearch.Name = "btnClearSearch";
             this.btnClearSearch.Padding = new System.Windows.Forms.Padding(7, 6, 7, 6);
             this.btnClearSearch.Size = new System.Drawing.Size(24, 25);
@@ -317,7 +314,7 @@ namespace Intersect.Editor.Forms.Editors
             this.txtSearch.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtSearch.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
             this.txtSearch.Location = new System.Drawing.Point(5, 23);
-            this.txtSearch.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.txtSearch.Margin = new System.Windows.Forms.Padding(4);
             this.txtSearch.Name = "txtSearch";
             this.txtSearch.Size = new System.Drawing.Size(135, 22);
             this.txtSearch.TabIndex = 21;
@@ -338,7 +335,7 @@ namespace Intersect.Editor.Forms.Editors
             this.lstClasses.ImageList = this.imageList;
             this.lstClasses.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
             this.lstClasses.Location = new System.Drawing.Point(5, 55);
-            this.lstClasses.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.lstClasses.Margin = new System.Windows.Forms.Padding(4);
             this.lstClasses.Name = "lstClasses";
             this.lstClasses.SelectedImageIndex = 0;
             this.lstClasses.Size = new System.Drawing.Size(168, 375);
@@ -382,7 +379,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpBaseStats.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.grpBaseStats.Name = "grpBaseStats";
             this.grpBaseStats.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this.grpBaseStats.Size = new System.Drawing.Size(244, 218);
+            this.grpBaseStats.Size = new System.Drawing.Size(244, 267);
             this.grpBaseStats.TabIndex = 17;
             this.grpBaseStats.TabStop = false;
             this.grpBaseStats.Text = "Base Stats:";
@@ -391,7 +388,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.nudCapacity.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudCapacity.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudCapacity.Location = new System.Drawing.Point(16, 190);
+            this.nudCapacity.Location = new System.Drawing.Point(16, 225);
             this.nudCapacity.Margin = new System.Windows.Forms.Padding(4);
             this.nudCapacity.Maximum = new decimal(new int[] {
             255,
@@ -411,7 +408,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblCapacity
             // 
             this.lblCapacity.AutoSize = true;
-            this.lblCapacity.Location = new System.Drawing.Point(12, 171);
+            this.lblCapacity.Location = new System.Drawing.Point(12, 206);
             this.lblCapacity.Name = "lblCapacity";
             this.lblCapacity.Size = new System.Drawing.Size(66, 17);
             this.lblCapacity.TabIndex = 38;
@@ -420,7 +417,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblFaith
             // 
             this.lblFaith.AutoSize = true;
-            this.lblFaith.Location = new System.Drawing.Point(126, 131);
+            this.lblFaith.Location = new System.Drawing.Point(126, 159);
             this.lblFaith.Name = "lblFaith";
             this.lblFaith.Size = new System.Drawing.Size(43, 17);
             this.lblFaith.TabIndex = 37;
@@ -431,7 +428,7 @@ namespace Intersect.Editor.Forms.Editors
             this.nudBaseMana.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudBaseMana.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudBaseMana.Location = new System.Drawing.Point(131, 39);
-            this.nudBaseMana.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.nudBaseMana.Margin = new System.Windows.Forms.Padding(4);
             this.nudBaseMana.Maximum = new decimal(new int[] {
             100000,
             0,
@@ -452,7 +449,7 @@ namespace Intersect.Editor.Forms.Editors
             this.nudBaseHP.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudBaseHP.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudBaseHP.Location = new System.Drawing.Point(12, 39);
-            this.nudBaseHP.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.nudBaseHP.Margin = new System.Windows.Forms.Padding(4);
             this.nudBaseHP.Maximum = new decimal(new int[] {
             100000,
             0,
@@ -477,8 +474,8 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.nudPoints.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudPoints.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudPoints.Location = new System.Drawing.Point(129, 177);
-            this.nudPoints.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.nudPoints.Location = new System.Drawing.Point(129, 225);
+            this.nudPoints.Margin = new System.Windows.Forms.Padding(4);
             this.nudPoints.Maximum = new decimal(new int[] {
             255,
             0,
@@ -499,7 +496,7 @@ namespace Intersect.Editor.Forms.Editors
             this.nudSpd.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudSpd.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudSpd.Location = new System.Drawing.Point(13, 177);
-            this.nudSpd.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.nudSpd.Margin = new System.Windows.Forms.Padding(4);
             this.nudSpd.Maximum = new decimal(new int[] {
             255,
             0,
@@ -520,7 +517,7 @@ namespace Intersect.Editor.Forms.Editors
             this.nudMR.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudMR.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudMR.Location = new System.Drawing.Point(129, 129);
-            this.nudMR.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.nudMR.Margin = new System.Windows.Forms.Padding(4);
             this.nudMR.Maximum = new decimal(new int[] {
             255,
             0,
@@ -541,7 +538,7 @@ namespace Intersect.Editor.Forms.Editors
             this.nudDef.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudDef.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudDef.Location = new System.Drawing.Point(12, 129);
-            this.nudDef.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.nudDef.Margin = new System.Windows.Forms.Padding(4);
             this.nudDef.Maximum = new decimal(new int[] {
             255,
             0,
@@ -562,7 +559,7 @@ namespace Intersect.Editor.Forms.Editors
             this.nudMag.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudMag.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudMag.Location = new System.Drawing.Point(132, 81);
-            this.nudMag.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.nudMag.Margin = new System.Windows.Forms.Padding(4);
             this.nudMag.Maximum = new decimal(new int[] {
             255,
             0,
@@ -583,7 +580,7 @@ namespace Intersect.Editor.Forms.Editors
             this.nudAttack.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudAttack.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudAttack.Location = new System.Drawing.Point(13, 81);
-            this.nudAttack.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.nudAttack.Margin = new System.Windows.Forms.Padding(4);
             this.nudAttack.Maximum = new decimal(new int[] {
             255,
             0,
@@ -602,7 +599,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblPoints
             // 
             this.lblPoints.AutoSize = true;
-            this.lblPoints.Location = new System.Drawing.Point(128, 158);
+            this.lblPoints.Location = new System.Drawing.Point(128, 206);
             this.lblPoints.Name = "lblPoints";
             this.lblPoints.Size = new System.Drawing.Size(51, 17);
             this.lblPoints.TabIndex = 18;
@@ -675,7 +672,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.nudFaith.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudFaith.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudFaith.Location = new System.Drawing.Point(129, 149);
+            this.nudFaith.Location = new System.Drawing.Point(129, 177);
             this.nudFaith.Margin = new System.Windows.Forms.Padding(4);
             this.nudFaith.Maximum = new decimal(new int[] {
             255,
@@ -904,7 +901,7 @@ namespace Intersect.Editor.Forms.Editors
             // btnAddFolder
             // 
             this.btnAddFolder.Location = new System.Drawing.Point(247, 47);
-            this.btnAddFolder.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnAddFolder.Margin = new System.Windows.Forms.Padding(4);
             this.btnAddFolder.Name = "btnAddFolder";
             this.btnAddFolder.Padding = new System.Windows.Forms.Padding(7, 6, 7, 6);
             this.btnAddFolder.Size = new System.Drawing.Size(24, 26);
@@ -937,7 +934,7 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbFolder.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbFolder.FormattingEnabled = true;
             this.cmbFolder.Location = new System.Drawing.Point(81, 47);
-            this.cmbFolder.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cmbFolder.Margin = new System.Windows.Forms.Padding(4);
             this.cmbFolder.Name = "cmbFolder";
             this.cmbFolder.Size = new System.Drawing.Size(157, 23);
             this.cmbFolder.TabIndex = 18;
@@ -949,7 +946,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.chkLocked.AutoSize = true;
             this.chkLocked.Location = new System.Drawing.Point(247, 17);
-            this.chkLocked.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.chkLocked.Margin = new System.Windows.Forms.Padding(4);
             this.chkLocked.Name = "chkLocked";
             this.chkLocked.Size = new System.Drawing.Size(76, 21);
             this.chkLocked.TabIndex = 14;
@@ -1107,7 +1104,7 @@ namespace Intersect.Editor.Forms.Editors
             this.nudLevel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudLevel.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudLevel.Location = new System.Drawing.Point(195, 71);
-            this.nudLevel.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.nudLevel.Margin = new System.Windows.Forms.Padding(4);
             this.nudLevel.Name = "nudLevel";
             this.nudLevel.Size = new System.Drawing.Size(93, 22);
             this.nudLevel.TabIndex = 27;
@@ -1133,7 +1130,7 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbSpell.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbSpell.FormattingEnabled = true;
             this.cmbSpell.Location = new System.Drawing.Point(144, 34);
-            this.cmbSpell.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cmbSpell.Margin = new System.Windows.Forms.Padding(4);
             this.cmbSpell.Name = "cmbSpell";
             this.cmbSpell.Size = new System.Drawing.Size(143, 23);
             this.cmbSpell.TabIndex = 26;
@@ -1223,7 +1220,7 @@ namespace Intersect.Editor.Forms.Editors
             this.nudY.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudY.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudY.Location = new System.Drawing.Point(239, 53);
-            this.nudY.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.nudY.Margin = new System.Windows.Forms.Padding(4);
             this.nudY.Name = "nudY";
             this.nudY.Size = new System.Drawing.Size(85, 22);
             this.nudY.TabIndex = 26;
@@ -1239,7 +1236,7 @@ namespace Intersect.Editor.Forms.Editors
             this.nudX.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudX.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudX.Location = new System.Drawing.Point(239, 21);
-            this.nudX.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.nudX.Margin = new System.Windows.Forms.Padding(4);
             this.nudX.Name = "nudX";
             this.nudX.Size = new System.Drawing.Size(85, 22);
             this.nudX.TabIndex = 25;
@@ -1383,9 +1380,9 @@ namespace Intersect.Editor.Forms.Editors
             this.grpHair.Controls.Add(this.lstHair);
             this.grpHair.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpHair.Location = new System.Drawing.Point(716, 206);
-            this.grpHair.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.grpHair.Margin = new System.Windows.Forms.Padding(4);
             this.grpHair.Name = "grpHair";
-            this.grpHair.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.grpHair.Padding = new System.Windows.Forms.Padding(4);
             this.grpHair.Size = new System.Drawing.Size(297, 218);
             this.grpHair.TabIndex = 38;
             this.grpHair.TabStop = false;
@@ -1443,9 +1440,9 @@ namespace Intersect.Editor.Forms.Editors
             this.grpGender2.Controls.Add(this.rbFemale2);
             this.grpGender2.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpGender2.Location = new System.Drawing.Point(136, 14);
-            this.grpGender2.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.grpGender2.Margin = new System.Windows.Forms.Padding(4);
             this.grpGender2.Name = "grpGender2";
-            this.grpGender2.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.grpGender2.Padding = new System.Windows.Forms.Padding(4);
             this.grpGender2.Size = new System.Drawing.Size(101, 76);
             this.grpGender2.TabIndex = 24;
             this.grpGender2.TabStop = false;
@@ -1511,6 +1508,120 @@ namespace Intersect.Editor.Forms.Editors
             this.lstHair.TabIndex = 18;
             this.lstHair.Click += new System.EventHandler(this.lstHair_Click);
             // 
+            // darkGroupBox1
+            // 
+            this.darkGroupBox1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
+            this.darkGroupBox1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.darkGroupBox1.Controls.Add(this.lblDark);
+            this.darkGroupBox1.Controls.Add(this.lblWind);
+            this.darkGroupBox1.Controls.Add(this.lblThunder);
+            this.darkGroupBox1.Controls.Add(this.lblFire);
+            this.darkGroupBox1.Controls.Add(this.lblLight);
+            this.darkGroupBox1.Controls.Add(this.lblNature);
+            this.darkGroupBox1.Controls.Add(this.lblWater);
+            this.darkGroupBox1.Controls.Add(this.lblEarth);
+            this.darkGroupBox1.Controls.Add(this.nudDark);
+            this.darkGroupBox1.Controls.Add(this.nudThunder);
+            this.darkGroupBox1.Controls.Add(this.nudLight);
+            this.darkGroupBox1.Controls.Add(this.lblIce);
+            this.darkGroupBox1.Controls.Add(this.nudNature);
+            this.darkGroupBox1.Controls.Add(this.nudFire);
+            this.darkGroupBox1.Controls.Add(this.nudWater);
+            this.darkGroupBox1.Controls.Add(this.nudIce);
+            this.darkGroupBox1.Controls.Add(this.nudWind);
+            this.darkGroupBox1.Controls.Add(this.nudEarth);
+            this.darkGroupBox1.ForeColor = System.Drawing.Color.Gainsboro;
+            this.darkGroupBox1.Location = new System.Drawing.Point(6, 476);
+            this.darkGroupBox1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.darkGroupBox1.Name = "darkGroupBox1";
+            this.darkGroupBox1.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.darkGroupBox1.Size = new System.Drawing.Size(729, 45);
+            this.darkGroupBox1.TabIndex = 40;
+            this.darkGroupBox1.TabStop = false;
+            this.darkGroupBox1.Text = "Base Stats:";
+            // 
+            // lblDark
+            // 
+            this.lblDark.AutoSize = true;
+            this.lblDark.Location = new System.Drawing.Point(643, 18);
+            this.lblDark.Name = "lblDark";
+            this.lblDark.Size = new System.Drawing.Size(34, 17);
+            this.lblDark.TabIndex = 46;
+            this.lblDark.Text = "Drk:";
+            // 
+            // lblWind
+            // 
+            this.lblWind.AutoSize = true;
+            this.lblWind.Location = new System.Drawing.Point(314, 17);
+            this.lblWind.Name = "lblWind";
+            this.lblWind.Size = new System.Drawing.Size(41, 17);
+            this.lblWind.TabIndex = 37;
+            this.lblWind.Text = "Wnd:";
+            // 
+            // lblThunder
+            // 
+            this.lblThunder.AutoSize = true;
+            this.lblThunder.Location = new System.Drawing.Point(152, 17);
+            this.lblThunder.Name = "lblThunder";
+            this.lblThunder.Size = new System.Drawing.Size(34, 17);
+            this.lblThunder.TabIndex = 15;
+            this.lblThunder.Text = "Thr:";
+            // 
+            // lblFire
+            // 
+            this.lblFire.AutoSize = true;
+            this.lblFire.Location = new System.Drawing.Point(1, 17);
+            this.lblFire.Name = "lblFire";
+            this.lblFire.Size = new System.Drawing.Size(28, 17);
+            this.lblFire.TabIndex = 14;
+            this.lblFire.Text = "Fir:";
+            // 
+            // lblLight
+            // 
+            this.lblLight.AutoSize = true;
+            this.lblLight.Location = new System.Drawing.Point(564, 17);
+            this.lblLight.Name = "lblLight";
+            this.lblLight.Size = new System.Drawing.Size(32, 17);
+            this.lblLight.TabIndex = 9;
+            this.lblLight.Text = "Lgt:";
+            // 
+            // lblNature
+            // 
+            this.lblNature.AutoSize = true;
+            this.lblNature.Location = new System.Drawing.Point(485, 17);
+            this.lblNature.Name = "lblNature";
+            this.lblNature.Size = new System.Drawing.Size(31, 17);
+            this.lblNature.TabIndex = 8;
+            this.lblNature.Text = "Ntr:";
+            // 
+            // lblWater
+            // 
+            this.lblWater.AutoSize = true;
+            this.lblWater.Location = new System.Drawing.Point(403, 17);
+            this.lblWater.Name = "lblWater";
+            this.lblWater.Size = new System.Drawing.Size(34, 17);
+            this.lblWater.TabIndex = 7;
+            this.lblWater.Text = "Wtr:";
+            this.lblWater.Click += new System.EventHandler(this.Label8_Click);
+            // 
+            // lblEarth
+            // 
+            this.lblEarth.AutoSize = true;
+            this.lblEarth.Location = new System.Drawing.Point(233, 17);
+            this.lblEarth.Name = "lblEarth";
+            this.lblEarth.Size = new System.Drawing.Size(33, 17);
+            this.lblEarth.TabIndex = 6;
+            this.lblEarth.Text = "Eth:";
+            // 
+            // lblIce
+            // 
+            this.lblIce.AutoSize = true;
+            this.lblIce.Location = new System.Drawing.Point(74, 17);
+            this.lblIce.Name = "lblIce";
+            this.lblIce.Size = new System.Drawing.Size(30, 17);
+            this.lblIce.TabIndex = 5;
+            this.lblIce.Text = "Ice:";
+            // 
             // grpSpawnItems
             // 
             this.grpSpawnItems.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
@@ -1523,10 +1634,10 @@ namespace Intersect.Editor.Forms.Editors
             this.grpSpawnItems.Controls.Add(this.lblSpawnItemAmount);
             this.grpSpawnItems.Controls.Add(this.lblSpawnItem);
             this.grpSpawnItems.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpSpawnItems.Location = new System.Drawing.Point(4, 856);
-            this.grpSpawnItems.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.grpSpawnItems.Location = new System.Drawing.Point(4, 753);
+            this.grpSpawnItems.Margin = new System.Windows.Forms.Padding(4);
             this.grpSpawnItems.Name = "grpSpawnItems";
-            this.grpSpawnItems.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.grpSpawnItems.Padding = new System.Windows.Forms.Padding(4);
             this.grpSpawnItems.Size = new System.Drawing.Size(301, 292);
             this.grpSpawnItems.TabIndex = 32;
             this.grpSpawnItems.TabStop = false;
@@ -1535,7 +1646,7 @@ namespace Intersect.Editor.Forms.Editors
             // btnSpawnItemRemove
             // 
             this.btnSpawnItemRemove.Location = new System.Drawing.Point(168, 245);
-            this.btnSpawnItemRemove.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnSpawnItemRemove.Margin = new System.Windows.Forms.Padding(4);
             this.btnSpawnItemRemove.Name = "btnSpawnItemRemove";
             this.btnSpawnItemRemove.Padding = new System.Windows.Forms.Padding(7, 6, 7, 6);
             this.btnSpawnItemRemove.Size = new System.Drawing.Size(100, 28);
@@ -1546,7 +1657,7 @@ namespace Intersect.Editor.Forms.Editors
             // btnSpawnItemAdd
             // 
             this.btnSpawnItemAdd.Location = new System.Drawing.Point(8, 245);
-            this.btnSpawnItemAdd.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.btnSpawnItemAdd.Margin = new System.Windows.Forms.Padding(4);
             this.btnSpawnItemAdd.Name = "btnSpawnItemAdd";
             this.btnSpawnItemAdd.Padding = new System.Windows.Forms.Padding(7, 6, 7, 6);
             this.btnSpawnItemAdd.Size = new System.Drawing.Size(100, 28);
@@ -1562,7 +1673,7 @@ namespace Intersect.Editor.Forms.Editors
             this.lstSpawnItems.FormattingEnabled = true;
             this.lstSpawnItems.ItemHeight = 16;
             this.lstSpawnItems.Location = new System.Drawing.Point(12, 23);
-            this.lstSpawnItems.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.lstSpawnItems.Margin = new System.Windows.Forms.Padding(4);
             this.lstSpawnItems.Name = "lstSpawnItems";
             this.lstSpawnItems.Size = new System.Drawing.Size(255, 114);
             this.lstSpawnItems.TabIndex = 62;
@@ -1573,7 +1684,7 @@ namespace Intersect.Editor.Forms.Editors
             this.nudSpawnItemAmount.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudSpawnItemAmount.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudSpawnItemAmount.Location = new System.Drawing.Point(8, 213);
-            this.nudSpawnItemAmount.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.nudSpawnItemAmount.Margin = new System.Windows.Forms.Padding(4);
             this.nudSpawnItemAmount.Maximum = new decimal(new int[] {
             10000000,
             0,
@@ -1604,7 +1715,7 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbSpawnItem.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbSpawnItem.FormattingEnabled = true;
             this.cmbSpawnItem.Location = new System.Drawing.Point(8, 161);
-            this.cmbSpawnItem.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cmbSpawnItem.Margin = new System.Windows.Forms.Padding(4);
             this.cmbSpawnItem.Name = "cmbSpawnItem";
             this.cmbSpawnItem.Size = new System.Drawing.Size(259, 23);
             this.cmbSpawnItem.TabIndex = 17;
@@ -1652,10 +1763,10 @@ namespace Intersect.Editor.Forms.Editors
             this.grpCombat.Controls.Add(this.lblAttackAnimation);
             this.grpCombat.Controls.Add(this.lblDamage);
             this.grpCombat.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpCombat.Location = new System.Drawing.Point(716, 637);
-            this.grpCombat.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.grpCombat.Location = new System.Drawing.Point(715, 542);
+            this.grpCombat.Margin = new System.Windows.Forms.Padding(4);
             this.grpCombat.Name = "grpCombat";
-            this.grpCombat.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.grpCombat.Padding = new System.Windows.Forms.Padding(4);
             this.grpCombat.Size = new System.Drawing.Size(297, 498);
             this.grpCombat.TabIndex = 30;
             this.grpCombat.TabStop = false;
@@ -1671,9 +1782,9 @@ namespace Intersect.Editor.Forms.Editors
             this.grpAttackSpeed.Controls.Add(this.lblAttackSpeedModifier);
             this.grpAttackSpeed.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpAttackSpeed.Location = new System.Drawing.Point(17, 380);
-            this.grpAttackSpeed.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.grpAttackSpeed.Margin = new System.Windows.Forms.Padding(4);
             this.grpAttackSpeed.Name = "grpAttackSpeed";
-            this.grpAttackSpeed.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.grpAttackSpeed.Padding = new System.Windows.Forms.Padding(4);
             this.grpAttackSpeed.Size = new System.Drawing.Size(256, 106);
             this.grpAttackSpeed.TabIndex = 66;
             this.grpAttackSpeed.TabStop = false;
@@ -1684,7 +1795,7 @@ namespace Intersect.Editor.Forms.Editors
             this.nudAttackSpeedValue.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudAttackSpeedValue.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudAttackSpeedValue.Location = new System.Drawing.Point(80, 71);
-            this.nudAttackSpeedValue.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.nudAttackSpeedValue.Margin = new System.Windows.Forms.Padding(4);
             this.nudAttackSpeedValue.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -1725,7 +1836,7 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbAttackSpeedModifier.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbAttackSpeedModifier.FormattingEnabled = true;
             this.cmbAttackSpeedModifier.Location = new System.Drawing.Point(80, 30);
-            this.cmbAttackSpeedModifier.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cmbAttackSpeedModifier.Margin = new System.Windows.Forms.Padding(4);
             this.cmbAttackSpeedModifier.Name = "cmbAttackSpeedModifier";
             this.cmbAttackSpeedModifier.Size = new System.Drawing.Size(151, 23);
             this.cmbAttackSpeedModifier.TabIndex = 28;
@@ -1753,7 +1864,7 @@ namespace Intersect.Editor.Forms.Editors
             0,
             65536});
             this.nudCritMultiplier.Location = new System.Drawing.Point(16, 138);
-            this.nudCritMultiplier.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.nudCritMultiplier.Margin = new System.Windows.Forms.Padding(4);
             this.nudCritMultiplier.Maximum = new decimal(new int[] {
             1000,
             0,
@@ -1784,7 +1895,7 @@ namespace Intersect.Editor.Forms.Editors
             this.nudScaling.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudScaling.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudScaling.Location = new System.Drawing.Point(17, 292);
-            this.nudScaling.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.nudScaling.Margin = new System.Windows.Forms.Padding(4);
             this.nudScaling.Name = "nudScaling";
             this.nudScaling.Size = new System.Drawing.Size(256, 22);
             this.nudScaling.TabIndex = 61;
@@ -1800,7 +1911,7 @@ namespace Intersect.Editor.Forms.Editors
             this.nudCritChance.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudCritChance.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudCritChance.Location = new System.Drawing.Point(16, 87);
-            this.nudCritChance.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.nudCritChance.Margin = new System.Windows.Forms.Padding(4);
             this.nudCritChance.Name = "nudCritChance";
             this.nudCritChance.Size = new System.Drawing.Size(256, 22);
             this.nudCritChance.TabIndex = 60;
@@ -1816,7 +1927,7 @@ namespace Intersect.Editor.Forms.Editors
             this.nudDamage.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudDamage.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudDamage.Location = new System.Drawing.Point(16, 43);
-            this.nudDamage.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.nudDamage.Margin = new System.Windows.Forms.Padding(4);
             this.nudDamage.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -1847,7 +1958,7 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbScalingStat.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbScalingStat.FormattingEnabled = true;
             this.cmbScalingStat.Location = new System.Drawing.Point(17, 239);
-            this.cmbScalingStat.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cmbScalingStat.Margin = new System.Windows.Forms.Padding(4);
             this.cmbScalingStat.Name = "cmbScalingStat";
             this.cmbScalingStat.Size = new System.Drawing.Size(253, 23);
             this.cmbScalingStat.TabIndex = 58;
@@ -1894,7 +2005,7 @@ namespace Intersect.Editor.Forms.Editors
             "Magic",
             "True"});
             this.cmbDamageType.Location = new System.Drawing.Point(17, 188);
-            this.cmbDamageType.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cmbDamageType.Margin = new System.Windows.Forms.Padding(4);
             this.cmbDamageType.Name = "cmbDamageType";
             this.cmbDamageType.Size = new System.Drawing.Size(253, 23);
             this.cmbDamageType.TabIndex = 54;
@@ -1937,7 +2048,7 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbAttackAnimation.ForeColor = System.Drawing.Color.Gainsboro;
             this.cmbAttackAnimation.FormattingEnabled = true;
             this.cmbAttackAnimation.Location = new System.Drawing.Point(16, 341);
-            this.cmbAttackAnimation.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.cmbAttackAnimation.Margin = new System.Windows.Forms.Padding(4);
             this.cmbAttackAnimation.Name = "cmbAttackAnimation";
             this.cmbAttackAnimation.Size = new System.Drawing.Size(255, 23);
             this.cmbAttackAnimation.TabIndex = 50;
@@ -1989,7 +2100,7 @@ namespace Intersect.Editor.Forms.Editors
             this.nudMpRegen.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudMpRegen.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudMpRegen.Location = new System.Drawing.Point(11, 85);
-            this.nudMpRegen.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.nudMpRegen.Margin = new System.Windows.Forms.Padding(4);
             this.nudMpRegen.Name = "nudMpRegen";
             this.nudMpRegen.Size = new System.Drawing.Size(128, 22);
             this.nudMpRegen.TabIndex = 31;
@@ -2005,7 +2116,7 @@ namespace Intersect.Editor.Forms.Editors
             this.nudHPRegen.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudHPRegen.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudHPRegen.Location = new System.Drawing.Point(11, 38);
-            this.nudHPRegen.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.nudHPRegen.Margin = new System.Windows.Forms.Padding(4);
             this.nudHPRegen.Name = "nudHPRegen";
             this.nudHPRegen.Size = new System.Drawing.Size(128, 22);
             this.nudHPRegen.TabIndex = 30;
@@ -2060,9 +2171,9 @@ namespace Intersect.Editor.Forms.Editors
             this.grpSprite.Controls.Add(this.cmbSprite);
             this.grpSprite.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpSprite.Location = new System.Drawing.Point(341, 0);
-            this.grpSprite.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.grpSprite.Margin = new System.Windows.Forms.Padding(4);
             this.grpSprite.Name = "grpSprite";
-            this.grpSprite.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.grpSprite.Padding = new System.Windows.Forms.Padding(4);
             this.grpSprite.Size = new System.Drawing.Size(672, 201);
             this.grpSprite.TabIndex = 28;
             this.grpSprite.TabStop = false;
@@ -2130,9 +2241,9 @@ namespace Intersect.Editor.Forms.Editors
             this.grpGender.Controls.Add(this.rbFemale);
             this.grpGender.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpGender.Location = new System.Drawing.Point(219, 17);
-            this.grpGender.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.grpGender.Margin = new System.Windows.Forms.Padding(4);
             this.grpGender.Name = "grpGender";
-            this.grpGender.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.grpGender.Padding = new System.Windows.Forms.Padding(4);
             this.grpGender.Size = new System.Drawing.Size(101, 92);
             this.grpGender.TabIndex = 20;
             this.grpGender.TabStop = false;
@@ -2146,7 +2257,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpExpGrid.Controls.Add(this.btnCloseExpGrid);
             this.grpExpGrid.Controls.Add(this.expGrid);
             this.grpExpGrid.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpExpGrid.Location = new System.Drawing.Point(3, 641);
+            this.grpExpGrid.Location = new System.Drawing.Point(1, 532);
             this.grpExpGrid.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.grpExpGrid.Name = "grpExpGrid";
             this.grpExpGrid.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -2185,8 +2296,6 @@ namespace Intersect.Editor.Forms.Editors
             this.expGrid.AllowUserToResizeRows = false;
             dataGridViewCellStyle1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(53)))), ((int)(((byte)(55)))));
             this.expGrid.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
-            dataGridViewCellStyle4.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(50)))), ((int)(((byte)(53)))), ((int)(((byte)(55)))));
-            this.expGrid.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle4;
             this.expGrid.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.expGrid.BackgroundColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.expGrid.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
@@ -2200,25 +2309,17 @@ namespace Intersect.Editor.Forms.Editors
             dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.expGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
-            dataGridViewCellStyle5.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle5.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
-            dataGridViewCellStyle5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle5.ForeColor = System.Drawing.Color.Gainsboro;
-            dataGridViewCellStyle5.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle5.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle5.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.expGrid.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle5;
             this.expGrid.ColumnHeadersHeight = 24;
             this.expGrid.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.expGrid.EnableHeadersVisualStyles = false;
             this.expGrid.Location = new System.Drawing.Point(9, 22);
-            this.expGrid.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.expGrid.Margin = new System.Windows.Forms.Padding(4);
             this.expGrid.MultiSelect = false;
             this.expGrid.Name = "expGrid";
             this.expGrid.RowHeadersVisible = false;
             this.expGrid.RowHeadersWidth = 51;
-            dataGridViewCellStyle6.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
-            this.expGrid.RowsDefaultCellStyle = dataGridViewCellStyle6;
+            dataGridViewCellStyle3.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(63)))), ((int)(((byte)(65)))));
+            this.expGrid.RowsDefaultCellStyle = dataGridViewCellStyle3;
             this.expGrid.Size = new System.Drawing.Size(687, 154);
             this.expGrid.TabIndex = 0;
             this.expGrid.CellEndEdit += new System.Windows.Forms.DataGridViewCellEventHandler(this.expGrid_CellEndEdit);
@@ -2238,7 +2339,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpLeveling.Controls.Add(this.lblBaseExp);
             this.grpLeveling.Controls.Add(this.grpLevelBoosts);
             this.grpLeveling.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpLeveling.Location = new System.Drawing.Point(3, 641);
+            this.grpLeveling.Location = new System.Drawing.Point(1, 531);
             this.grpLeveling.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.grpLeveling.Name = "grpLeveling";
             this.grpLeveling.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -2263,7 +2364,7 @@ namespace Intersect.Editor.Forms.Editors
             this.nudBaseExp.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudBaseExp.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudBaseExp.Location = new System.Drawing.Point(9, 38);
-            this.nudBaseExp.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.nudBaseExp.Margin = new System.Windows.Forms.Padding(4);
             this.nudBaseExp.Maximum = new decimal(new int[] {
             100000,
             0,
@@ -2289,7 +2390,7 @@ namespace Intersect.Editor.Forms.Editors
             this.nudExpIncrease.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudExpIncrease.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudExpIncrease.Location = new System.Drawing.Point(153, 38);
-            this.nudExpIncrease.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.nudExpIncrease.Margin = new System.Windows.Forms.Padding(4);
             this.nudExpIncrease.Name = "nudExpIncrease";
             this.nudExpIncrease.Size = new System.Drawing.Size(163, 22);
             this.nudExpIncrease.TabIndex = 31;
@@ -2348,20 +2449,80 @@ namespace Intersect.Editor.Forms.Editors
             this.grpLevelBoosts.Controls.Add(this.lblMagicIncrease);
             this.grpLevelBoosts.ForeColor = System.Drawing.Color.Gainsboro;
             this.grpLevelBoosts.Location = new System.Drawing.Point(12, 65);
-            this.grpLevelBoosts.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.grpLevelBoosts.Margin = new System.Windows.Forms.Padding(4);
             this.grpLevelBoosts.Name = "grpLevelBoosts";
-            this.grpLevelBoosts.Padding = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.grpLevelBoosts.Padding = new System.Windows.Forms.Padding(4);
             this.grpLevelBoosts.Size = new System.Drawing.Size(572, 143);
             this.grpLevelBoosts.TabIndex = 23;
             this.grpLevelBoosts.TabStop = false;
             this.grpLevelBoosts.Text = "Level Up Boosts";
+            // 
+            // nudCapacityIncrease
+            // 
+            this.nudCapacityIncrease.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudCapacityIncrease.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudCapacityIncrease.Location = new System.Drawing.Point(440, 58);
+            this.nudCapacityIncrease.Margin = new System.Windows.Forms.Padding(4);
+            this.nudCapacityIncrease.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.nudCapacityIncrease.Name = "nudCapacityIncrease";
+            this.nudCapacityIncrease.Size = new System.Drawing.Size(93, 22);
+            this.nudCapacityIncrease.TabIndex = 40;
+            this.nudCapacityIncrease.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudCapacityIncrease.ValueChanged += new System.EventHandler(this.nudCapacityIncrease_ValueChanged);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(436, 38);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(66, 17);
+            this.label2.TabIndex = 39;
+            this.label2.Text = "Capacity:";
+            // 
+            // nudFaithIncrease
+            // 
+            this.nudFaithIncrease.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nudFaithIncrease.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nudFaithIncrease.Location = new System.Drawing.Point(331, 111);
+            this.nudFaithIncrease.Margin = new System.Windows.Forms.Padding(4);
+            this.nudFaithIncrease.Maximum = new decimal(new int[] {
+            255,
+            0,
+            0,
+            0});
+            this.nudFaithIncrease.Name = "nudFaithIncrease";
+            this.nudFaithIncrease.Size = new System.Drawing.Size(93, 22);
+            this.nudFaithIncrease.TabIndex = 38;
+            this.nudFaithIncrease.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nudFaithIncrease.ValueChanged += new System.EventHandler(this.nudFaithIncrease_ValueChanged);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(327, 95);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(43, 17);
+            this.label1.TabIndex = 37;
+            this.label1.Text = "Faith:";
             // 
             // nudHpIncrease
             // 
             this.nudHpIncrease.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudHpIncrease.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudHpIncrease.Location = new System.Drawing.Point(15, 58);
-            this.nudHpIncrease.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.nudHpIncrease.Margin = new System.Windows.Forms.Padding(4);
             this.nudHpIncrease.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -2382,7 +2543,7 @@ namespace Intersect.Editor.Forms.Editors
             this.nudMpIncrease.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudMpIncrease.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudMpIncrease.Location = new System.Drawing.Point(148, 58);
-            this.nudMpIncrease.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.nudMpIncrease.Margin = new System.Windows.Forms.Padding(4);
             this.nudMpIncrease.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -2403,7 +2564,7 @@ namespace Intersect.Editor.Forms.Editors
             this.nudPointsIncrease.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudPointsIncrease.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudPointsIncrease.Location = new System.Drawing.Point(415, 111);
-            this.nudPointsIncrease.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.nudPointsIncrease.Margin = new System.Windows.Forms.Padding(4);
             this.nudPointsIncrease.Maximum = new decimal(new int[] {
             255,
             0,
@@ -2424,7 +2585,7 @@ namespace Intersect.Editor.Forms.Editors
             this.nudMagicResistIncrease.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudMagicResistIncrease.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudMagicResistIncrease.Location = new System.Drawing.Point(415, 58);
-            this.nudMagicResistIncrease.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.nudMagicResistIncrease.Margin = new System.Windows.Forms.Padding(4);
             this.nudMagicResistIncrease.Maximum = new decimal(new int[] {
             255,
             0,
@@ -2445,7 +2606,7 @@ namespace Intersect.Editor.Forms.Editors
             this.nudSpeedIncrease.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudSpeedIncrease.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudSpeedIncrease.Location = new System.Drawing.Point(281, 111);
-            this.nudSpeedIncrease.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.nudSpeedIncrease.Margin = new System.Windows.Forms.Padding(4);
             this.nudSpeedIncrease.Maximum = new decimal(new int[] {
             255,
             0,
@@ -2466,7 +2627,7 @@ namespace Intersect.Editor.Forms.Editors
             this.nudMagicIncrease.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudMagicIncrease.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudMagicIncrease.Location = new System.Drawing.Point(148, 111);
-            this.nudMagicIncrease.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.nudMagicIncrease.Margin = new System.Windows.Forms.Padding(4);
             this.nudMagicIncrease.Maximum = new decimal(new int[] {
             255,
             0,
@@ -2487,7 +2648,7 @@ namespace Intersect.Editor.Forms.Editors
             this.nudArmorIncrease.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudArmorIncrease.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudArmorIncrease.Location = new System.Drawing.Point(281, 58);
-            this.nudArmorIncrease.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.nudArmorIncrease.Margin = new System.Windows.Forms.Padding(4);
             this.nudArmorIncrease.Maximum = new decimal(new int[] {
             255,
             0,
@@ -2508,7 +2669,7 @@ namespace Intersect.Editor.Forms.Editors
             this.nudStrengthIncrease.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nudStrengthIncrease.ForeColor = System.Drawing.Color.Gainsboro;
             this.nudStrengthIncrease.Location = new System.Drawing.Point(15, 111);
-            this.nudStrengthIncrease.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.nudStrengthIncrease.Margin = new System.Windows.Forms.Padding(4);
             this.nudStrengthIncrease.Maximum = new decimal(new int[] {
             255,
             0,
@@ -2528,7 +2689,7 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.rdoPercentageIncrease.AutoSize = true;
             this.rdoPercentageIncrease.Location = new System.Drawing.Point(88, 18);
-            this.rdoPercentageIncrease.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.rdoPercentageIncrease.Margin = new System.Windows.Forms.Padding(4);
             this.rdoPercentageIncrease.Name = "rdoPercentageIncrease";
             this.rdoPercentageIncrease.Size = new System.Drawing.Size(102, 21);
             this.rdoPercentageIncrease.TabIndex = 1;
@@ -2540,7 +2701,7 @@ namespace Intersect.Editor.Forms.Editors
             this.rdoStaticIncrease.AutoSize = true;
             this.rdoStaticIncrease.Checked = true;
             this.rdoStaticIncrease.Location = new System.Drawing.Point(9, 18);
-            this.rdoStaticIncrease.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.rdoStaticIncrease.Margin = new System.Windows.Forms.Padding(4);
             this.rdoStaticIncrease.Name = "rdoStaticIncrease";
             this.rdoStaticIncrease.Size = new System.Drawing.Size(64, 21);
             this.rdoStaticIncrease.TabIndex = 0;
@@ -2784,66 +2945,6 @@ namespace Intersect.Editor.Forms.Editors
             this.btnExpPaste.Text = "Paste";
             this.btnExpPaste.Click += new System.EventHandler(this.btnPaste_Click);
             // 
-            // nudFaithIncrease
-            // 
-            this.nudFaithIncrease.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudFaithIncrease.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudFaithIncrease.Location = new System.Drawing.Point(331, 111);
-            this.nudFaithIncrease.Margin = new System.Windows.Forms.Padding(4);
-            this.nudFaithIncrease.Maximum = new decimal(new int[] {
-            255,
-            0,
-            0,
-            0});
-            this.nudFaithIncrease.Name = "nudFaithIncrease";
-            this.nudFaithIncrease.Size = new System.Drawing.Size(93, 22);
-            this.nudFaithIncrease.TabIndex = 38;
-            this.nudFaithIncrease.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.nudFaithIncrease.ValueChanged += new System.EventHandler(this.nudFaithIncrease_ValueChanged);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(327, 95);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(43, 17);
-            this.label1.TabIndex = 37;
-            this.label1.Text = "Faith:";
-            // 
-            // nudCapacityIncrease
-            // 
-            this.nudCapacityIncrease.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
-            this.nudCapacityIncrease.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nudCapacityIncrease.Location = new System.Drawing.Point(440, 58);
-            this.nudCapacityIncrease.Margin = new System.Windows.Forms.Padding(4);
-            this.nudCapacityIncrease.Maximum = new decimal(new int[] {
-            255,
-            0,
-            0,
-            0});
-            this.nudCapacityIncrease.Name = "nudCapacityIncrease";
-            this.nudCapacityIncrease.Size = new System.Drawing.Size(93, 22);
-            this.nudCapacityIncrease.TabIndex = 40;
-            this.nudCapacityIncrease.Value = new decimal(new int[] {
-            0,
-            0,
-            0,
-            0});
-            this.nudCapacityIncrease.ValueChanged += new System.EventHandler(this.nudCapacityIncrease_ValueChanged);
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(436, 38);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(66, 17);
-            this.label2.TabIndex = 39;
-            this.label2.Text = "Capacity:";
-            // 
             // FrmClass
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -2937,6 +3038,8 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.nudExpIncrease)).EndInit();
             this.grpLevelBoosts.ResumeLayout(false);
             this.grpLevelBoosts.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudCapacityIncrease)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFaithIncrease)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudHpIncrease)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMpIncrease)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudPointsIncrease)).EndInit();
@@ -2948,8 +3051,6 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStrip.ResumeLayout(false);
             this.toolStrip.PerformLayout();
             this.mnuExpGrid.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.nudFaithIncrease)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.nudCapacityIncrease)).EndInit();
             this.ResumeLayout(false);
 
         }

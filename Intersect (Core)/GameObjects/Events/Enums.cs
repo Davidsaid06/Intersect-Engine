@@ -226,6 +226,9 @@
         //Change Hair
         ChangeHair,
 
+        //Change Stat
+        ChangeStat,
+
     }
 
 }

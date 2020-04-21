@@ -239,6 +239,8 @@ namespace Intersect.Server.Maps
 
             if (itemBase.ItemType == ItemTypes.Equipment)
             {
+
+
                 mapItem.Quantity = 1;
                 if (mapItem.StatBuffs != null && item.StatBuffs != null)
                 {

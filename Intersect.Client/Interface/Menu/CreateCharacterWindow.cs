@@ -85,6 +85,34 @@ namespace Intersect.Client.Interface.Menu
         private Button mPrevHairButton;
 
 
+        //Color Buttons
+
+        private Button mHairColorWhite;
+
+        private Button mHairColorBlack;
+
+        private Button mHairColorRed;
+
+        private Button mHairColorBlue;
+
+        private Button mHairColorGreen;
+
+        private Button mHairColorYellow;
+
+        private Button mHairColorPink;
+
+        private Button mHairColorPurple;
+
+        private Button mHairColorLBrown;
+
+        private Button mHairColorDBrown;
+
+
+
+        private int mSelectedHairColor=1;
+
+        private int mSelectedHairStyle = 0;
+
         private SelectCharacterWindow mSelectCharacterWindow;
 
         //Init
@@ -165,6 +193,39 @@ namespace Intersect.Client.Interface.Menu
             //Prev Hair Button
             mPrevHairButton = new Button(mCharacterContainer, "PreviousHairButton");
             mPrevHairButton.Clicked += _prevHairButton_Clicked;
+
+            //Color buttons
+
+            mHairColorWhite = new Button(mCharacterContainer, "HairColorWhite");
+            mHairColorWhite.Clicked += _HairColorWhite_Clicked;
+
+            mHairColorBlack = new Button(mCharacterContainer, "HairColorBlack");
+            mHairColorBlack.Clicked += _HairColorBlack_Clicked;
+
+            mHairColorRed = new Button(mCharacterContainer, "HairColorRed");
+            mHairColorRed.Clicked += _HairColorRed_Clicked;
+
+            mHairColorGreen = new Button(mCharacterContainer, "HairColorGreen");
+            mHairColorGreen.Clicked += _HairColorGreen_Clicked;
+
+            mHairColorBlue = new Button(mCharacterContainer, "HairColorBlue");
+            mHairColorBlue.Clicked += _HairColorBlue_Clicked;
+
+            mHairColorYellow = new Button(mCharacterContainer, "HairColorYellow");
+            mHairColorYellow.Clicked += _HairColorYellow_Clicked;
+
+            mHairColorPink = new Button(mCharacterContainer, "HairColorPink");
+            mHairColorPink.Clicked += _HairColorPink_Clicked;
+
+            mHairColorPurple = new Button(mCharacterContainer, "HairColorPurple");
+            mHairColorPurple.Clicked += _HairColorPurple_Clicked;
+
+            mHairColorLBrown = new Button(mCharacterContainer, "HairColorLBrown");
+            mHairColorLBrown.Clicked += _HairColorLBrown_Clicked;
+
+            mHairColorDBrown = new Button(mCharacterContainer, "HairColorDBrown");
+            mHairColorDBrown.Clicked += _HairColorDBrown_Clicked;
+
 
             //Class Background
             mGenderBackground = new ImagePanel(mCharCreationPanel, "GenderPanel");
@@ -448,6 +509,17 @@ namespace Intersect.Client.Interface.Menu
             mPrevSpriteButton.IsHidden = true;
             mNextHairButton.IsHidden = true;
             mPrevHairButton.IsHidden = true;
+            mHairColorBlack.IsHidden = true;
+            mHairColorBlue.IsHidden = true;
+            mHairColorDBrown.IsHidden = true;
+            mHairColorGreen.IsHidden = true;
+            mHairColorLBrown.IsHidden = true;
+            mHairColorPink.IsHidden = true;
+            mHairColorPurple.IsHidden = true;
+            mHairColorRed.IsHidden = true;
+            mHairColorWhite.IsHidden = true;
+            mHairColorYellow.IsHidden = true;
+
             if (mMaleChk.IsChecked)
             {
                 // Sprite
@@ -473,6 +545,16 @@ namespace Intersect.Client.Interface.Menu
                     {
                         mNextHairButton.IsHidden = false;
                         mPrevHairButton.IsHidden = false;
+                        mHairColorBlack.IsHidden = false;
+                        mHairColorBlue.IsHidden = false;
+                        mHairColorDBrown.IsHidden = false;
+                        mHairColorGreen.IsHidden = false;
+                        mHairColorLBrown.IsHidden = false;
+                        mHairColorPink.IsHidden = false;
+                        mHairColorPurple.IsHidden = false;
+                        mHairColorRed.IsHidden = false;
+                        mHairColorWhite.IsHidden = false;
+                        mHairColorYellow.IsHidden = false;
                     }
                 } 
                 else 
@@ -504,6 +586,16 @@ namespace Intersect.Client.Interface.Menu
                     {
                         mNextHairButton.IsHidden = false;
                         mPrevHairButton.IsHidden = false;
+                        mHairColorBlack.IsHidden = false;
+                        mHairColorBlue.IsHidden = false;
+                        mHairColorDBrown.IsHidden = false;
+                        mHairColorGreen.IsHidden = false;
+                        mHairColorLBrown.IsHidden = false;
+                        mHairColorPink.IsHidden = false;
+                        mHairColorPurple.IsHidden = false;
+                        mHairColorRed.IsHidden = false;
+                        mHairColorWhite.IsHidden = false;
+                        mHairColorYellow.IsHidden = false;
                     }
                 } 
                 else 
@@ -585,15 +677,29 @@ namespace Intersect.Client.Interface.Menu
 
         private void _prevHairButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
-            mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair]--;
+            if (mSelectedHairStyle == 0)
+            {
+                mSelectedHairStyle = 15;
+            }
+            else
+            {
+                mSelectedHairStyle--;
+            }
+
+            if(mSelectedHairStyle==0)
+            {
+                mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] = 0;
+            }
+            else
+            {
+                mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] = (mSelectedHairStyle + ((mSelectedHairColor - 1) * 15));
+            }
+
             if (mMaleChk.IsChecked)
             {
                 if (mMaleCustomSpriteLayers[Enums.CustomSpriteLayers.Hair].Count > 0)
                 {
-                    if (mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] == -1)
-                    {
-                        mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] = mMaleCustomSpriteLayers[Enums.CustomSpriteLayers.Hair].Count - 1;
-                    }
+
                 }
                 else
                 {
@@ -604,10 +710,7 @@ namespace Intersect.Client.Interface.Menu
             {
                 if (mFemaleCustomSpriteLayers[Enums.CustomSpriteLayers.Hair].Count > 0)
                 {
-                    if (mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] == -1)
-                    {
-                        mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] = mFemaleCustomSpriteLayers[Enums.CustomSpriteLayers.Hair].Count - 1;
-                    }
+
                 }
                 else
                 {
@@ -619,15 +722,32 @@ namespace Intersect.Client.Interface.Menu
         }
 
         private void _nextHairButton_Clicked(Base sender, ClickedEventArgs arguments) {
-            mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair]++;
+            if (mSelectedHairStyle == 15)
+            {
+                mSelectedHairStyle = 0;
+            }
+            else
+            {
+                mSelectedHairStyle++;
+            }
+
+            if (mSelectedHairStyle == 0)
+            {
+                mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] = 0;
+            }
+            else
+            {
+                mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] = (mSelectedHairStyle + ((mSelectedHairColor - 1) * 15));
+            }
+
+
+
+
             if (mMaleChk.IsChecked)
             {
                 if (mMaleCustomSpriteLayers[Enums.CustomSpriteLayers.Hair].Count > 0)
                 {
-                    if (mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] >= mMaleCustomSpriteLayers[Enums.CustomSpriteLayers.Hair].Count)
-                    {
-                        mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] = 0;
-                    }
+
                 }
                 else
                 {
@@ -638,10 +758,7 @@ namespace Intersect.Client.Interface.Menu
             {
                 if (mFemaleCustomSpriteLayers[Enums.CustomSpriteLayers.Hair].Count > 0)
                 {
-                    if (mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] >= mFemaleCustomSpriteLayers[Enums.CustomSpriteLayers.Hair].Count)
-                    {
-                        mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] = 0;
-                    }
+
                 }
                 else
                 {
@@ -651,6 +768,157 @@ namespace Intersect.Client.Interface.Menu
 
             UpdateDisplay();
         }
+
+        private void _HairColorWhite_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+
+            mSelectedHairColor = 1;
+
+            mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] = (mSelectedHairStyle + ((mSelectedHairColor - 1) * 15));
+
+            if (mSelectedHairStyle == 0)
+            {
+                mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] = 0;
+            }
+
+            UpdateDisplay();
+        }
+
+        private void _HairColorBlack_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+
+            mSelectedHairColor = 2;
+
+            mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] = (mSelectedHairStyle + ((mSelectedHairColor - 1) * 15)) ;
+
+            if (mSelectedHairStyle == 0)
+            {
+                mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] = 0;
+            }
+
+            UpdateDisplay();
+        }
+
+        private void _HairColorRed_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+
+            mSelectedHairColor = 5;
+
+            mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] = (mSelectedHairStyle + ((mSelectedHairColor - 1) * 15));
+
+            if (mSelectedHairStyle == 0)
+            {
+                mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] = 0;
+            }
+
+            UpdateDisplay();
+        }
+
+        private void _HairColorGreen_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+
+            mSelectedHairColor = 4;
+
+            mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] = (mSelectedHairStyle + ((mSelectedHairColor - 1) * 15));
+
+            if (mSelectedHairStyle == 0)
+            {
+                mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] = 0;
+            }
+
+            UpdateDisplay();
+        }
+
+        private void _HairColorBlue_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+
+            mSelectedHairColor = 3;
+
+            mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] = (mSelectedHairStyle + ((mSelectedHairColor - 1) * 15)) ;
+
+            if (mSelectedHairStyle == 0)
+            {
+                mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] = 0;
+            }
+
+            UpdateDisplay();
+        }
+
+        private void _HairColorYellow_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+
+            mSelectedHairColor = 6;
+
+            mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] = (mSelectedHairStyle + ((mSelectedHairColor - 1) * 15)) ;
+
+            if (mSelectedHairStyle == 0)
+            {
+                mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] = 0;
+            }
+
+            UpdateDisplay();
+        }
+
+        private void _HairColorPink_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+
+            mSelectedHairColor = 7;
+
+            mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] = (mSelectedHairStyle + ((mSelectedHairColor - 1) * 15)) ;
+
+            if (mSelectedHairStyle == 0)
+            {
+                mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] = 0;
+            }
+
+            UpdateDisplay();
+        }
+
+        private void _HairColorPurple_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+
+            mSelectedHairColor = 8;
+
+            mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] = (mSelectedHairStyle + ((mSelectedHairColor - 1) * 15)) ;
+
+            if (mSelectedHairStyle == 0)
+            {
+                mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] = 0;
+            }
+
+            UpdateDisplay();
+        }
+
+        private void _HairColorLBrown_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+
+            mSelectedHairColor = 9;
+
+            mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] = (mSelectedHairStyle + ((mSelectedHairColor - 1) * 15)) ;
+
+            if (mSelectedHairStyle == 0)
+            {
+                mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] = 0;
+            }
+
+            UpdateDisplay();
+        }
+
+        private void _HairColorDBrown_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+
+            mSelectedHairColor = 10;
+
+            mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] = (mSelectedHairStyle + ((mSelectedHairColor - 1) * 15));
+
+            if (mSelectedHairStyle == 0)
+            {
+                mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] = 0;
+            }
+
+            UpdateDisplay();
+        }
+
 
         void TryCreateCharacter(int gender)
         {

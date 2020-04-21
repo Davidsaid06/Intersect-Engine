@@ -592,6 +592,11 @@ namespace Intersect.Editor.Forms.Editors.Events
             return Strings.EventCommandList.setlevel.ToString(command.Level);
         }
 
+        private static string GetCommandText(ChangeStatCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.setstat.ToString(command.Amount);
+        }
+
         private static string GetCommandText(ChangeSpellsCommand command, MapInstance map)
         {
             if (command.Add)

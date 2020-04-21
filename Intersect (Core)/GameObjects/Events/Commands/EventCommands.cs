@@ -835,4 +835,15 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
+    public class ChangeStatCommand : EventCommand
+    {
+
+        public override EventCommandType Type { get; } = EventCommandType.ChangeStat;
+
+        public int Amount { get; set; }
+
+        public int Index { get; set; }
+
+    }
+
 }

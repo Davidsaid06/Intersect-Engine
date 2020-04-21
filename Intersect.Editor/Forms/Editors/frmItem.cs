@@ -141,7 +141,9 @@ namespace Intersect.Editor.Forms.Editors
             nudNature.Maximum = Options.MaxStatValue;
             nudLight.Maximum = Options.MaxStatValue;
             nudDark.Maximum = Options.MaxStatValue;
-            nudCapacity.Maximum = Options.MaxStatValue;
+            nudCapacity.Maximum = 10000;
+            nudDurability.Maximum = 10000;
+            nudWeaponSkillPoints.Maximum = 10000;
 
             nudStr.Minimum = -Options.MaxStatValue;
             nudMag.Minimum = -Options.MaxStatValue;
@@ -158,7 +160,10 @@ namespace Intersect.Editor.Forms.Editors
             nudNature.Minimum = -Options.MaxStatValue;
             nudLight.Minimum = -Options.MaxStatValue;
             nudDark.Minimum = -Options.MaxStatValue;
-            nudCapacity.Minimum = -Options.MaxStatValue;
+            nudCapacity.Minimum = -10000;
+            nudDurability.Minimum = -10000;
+            nudWeaponSkillPoints.Minimum = -10000;
+
 
             InitLocalization();
             UpdateEditor();
@@ -317,6 +322,8 @@ namespace Intersect.Editor.Forms.Editors
                 nudLight.Value = mEditorItem.StatsGiven[13];
                 nudDark.Value = mEditorItem.StatsGiven[14];
                 nudCapacity.Value = mEditorItem.StatsGiven[15];
+                nudDurability.Value = mEditorItem.Durability;
+                nudWeaponSkillPoints.Value = mEditorItem.WeaponSkill;
 
 
 
@@ -834,6 +841,16 @@ namespace Intersect.Editor.Forms.Editors
         private void nudCapacity_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.StatsGiven[15] = (int)nudCapacity.Value;
+        }
+
+        private void nudDurability_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Durability = (int)nudDurability.Value;
+        }
+
+        private void nudWeaponSkillPoints_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.WeaponSkill = (int)nudWeaponSkillPoints.Value;
         }
 
         private void nudStrPercentage_ValueChanged(object sender, EventArgs e)

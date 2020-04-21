@@ -1588,7 +1588,18 @@ namespace Intersect.Client.Entities
 
                     if (IsMoving)
                     {
-                        MoveTimer = Globals.System.GetTimeMs() + GetMovementTime();
+
+                        var cls = ClassBase.Get(Class);
+
+
+                        var maxCap = cls.BaseStat[(int) Stats.Capacity] * Level;
+                        var currentCap = Stat[(int)Stats.Capacity];
+
+                        var capSpeedBonus = (currentCap - (maxCap / 2)) * ((50 / (float)(maxCap / 2)));
+
+                        float speed = GetMovementTime();
+                        speed = speed - (speed * (capSpeedBonus/100));
+                        MoveTimer = Globals.System.GetTimeMs() + speed;
                         didMove = true;
                         if (tmpX < 0 || tmpY < 0 || tmpX > Options.MapWidth - 1 || tmpY > Options.MapHeight - 1)
                         {
@@ -2087,22 +2098,39 @@ namespace Intersect.Client.Entities
                 destRectangle.X -= texture.GetWidth() / 8;
                 switch (Dir)
                 {
-                    case 0:
+                    case 0: // Up
                         d = 3;
 
                         break;
-                    case 1:
+                    case 1: // Down
                         d = 0;
 
                         break;
-                    case 2:
+                    case 2: // Left
                         d = 1;
 
                         break;
-                    case 3:
+                    case 3: // Right
                         d = 2;
 
                         break;
+                    case 4: // UpLeft
+                        d = 1;
+
+                        break;
+                    case 5: // UpRight
+                        d = 2;
+
+                        break;
+                    case 6: // DownLeft
+                        d = 1;
+
+                        break;
+                    case 7: // DownRight
+                        d = 2;
+
+                        break;
+
                     default:
                         Dir = 0;
                         d = 3;
