@@ -480,6 +480,18 @@
     <Compile Include="Entities\Pathfinding\SpatialAStar.cs" />
     <Compile Include="Entities\Pathfinding\PathfinderTarget.cs" />
     <Compile Include="Entities\Pathfinding\PriorityQueue.cs" />
+    <Compile Include="Migrations\20200413042444_playerDurability.cs" />
+    <Compile Include="Migrations\20200413042444_playerDurability.designer.cs">
+      <DependentUpon>20200413042444_playerDurability.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\20200415054339_AddingWeaponSkills.cs" />
+    <Compile Include="Migrations\20200415054339_AddingWeaponSkills.designer.cs">
+      <DependentUpon>20200415054339_AddingWeaponSkills.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\20200417054313_ItemDurabilityV2.cs" />
+    <Compile Include="Migrations\20200417054313_ItemDurabilityV2.designer.cs">
+      <DependentUpon>20200417054313_ItemDurabilityV2.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Game\20200404164233_ExtendedCraftingNew.cs" />
     <Compile Include="Migrations\Game\20200404164233_ExtendedCraftingNew.designer.cs">
       <DependentUpon>20200404164233_ExtendedCraftingNew.cs</DependentUpon>
@@ -487,6 +499,30 @@
     <Compile Include="Migrations\Game\20200404174804_CraftRequirementsv2.cs" />
     <Compile Include="Migrations\Game\20200404174804_CraftRequirementsv2.designer.cs">
       <DependentUpon>20200404174804_CraftRequirementsv2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\20200402173703_PlayerHair_PlayerEdits.cs" />
+    <Compile Include="Migrations\20200402173703_PlayerHair_PlayerEdits.designer.cs">
+      <DependentUpon>20200402173703_PlayerHair_PlayerEdits.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Game\20200402142818_PlayerHair_ClassEdits.cs" />
+    <Compile Include="Migrations\Game\20200402142818_PlayerHair_ClassEdits.designer.cs">
+      <DependentUpon>20200402142818_PlayerHair_ClassEdits.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Game\20200413042510_playerDurability.cs" />
+    <Compile Include="Migrations\Game\20200413042510_playerDurability.designer.cs">
+      <DependentUpon>20200413042510_playerDurability.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Game\20200415054311_AddingWeaponSkills.cs" />
+    <Compile Include="Migrations\Game\20200415054311_AddingWeaponSkills.designer.cs">
+      <DependentUpon>20200415054311_AddingWeaponSkills.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Game\20200417054337_ItemDurabilityV2.cs" />
+    <Compile Include="Migrations\Game\20200417054337_ItemDurabilityV2.designer.cs">
+      <DependentUpon>20200417054337_ItemDurabilityV2.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Game\20200419075704_ItemDurabilityV3.cs" />
+    <Compile Include="Migrations\Game\20200419075704_ItemDurabilityV3.designer.cs">
+      <DependentUpon>20200419075704_ItemDurabilityV3.cs</DependentUpon>
     </Compile>
     <Compile Include="Networking\Client.cs" />
     <Compile Include="Entities\Npc.cs" />

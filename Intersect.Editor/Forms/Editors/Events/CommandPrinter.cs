@@ -592,6 +592,11 @@ namespace Intersect.Editor.Forms.Editors.Events
             return Strings.EventCommandList.setlevel.ToString(command.Level);
         }
 
+        private static string GetCommandText(ChangeStatCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.setstat.ToString(command.Amount);
+        }
+
         private static string GetCommandText(ChangeSpellsCommand command, MapInstance map)
         {
             if (command.Add)
@@ -633,6 +638,11 @@ namespace Intersect.Editor.Forms.Editors.Events
         private static string GetCommandText(ChangeFaceCommand command, MapInstance map)
         {
             return Strings.EventCommandList.setface.ToString(command.Face);
+        }
+
+        private static string GetCommandText(ChangeHairCommand command, MapInstance map)
+        {
+            return Strings.EventCommandList.sethair.ToString(command.Hair);
         }
 
         private static string GetCommandText(ChangeNameColorCommand command, MapInstance map)

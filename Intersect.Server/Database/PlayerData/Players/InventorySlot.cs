@@ -16,10 +16,14 @@ namespace Intersect.Server.Database.PlayerData.Players
 
         public InventorySlot()
         {
+            MaxDurability = Durability;
+            currentDurability = MaxDurability;
         }
 
         public InventorySlot(int slot)
         {
+            MaxDurability = Durability;
+            currentDurability = MaxDurability;
             Slot = slot;
         }
 
@@ -33,6 +37,15 @@ namespace Intersect.Server.Database.PlayerData.Players
         public virtual Player Player { get; private set; }
 
         public int Slot { get; private set; }
+
+        public int MaxDurability { get; private set; }
+
+        public int currentDurability { get; private set; }
+
+        public int MaxWeaponSkillsPoint { get; private set; }
+
+        public int currentWeaponSkillPoint { get; private set; }
+
 
     }
 

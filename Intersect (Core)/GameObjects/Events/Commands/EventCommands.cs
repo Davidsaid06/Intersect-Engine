@@ -518,6 +518,15 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
+    public class ChangeHairCommand : EventCommand
+    {
+
+        public override EventCommandType Type { get; } = EventCommandType.ChangeHair;
+
+        public string Hair { get; set; } = "";
+
+    }
+
     public class ChangeGenderCommand : EventCommand
     {
 
@@ -823,6 +832,17 @@ namespace Intersect.GameObjects.Events.Commands
         public Guid QuestId { get; set; }
 
         public bool SkipCompletionEvent { get; set; }
+
+    }
+
+    public class ChangeStatCommand : EventCommand
+    {
+
+        public override EventCommandType Type { get; } = EventCommandType.ChangeStat;
+
+        public int Amount { get; set; }
+
+        public int Index { get; set; }
 
     }
 

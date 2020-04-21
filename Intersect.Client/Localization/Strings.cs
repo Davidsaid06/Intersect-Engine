@@ -861,6 +861,8 @@ namespace Intersect.Client.Localization
 
             public static LocalizedString bonuses = @"Stat Bonuses:";
 
+            public static LocalizedString durability = @"Durability: {00} / {01}";
+
             public static LocalizedString damage = @"Base Damage: {00}";
 
             public static LocalizedString desc = @"{00}";

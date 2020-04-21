@@ -75,6 +75,9 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<string>("JsonBaseVitals")
                         .HasColumnName("BaseVitals");
 
+                    b.Property<string>("JsonCustomSpriteLayers")
+                        .HasColumnName("CustomSpriteLayers");
+
                     b.Property<string>("JsonItems")
                         .HasColumnName("Items");
 
@@ -232,6 +235,8 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<bool>("DestroySpell");
 
+                    b.Property<int>("Durability");
+
                     b.Property<Guid>("EquipmentAnimationId")
                         .HasColumnName("EquipmentAnimation");
 
@@ -299,6 +304,8 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<string>("VitalsRegenJson")
                         .HasColumnName("VitalsRegen");
+
+                    b.Property<int>("WeaponSkill");
 
                     b.HasKey("Id");
 

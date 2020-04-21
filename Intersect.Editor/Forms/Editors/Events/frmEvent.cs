@@ -599,12 +599,20 @@ namespace Intersect.Editor.Forms.Editors.Events
                     tmpCommand = new ChangeFaceCommand();
 
                     break;
+                case EventCommandType.ChangeHair:
+                    tmpCommand = new ChangeHairCommand();
+
+                    break;
                 case EventCommandType.ChangeGender:
                     tmpCommand = new ChangeGenderCommand();
 
                     break;
                 case EventCommandType.ChangeNameColor:
                     tmpCommand = new ChangeNameColorCommand();
+
+                    break;
+                case EventCommandType.ChangeStat:
+                    tmpCommand = new ChangeStatCommand();
 
                     break;
                 case EventCommandType.PlayerLabel:
@@ -1155,6 +1163,11 @@ namespace Intersect.Editor.Forms.Editors.Events
                     cmdWindow = new EventCommandChangeLevel((ChangeLevelCommand) command, this);
 
                     break;
+                case EventCommandType.ChangeStat:
+                    cmdWindow = new EventCommandChangeStat((ChangeStatCommand)command, this);
+
+                    break;
+
                 case EventCommandType.ChangeSpells:
                     cmdWindow = new EventCommandChangeSpells((ChangeSpellsCommand) command, CurrentPage, this);
 
@@ -1173,6 +1186,10 @@ namespace Intersect.Editor.Forms.Editors.Events
                     break;
                 case EventCommandType.ChangeFace:
                     cmdWindow = new EventCommandChangeFace((ChangeFaceCommand) command, this);
+
+                    break;
+                case EventCommandType.ChangeHair:
+                    cmdWindow = new EventCommandChangeHair((ChangeHairCommand) command, this);
 
                     break;
                 case EventCommandType.ChangeGender:

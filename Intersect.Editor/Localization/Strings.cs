@@ -852,6 +852,10 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString undotitle = @"Undo Changes";
 
+            public static LocalizedString hairstyles = @"Hairstyles";
+
+            public static LocalizedString hair = @"Hair:";
+
         }
 
         public struct Colors
@@ -1193,6 +1197,19 @@ Tick timer saved in server config.json.";
 
         }
 
+        public struct EventChangeHair
+        {
+
+            public static LocalizedString cancel = @"Cancel";
+
+            public static LocalizedString label = @"Hair:";
+
+            public static LocalizedString okay = @"Ok";
+
+            public static LocalizedString title = @"Change Hair";
+
+        }
+
         public struct EventShowPicture
         {
 
@@ -1300,6 +1317,20 @@ Tick timer saved in server config.json.";
             public static LocalizedString title = @"Change Level";
 
         }
+
+        public struct EventChangeStat
+        {
+
+            public static LocalizedString cancel = @"Cancel";
+
+            public static LocalizedString label = @"Set Stat:";
+
+            public static LocalizedString okay = @"Ok";
+
+            public static LocalizedString title = @"Change Stat";
+
+        }
+
 
         public struct EventChangeNameColor
         {
@@ -1607,6 +1638,8 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString setface = @"Set Player Face to {00}";
 
+            public static LocalizedString sethair = @"Set Player Hair to {00}";
+
             public static LocalizedString setnamecolor = @"Set Player Name Color";
 
             public static LocalizedString removenamecolor = @"Remove Player Name Color";
@@ -1616,6 +1649,8 @@ Tick timer saved in server config.json.";
             public static LocalizedString setgender = @"Set Player Gender to {00}";
 
             public static LocalizedString setlevel = @"Set Player Level To: {00}";
+
+            public static LocalizedString setstat = @"Set Player Stat To: {00}";
 
             public static LocalizedString setsprite = @"Set Player Sprite to {00}";
 
@@ -1741,6 +1776,8 @@ Tick timer saved in server config.json.";
                 {"changenamecolor", @"Change Name Color"},
                 {"inputvariable", @"Input Variable"},
                 {"changeplayerlabel", @"Change Player Label"},
+                {"changehair", @"Change Hair"},
+                {"changestats", @"Change Stat"},
             };
 
         }

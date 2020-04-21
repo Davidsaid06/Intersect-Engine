@@ -365,6 +365,21 @@ namespace Intersect.Server.Entities.Events
             player.SetLevel(command.Level, true);
         }
 
+
+        //Change Stat Command
+        private static void ProcessCommand(
+            ChangeStatCommand command,
+            Player player,
+            Event instance,
+            CommandInstance stackInfo,
+            Stack<CommandInstance> callStack
+        )
+        {
+
+
+            player.AddStat(command.Index,command.Amount);
+        }
+
         //Change Spells Command
         private static void ProcessCommand(
             ChangeSpellsCommand command,
@@ -491,6 +506,19 @@ namespace Intersect.Server.Entities.Events
         {
             player.Face = command.Face;
             PacketSender.SendEntityDataToProximity(player);
+        }
+
+        //Change Hair Command
+        private static void ProcessCommand(
+            ChangeHairCommand command,
+            Player player,
+            Event instance,
+            CommandInstance stackInfo,
+            Stack<CommandInstance> callStack
+        )
+        {
+            player.CustomSpriteLayers[(int)Enums.CustomSpriteLayers.Hair] = command.Hair;
+            PacketSender.SendCustomSpriteLayersToProximity(player);
         }
 
         //Change Gender Command

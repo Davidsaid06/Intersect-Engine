@@ -154,6 +154,12 @@ namespace Intersect.GameObjects
 
         public int StatGrowth { get; set; }
 
+        public int Durability { get; set; }
+
+        public int WeaponSkill { get; set; }
+
+
+
         public int Tool { get; set; } = -1;
 
         [Column("VitalsGiven")]
