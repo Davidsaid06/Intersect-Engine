@@ -25,7 +25,21 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
                 mMyCommand.Amount = 1;
             }
 
-            mMyCommand.Index = cmbStat.SelectedIndex;
+            cmbStat.Items.Clear();
+
+            for (var i = 0; i < (int)Stats.StatCount; i++)
+            {
+                cmbStat.Items.Add(Strings.Combat.stats[i]);
+            }
+            var selIndex = cmbStat.Items.IndexOf((Strings.Combat.stats[mMyCommand.Index]));
+            if (selIndex > -1)
+            {
+                cmbStat.SelectedIndex = selIndex;
+            }
+            else
+            {
+                cmbStat.SelectedIndex = 0;
+            }
 
             nudAmount.Maximum = Options.MaxStatValue;
             nudAmount.Value = mMyCommand.Amount;
@@ -39,10 +53,12 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             btnSave.Text = Strings.EventChangeStat.okay;
             btnCancel.Text = Strings.EventChangeStat.cancel;
 
+            /*
             for (var i = 0; i < (int)Stats.StatCount; i++)
             {
                 cmbStat.Items.Add(Strings.Combat.stats[i]);
             }
+            */
 
         }
 

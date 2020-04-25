@@ -2827,7 +2827,6 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStrip.Size = new System.Drawing.Size(1239, 31);
             this.toolStrip.TabIndex = 42;
             this.toolStrip.Text = "toolStrip1";
-            this.toolStrip.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.ToolStrip_ItemClicked);
             // 
             // toolStripItemNew
             // 
