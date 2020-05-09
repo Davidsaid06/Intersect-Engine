@@ -1,0 +1,62 @@
+From 82a856f37bde51376c1fcfc2553c9370f3666818 Mon Sep 17 00:00:00 2001
+From: Joyce <azurebeats@hotmail.nl>
+Date: Fri, 17 Apr 2020 18:03:42 +0200
+Subject: [PATCH] Fix a crash and minor visual discrepencies in the class
+ editor related to hairstyles.
+
+---
+ Intersect.Editor/Forms/Editors/frmClass.cs | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
+
+diff --git a/Intersect.Editor/Forms/Editors/frmClass.cs b/Intersect.Editor/Forms/Editors/frmClass.cs
+index 7b3ce587..e14423e1 100644
+--- a/Intersect.Editor/Forms/Editors/frmClass.cs
++++ b/Intersect.Editor/Forms/Editors/frmClass.cs
+@@ -247,6 +247,16 @@ private void UpdateEditor()
+                     mEditorItem.SpawnMapId = MapList.OrderedMaps[0].MapId;
+                 }
+ 
++                if (mEditorItem.CustomSpriteLayers[CustomSpriteLayers.Hair].Count > 0)
++                {
++                    lstHair.SelectedIndex = 0;
++                } else
++                {
++                    lstHair.SelectedIndex = -1;
++                    cmbHair.SelectedIndex = 0;
++                    rbMale2.Checked = true;
++                }
++
+                 nudX.Value = mEditorItem.SpawnX;
+                 nudY.Value = mEditorItem.SpawnY;
+                 cmbDirection.SelectedIndex = mEditorItem.SpawnDir;
+@@ -695,7 +705,12 @@ private void RefreshSpriteList(bool saveSpot = true)
+ 
+             if (saveSpot) {
+                 lstHair.SelectedIndex = n;
++            } else if (lstHair.Items.Count > 0)
++            {
++                lstHair.SelectedIndex = 0;
+             }
++
++            lstHair_Click(null, null);
+         }
+ 
+         private void btnAdd_Click(object sender, EventArgs e)
+@@ -1410,6 +1425,8 @@ private void nudAttackSpeedValue_ValueChanged(object sender, EventArgs e)
+         }
+ 
+         private void rbMale2_Click(object sender, EventArgs e) {
++            if (lstHair.SelectedIndex == -1) return;
++
+             if (lstHair.Items.Count > 0) {
+                 mEditorItem.CustomSpriteLayers[CustomSpriteLayers.Hair][lstHair.SelectedIndex].Gender = Gender.Male;
+                 RefreshHairList();
+@@ -1417,6 +1434,8 @@ private void nudAttackSpeedValue_ValueChanged(object sender, EventArgs e)
+         }
+ 
+         private void rbFemale2_Click(object sender, EventArgs e) {
++            if (lstHair.SelectedIndex == -1) return;
++
+             if (lstHair.Items.Count > 0) {
+                 mEditorItem.CustomSpriteLayers[CustomSpriteLayers.Hair][lstHair.SelectedIndex].Gender = Gender.Female;
+                 RefreshHairList();
