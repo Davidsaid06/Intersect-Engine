@@ -240,6 +240,11 @@ namespace Intersect.Editor.Localization
             return Strings.EventConditionDesc.map.ToString(EventConditionDesc.mapnotfound);
         }
 
+        public static string GetEventConditionalDesc(HasFreeInventorySlots condition)
+        {
+            return Strings.EventConditionDesc.HasFreeInventorySlots.ToString(condition.Quantity);
+        }
+
         public static string GetVariableComparisonString(VariableCompaison comparison)
         {
             return "";
@@ -1271,6 +1276,17 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString item = @"Item:";
 
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Method = @"Method:";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static Dictionary<int, LocalizedString> Methods = new Dictionary<int, LocalizedString>
+            {
+                {0, @"Normal"},
+                {1, @"Allow Overflow"},
+                {2, @"Up to Amount" },
+            };
+
             public static LocalizedString okay = @"Ok";
 
             public static LocalizedString title = @"Change Player Items";
@@ -1857,6 +1873,7 @@ Tick timer saved in server config.json.";
                 {15, @"Gender is..."},
                 {16, @"Map is..."},
                 {17, @"Item Equipped is..."},
+                {18, @"Has X free Inventory slots..." }
             };
 
             public static LocalizedString endrange = @"End Range:";
@@ -1975,6 +1992,9 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString variable = @"Variable Is...";
 
+            [NotNull, JsonProperty]
+            public static LocalizedString FreeInventorySlots = @"Has X free Inventory slots";
+
         }
 
         public struct EventConditionDesc
@@ -2051,6 +2071,9 @@ Tick timer saved in server config.json.";
             public static LocalizedString questinprogress = @"Quest In Progress: {00} {01}";
 
             public static LocalizedString selfswitch = @"Self Switch {00} is {01}";
+
+            [NotNull, JsonProperty]
+            public static LocalizedString HasFreeInventorySlots = @"Player has {00} free inventory slot(s)";
 
             public static Dictionary<int, LocalizedString> selfswitches = new Dictionary<int, LocalizedString>
             {

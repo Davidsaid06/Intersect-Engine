@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
+
 
 namespace Intersect.Client.Items
 {
@@ -17,6 +19,11 @@ namespace Intersect.Client.Items
         public int MaxWeaponSkillsPoint { get; private set; }
 
         public int CurrentWeaponSkillPoint { get; private set; }
+
+        public Guid Owner;
+
+        public bool VisibleToAll;
+
 
         public MapItemInstance() : base()
         {
