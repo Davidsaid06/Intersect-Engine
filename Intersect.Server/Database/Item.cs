@@ -44,6 +44,10 @@ namespace Intersect.Server.Database
             Bag = bag;
 
             var descriptor = ItemBase.Get(ItemId);
+            if (descriptor == null)
+            {
+                return;
+            }
             Durability = descriptor.Durability;
             WeaponSkill = descriptor.WeaponSkill;
 
@@ -52,7 +56,7 @@ namespace Intersect.Server.Database
                 Log.Debug($"Durabilidad de: {descriptor.Name} es {Durability}.");
             }
 
-            if (descriptor == null || !includeStatBuffs)
+            if (!includeStatBuffs)
             {
                 return;
             }
@@ -75,8 +79,13 @@ namespace Intersect.Server.Database
         public Item(Item item) : this(item.ItemId, item.Quantity, item.BagId, item.Bag)
         {
             var descriptor = ItemBase.Get(ItemId);
-            Durability = descriptor.Durability;
-            WeaponSkill = descriptor.WeaponSkill;
+
+            if (descriptor != null)
+            {
+                Durability = descriptor.Durability;
+                WeaponSkill = descriptor.WeaponSkill;
+            }
+
             if (Durability > 0)
             {
                 Log.Debug($"Durabilidad de: {descriptor.Name} es {Durability}.");
