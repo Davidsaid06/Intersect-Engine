@@ -258,13 +258,11 @@ namespace Intersect.Server.Maps
                     OwnershipTime = Globals.Timing.TimeMs + Options.Loot.ItemOwnershipTime,
                     VisibleToAll = Options.Loot.ShowUnownedItems
                 };
+                if (itemDescriptor.ItemType == ItemTypes.Equipment)
+                {
+                    mapItem.Quantity = 1;
 
-
-            if (itemBase.ItemType == ItemTypes.Equipment)
-            {
-
-
-                mapItem.Quantity = 1;
+                }
                 if (mapItem.StatBuffs != null && item.StatBuffs != null)
                 {
                     for (var i = 0; i < mapItem.StatBuffs.Length; ++i)
