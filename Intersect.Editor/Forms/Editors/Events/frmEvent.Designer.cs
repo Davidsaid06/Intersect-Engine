@@ -103,6 +103,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             System.Windows.Forms.TreeNode treeNode39 = new System.Windows.Forms.TreeNode("Hide Player");
             System.Windows.Forms.TreeNode treeNode40 = new System.Windows.Forms.TreeNode("Show Player");
             System.Windows.Forms.TreeNode treeNode41 = new System.Windows.Forms.TreeNode("Movement", new System.Windows.Forms.TreeNode[] {
+            treeNode31,
             treeNode32,
             treeNode33,
             treeNode34,
@@ -120,6 +121,7 @@ namespace Intersect.Editor.Forms.Editors.Events
             System.Windows.Forms.TreeNode treeNode47 = new System.Windows.Forms.TreeNode("Show Picture");
             System.Windows.Forms.TreeNode treeNode48 = new System.Windows.Forms.TreeNode("Hide Picture");
             System.Windows.Forms.TreeNode treeNode49 = new System.Windows.Forms.TreeNode("Special Effects", new System.Windows.Forms.TreeNode[] {
+            treeNode41,
             treeNode42,
             treeNode43,
             treeNode44,

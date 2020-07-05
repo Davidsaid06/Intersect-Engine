@@ -1196,7 +1196,6 @@ namespace Intersect.Editor.Forms.Editors
             this.grpAttackSpeed.Name = "grpAttackSpeed";
             this.grpAttackSpeed.Padding = new System.Windows.Forms.Padding(4);
             this.grpAttackSpeed.Size = new System.Drawing.Size(256, 106);
-
             this.grpAttackSpeed.TabIndex = 64;
             this.grpAttackSpeed.TabStop = false;
             this.grpAttackSpeed.Text = "Attack Speed";

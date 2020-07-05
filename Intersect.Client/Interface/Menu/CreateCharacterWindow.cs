@@ -84,7 +84,6 @@ namespace Intersect.Client.Interface.Menu
 
         private Button mPrevHairButton;
 
-
         //Color Buttons
 
         private Button mHairColorWhite;
@@ -700,6 +699,10 @@ namespace Intersect.Client.Interface.Menu
                 if (mMaleCustomSpriteLayers[Enums.CustomSpriteLayers.Hair].Count > 0)
                 {
 
+                    if (mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] == -1)
+                    {
+                        mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] = mMaleCustomSpriteLayers[Enums.CustomSpriteLayers.Hair].Count - 1;
+                    }
                 }
                 else
                 {
@@ -710,7 +713,10 @@ namespace Intersect.Client.Interface.Menu
             {
                 if (mFemaleCustomSpriteLayers[Enums.CustomSpriteLayers.Hair].Count > 0)
                 {
-
+                    if (mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] == -1)
+                    {
+                        mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] = mFemaleCustomSpriteLayers[Enums.CustomSpriteLayers.Hair].Count - 1;
+                    }
                 }
                 else
                 {
@@ -747,7 +753,10 @@ namespace Intersect.Client.Interface.Menu
             {
                 if (mMaleCustomSpriteLayers[Enums.CustomSpriteLayers.Hair].Count > 0)
                 {
-
+                    if (mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] >= mMaleCustomSpriteLayers[Enums.CustomSpriteLayers.Hair].Count)
+                    {
+                        mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] = 0;
+                    }
                 }
                 else
                 {
@@ -758,7 +767,10 @@ namespace Intersect.Client.Interface.Menu
             {
                 if (mFemaleCustomSpriteLayers[Enums.CustomSpriteLayers.Hair].Count > 0)
                 {
-
+                    if (mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] >= mFemaleCustomSpriteLayers[Enums.CustomSpriteLayers.Hair].Count)
+                    {
+                        mDisplayCustomSpriteLayerIndex[(int)Enums.CustomSpriteLayers.Hair] = 0;
+                    }
                 }
                 else
                 {
@@ -768,7 +780,6 @@ namespace Intersect.Client.Interface.Menu
 
             UpdateDisplay();
         }
-
         private void _HairColorWhite_Clicked(Base sender, ClickedEventArgs arguments)
         {
 
@@ -918,7 +929,6 @@ namespace Intersect.Client.Interface.Menu
 
             UpdateDisplay();
         }
-
 
         void TryCreateCharacter(int gender)
         {

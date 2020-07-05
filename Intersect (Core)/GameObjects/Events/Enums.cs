@@ -94,6 +94,7 @@
 
         SetAnimation,
 
+        // At the bottom becauase of Designer Tag
         MoveUpLeft,
 
         MoveUpRight,

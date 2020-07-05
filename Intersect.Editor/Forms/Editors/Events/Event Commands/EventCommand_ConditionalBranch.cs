@@ -868,6 +868,11 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             );
         }
 
+        private void NudItemAmount_ValueChanged(object sender, System.EventArgs e)
+        {
+            nudItemAmount.Value = Math.Max(1, nudItemAmount.Value);
+        }
+
         #region "SetupFormValues"
 
         private void SetupFormValues(VariableIsCondition condition)

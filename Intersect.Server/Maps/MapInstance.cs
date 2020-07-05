@@ -258,21 +258,11 @@ namespace Intersect.Server.Maps
                     OwnershipTime = Globals.Timing.TimeMs + Options.Loot.ItemOwnershipTime,
                     VisibleToAll = Options.Loot.ShowUnownedItems
                 };
+
+                // If this is a piece of equipment, set up the stat buffs for it.
                 if (itemDescriptor.ItemType == ItemTypes.Equipment)
                 {
-                    mapItem.Quantity = 1;
-
-                }
-                if (mapItem.StatBuffs != null && item.StatBuffs != null)
-                {
-                    for (var i = 0; i < mapItem.StatBuffs.Length; ++i)
-                    {
-                        mapItem.StatBuffs[i] = item.StatBuffs.Length > i ? item.StatBuffs[i] : 0;
-                    }
-                }
-                else if (mapItem.StatBuffs == null)
-
-                {
+                    //mapItem.Quantity = 1; DR
                     mapItem.SetupStatBuffs(item);
                 }
 

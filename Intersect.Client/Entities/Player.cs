@@ -66,7 +66,6 @@ namespace Intersect.Client.Entities
 
         public GameTexture[] CustomSpriteLayersTexture { get; set; } = new GameTexture[(int)Enums.CustomSpriteLayers.CustomCount];
         public Dictionary<SpriteAnimations, GameTexture[]> CustomSpriteLayersAnimationTexture { get; set; } = new Dictionary<SpriteAnimations, GameTexture[]>();
-
         public long[] MoveDirectionTimers = new long[4];
 
         public Player(Guid id, PlayerEntityPacket packet) : base(id, packet)
@@ -232,6 +231,10 @@ namespace Intersect.Client.Entities
                 }
             }
 
+            for (var i = 0; i <= (int)SpriteAnimations.Weapon; i++)
+            {
+                CustomSpriteLayersAnimationTexture[(SpriteAnimations)i] = new GameTexture[(int)Enums.CustomSpriteLayers.CustomCount];
+            }
             if (pkt.CustomSpriteLayers != null)
             {
                 this.CustomSpriteLayers = pkt.CustomSpriteLayers.CustomSpriteLayers;
@@ -850,6 +853,9 @@ namespace Intersect.Client.Entities
             {
                 movex = 1;
             }
+                         // Used this so I can do multiple switch case
+             var move = movex / 10 + movey;
+
 
 
             // Used this so I can do multiple switch case
@@ -1067,10 +1073,12 @@ namespace Intersect.Client.Entities
             // The latest moving direction of the player
             switch (Globals.Me.Dir)
             {
-                case 0: // Up
+                case 0: //Up
+
                     y--;
                     
                     break;
+
                 case 1: // Down
                     y++;
 
@@ -1102,6 +1110,27 @@ namespace Intersect.Client.Entities
                     y++;
                     x++;
 
+                    break;
+
+                case 4: // UpLeft
+                    y--;
+                    x--;
+                    
+                    break;
+                case 5: //UpRight
+                    y--;
+                    x++;
+                    
+                    break;
+                case 6: // DownLeft
+                    y++;
+                    x--;
+                    
+                    break;
+                case 7: // DownRight
+                    y++;
+                    x++;
+                    
                     break;
             }
 
@@ -1316,7 +1345,7 @@ namespace Intersect.Client.Entities
                                     if (en.Value.CurrentMap == mapId &&
                                         en.Value.X == x &&
                                         en.Value.Y == y &&
-                                        !((Event) en.Value).DisablePreview &&
+                                        !((Event)en.Value).DisablePreview &&
                                         (!en.Value.IsStealthed() || en.Value is Player player && Globals.Me.IsInMyParty(player)))
                                     {
                                         if (TargetBox != null)
@@ -1983,7 +2012,7 @@ namespace Intersect.Client.Entities
                     }
 
                     if (en.Value.CurrentMap == eventMap.Id &&
-                        !((Event) en.Value).DisablePreview &&
+                        !((Event)en.Value).DisablePreview &&
                         (!en.Value.IsStealthed() || en.Value is Player player && Globals.Me.IsInMyParty(player)))
                     {
                         if (TargetType == 1 && TargetIndex == en.Value.Id)
@@ -2100,39 +2129,22 @@ namespace Intersect.Client.Entities
                 destRectangle.X -= texture.GetWidth() / 8;
                 switch (Dir)
                 {
-                    case 0: // Up
+                    case 0:
                         d = 3;
 
                         break;
-                    case 1: // Down
+                    case 1:
                         d = 0;
 
                         break;
-                    case 2: // Left
+                    case 2:
                         d = 1;
 
                         break;
-                    case 3: // Right
+                    case 3:
                         d = 2;
 
                         break;
-                    case 4: // UpLeft
-                        d = 1;
-
-                        break;
-                    case 5: // UpRight
-                        d = 2;
-
-                        break;
-                    case 6: // DownLeft
-                        d = 1;
-
-                        break;
-                    case 7: // DownRight
-                        d = 2;
-
-                        break;
-
                     default:
                         Dir = 0;
                         d = 3;

@@ -1238,7 +1238,7 @@ namespace Intersect.Server.Networking
                 return;
             }
 
-            player?.DropItems(packet.Slot, packet.Quantity);
+            player?.DropItemFrom(packet.Slot, packet.Quantity);
         }
 
         //UseItemPacket
@@ -1510,7 +1510,7 @@ namespace Intersect.Server.Networking
 
             var target = Player.FindOnline(packet.TargetId);
 
-            if (target != null && target.Id != player.Id && player.InRangeOf(target, Options.PartyInviteRange))
+            if (target != null && target.Id != player.Id && player.InRangeOf(target, Options.Party.InviteRange))
             {
                 target.InviteToParty(player);
 
