@@ -849,43 +849,28 @@ namespace Intersect.Client.Entities
                 movex = 1;
             }
 
-                         // Used this so I can do multiple switch case
-             var move = movex / 10 + movey;
-
             Globals.Me.MoveDir = -1;
             if (movex != 0f || movey != 0f)
             {
-                switch (move)
-                    {
+                if (movey < 0)
+                {
+                    Globals.Me.MoveDir = 1;
+                }
 
-                    case 1.0f:
-                        Globals.Me.MoveDir = 0; // Up
-                    break;
-                    case -1.0f:
-                        Globals.Me.MoveDir = 1; // Down
-                        break;
-                    case -0.1f: // x = 0, y = -1
-                        Globals.Me.MoveDir = 2; // Left
+                if (movey > 0)
+                {
+                    Globals.Me.MoveDir = 0;
+                }
 
-                        break;
-                    case 0.1f:
-                        Globals.Me.MoveDir = 3; // Right
-                        
-                        break;
-                    case 0.9f:
-                        Globals.Me.MoveDir = 4; // NW
-                        break;
-                    case 1.1f:
-                        Globals.Me.MoveDir = 5; // NE
-                        break;
-                    case -1.1f:
-                        Globals.Me.MoveDir = 6; // SW
-                        break;
-                    case -0.9f:
-                        Globals.Me.MoveDir = 7; // SE
-                        break;
-                        }
+                if (movex < 0)
+                {
+                    Globals.Me.MoveDir = 2;
+                }
 
+                if (movex > 0)
+                {
+                    Globals.Me.MoveDir = 3;
+                }
             }
         }
 
@@ -1022,42 +1007,21 @@ namespace Intersect.Client.Entities
             var map = Globals.Me.CurrentMap;
             switch (Globals.Me.Dir)
             {
-                case 0: //Up
+                case 0:
                     y--;
 
                     break;
-                case 1: //Down
+                case 1:
                     y++;
 
                     break;
-                case 2: //Left
+                case 2:
                     x--;
 
                     break;
-                case 3: //Right
+                case 3:
                     x++;
 
-                    break;
-
-                case 4: // UpLeft
-                    y--;
-                    x--;
-                    
-                    break;
-                case 5: //UpRight
-                    y--;
-                    x++;
-                    
-                    break;
-                case 6: // DownLeft
-                    y++;
-                    x--;
-                    
-                    break;
-                case 7: // DownRight
-                    y++;
-                    x++;
-                    
                     break;
             }
 
@@ -1445,18 +1409,18 @@ namespace Intersect.Client.Entities
                 {
                     switch (MoveDir)
                     {
-                        case 0: //Up
+                        case 0:
                             if (IsTileBlocked(X, Y - 1, Z, CurrentMap, ref blockedBy) == -1)
                             {
                                 tmpY--;
-                                Dir = 0; // Set the sprite direction
+                                Dir = 0;
                                 IsMoving = true;
                                 OffsetY = Options.TileHeight;
                                 OffsetX = 0;
                             }
 
                             break;
-                        case 1: //Down
+                        case 1:
                             if (IsTileBlocked(X, Y + 1, Z, CurrentMap, ref blockedBy) == -1)
                             {
                                 tmpY++;
@@ -1467,7 +1431,7 @@ namespace Intersect.Client.Entities
                             }
 
                             break;
-                        case 2://Left
+                        case 2:
                             if (IsTileBlocked(X - 1, Y, Z, CurrentMap, ref blockedBy) == -1)
                             {
                                 tmpX--;
@@ -1478,7 +1442,7 @@ namespace Intersect.Client.Entities
                             }
 
                             break;
-                        case 3://Right
+                        case 3:
                             if (IsTileBlocked(X + 1, Y, Z, CurrentMap, ref blockedBy) == -1)
                             {
                                 tmpX++;
@@ -1488,50 +1452,6 @@ namespace Intersect.Client.Entities
                                 OffsetX = -Options.TileWidth;
                             }
 
-                            break;
-                        case 4: // NW
-                            if (IsTileBlocked(X - 1, Y - 1, Z, CurrentMap, ref blockedBy) == -1)
-                            {
-                                tmpY--;
-                                tmpX--;
-                                Dir = 4;
-                                IsMoving = true;
-                                OffsetY = Options.TileHeight;
-                                OffsetX = Options.TileWidth;
-                                }
-                            break;
-                        case 5: // NE
-                            if (IsTileBlocked(X + 1, Y - 1, Z, CurrentMap, ref blockedBy) == -1)
-                                {
-                                tmpY--;
-                                tmpX++;
-                                Dir = 5;
-                                IsMoving = true;
-                                OffsetY = Options.TileHeight;
-                                OffsetX = -Options.TileWidth;
-                                }
-                            break;
-                        case 6: // SW
-                            if (IsTileBlocked(X - 1, Y + 1, Z, CurrentMap, ref blockedBy) == -1)
-                                {
-                                tmpY++;
-                                tmpX--;
-                                Dir = 6;
-                                IsMoving = true;
-                                OffsetY = -Options.TileHeight;
-                                OffsetX = Options.TileWidth;
-                                }
-                            break;
-                        case 7: // SE
-                            if (IsTileBlocked(X + 1, Y + 1, Z, CurrentMap, ref blockedBy) == -1)
-                                {
-                                tmpY++;
-                                tmpX++;
-                                Dir = 7;
-                                IsMoving = true;
-                                OffsetY = -Options.TileHeight;
-                                OffsetX = -Options.TileWidth;
-                                }
                             break;
                     }
 
@@ -1596,7 +1516,7 @@ namespace Intersect.Client.Entities
                     {
                         if (MoveDir != Dir)
                         {
-                            Dir = (byte)MoveDir;
+                            Dir = (byte) MoveDir;
                             PacketSender.SendDirection(Dir);
                         }
 

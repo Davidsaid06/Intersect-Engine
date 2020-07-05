@@ -16,8 +16,6 @@ namespace Intersect.Network.Packets.Server
 
         public EquipmentPacket Equipment { get; set; }
 
-        public CustomSpriteLayersPacket CustomSpriteLayers { get; set; }
-
         public long CombatTimeRemaining { get; set; }
 
     }

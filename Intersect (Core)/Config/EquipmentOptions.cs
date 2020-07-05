@@ -22,8 +22,6 @@ namespace Intersect.Config
             "Boots",
         };
 
-        public string HairSlot { get; set; } = "Helmet";
-
         public List<string> ToolTypes = new List<string>()
         {
             "Axe",

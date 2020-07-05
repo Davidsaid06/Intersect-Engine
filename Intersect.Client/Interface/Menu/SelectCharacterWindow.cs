@@ -244,28 +244,8 @@ namespace Intersect.Client.Interface.Menu
                         {
                             if (mPaperdollPortraits[i] != mCharacterPortrait)
                             {
-                                var texture = String.Empty;
-                                GameContentManager.TextureType type;
-                                if (Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][i]) == Options.EquipmentSlots.IndexOf(Options.Equipment.HairSlot))
-                                {
-                                    if (Characters[mSelectedChar].Equipment[i] != String.Empty && Characters[mSelectedChar].Equipment[i] != null) 
-                                    {
-                                        texture = Characters[mSelectedChar].Equipment[i];
-                                        type = GameContentManager.TextureType.Paperdoll;
-                                    } 
-                                    else
-                                    {
-                                        texture = Characters[mSelectedChar].CustomSpriteLayers[(int)Enums.CustomSpriteLayers.Hair];
-                                        type = GameContentManager.TextureType.Hair;
-                                    }
-                                }
-                                else
-                                {
-                                    texture = Characters[mSelectedChar].Equipment[i];
-                                    type = GameContentManager.TextureType.Paperdoll;
-                                }
                                 mPaperdollPortraits[i].Texture = Globals.ContentManager.GetTexture(
-                                    type, texture
+                                    GameContentManager.TextureType.Paperdoll, Characters[mSelectedChar].Equipment[i]
                                 );
 
                                 if (mPaperdollPortraits[i].Texture != null)
@@ -390,8 +370,6 @@ namespace Intersect.Client.Interface.Menu
 
         public string[] Equipment = new string[Options.EquipmentSlots.Count + 1];
 
-        public string[] CustomSpriteLayers = new string[(int)Enums.CustomSpriteLayers.CustomCount];
-
         public bool Exists = false;
 
         public string Face = "";
@@ -416,11 +394,9 @@ namespace Intersect.Client.Interface.Menu
             string face,
             int level,
             string charClass,
-            string[] equipment,
-            string[] customspritelayers
+            string[] equipment
         )
         {
-            CustomSpriteLayers = customspritelayers;
             Equipment = equipment;
             Id = id;
             Name = name;
