@@ -29,8 +29,29 @@ namespace Intersect.Server.Entities
         //Spell casting
         public long CastFreq;
 
-        //Damage Map - Keep track of who is doing the most damage to this npc and focus accordingly
+        /// <summary>
+        /// Damage Map - Keep track of who is doing the most damage to this npc and focus accordingly
+        /// </summary>
         public ConcurrentDictionary<Entity, long> DamageMap = new ConcurrentDictionary<Entity, long>();
+
+        /// <summary>
+        /// Returns the entity that ranks the highest on this NPC's damage map.
+        /// </summary>
+        public Entity DamageMapHighest { 
+            get {
+                long damage = 0;
+                Entity top = null;
+                foreach (var pair in DamageMap)
+                {
+                    if (pair.Value > damage)
+                    {
+                        top = pair.Key;
+                        damage = pair.Value;
+                    }
+                }
+                return top;
+            } 
+        }
 
         public bool Despawnable;
 
@@ -46,6 +67,9 @@ namespace Intersect.Server.Entities
 
         //Respawn/Despawn
         public long RespawnTime;
+
+        public long FindTargetWaitTime;
+        public int FindTargetDelay = 500;
 
         public Npc([NotNull] NpcBase myBase, bool despawnable = false) : base()
         {
@@ -662,7 +686,7 @@ namespace Intersect.Server.Entities
                     else
                     {
                         // Check if attack on sight or have other npc's to target
-                        TryFindNewTarget();
+                        TryFindNewTarget(timeMs);
                     }
                 }
 
@@ -776,7 +800,7 @@ namespace Intersect.Server.Entities
 
                                     break;
                                 case PathfinderResult.NoPathToTarget:
-                                    TryFindNewTarget(Target?.Id ?? Guid.Empty);
+                                    TryFindNewTarget(timeMs, Target?.Id ?? Guid.Empty);
                                     targetMap = Guid.Empty;
 
                                     break;
@@ -1018,16 +1042,22 @@ namespace Intersect.Server.Entities
             return false;
         }
 
-        private void TryFindNewTarget(Guid avoidId = new Guid())
+        private void TryFindNewTarget(long timeMs, Guid avoidId = new Guid())
         {
+            if (FindTargetWaitTime > timeMs)
+            {
+                return;
+            }
+
             var maps = MapInstance.Get(MapId).GetSurroundingMaps(true);
             var possibleTargets = new List<Entity>();
             var closestRange = Range + 1; //If the range is out of range we didn't find anything.
             var closestIndex = -1;
             foreach (var map in maps)
             {
-                foreach (var entity in map.GetEntities())
+                foreach (var en in map.GetEntitiesDictionary())
                 {
+                    var entity = en.Value;
                     if (entity != null && entity.IsDead() == false && entity != this && entity.Id != avoidId)
                     {
                         //TODO Check if NPC is allowed to attack player with new conditions
@@ -1065,6 +1095,8 @@ namespace Intersect.Server.Entities
             {
                 AssignTarget(possibleTargets[closestIndex]);
             }
+
+            FindTargetWaitTime = timeMs + FindTargetDelay;
         }
 
         public override void ProcessRegen()
