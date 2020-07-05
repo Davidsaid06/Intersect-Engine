@@ -6,6 +6,9 @@ using Intersect.Client.Core;
 using Intersect.Client.Core.Controls;
 using Intersect.Client.Entities.Events;
 using Intersect.Client.Entities.Projectiles;
+using Intersect.Client.Framework.File_Management;
+using Intersect.Client.Framework.GenericClasses;
+using Intersect.Client.Framework.Graphics;
 using Intersect.Client.General;
 using Intersect.Client.Interface.Game;
 using Intersect.Client.Interface.Game.EntityPanel;
@@ -58,6 +61,11 @@ namespace Intersect.Client.Entities
         public Guid TargetIndex;
 
         public int TargetType;
+        
+        protected string[] mMyCustomSpriteLayers { get; set; } = new string[(int)Enums.CustomSpriteLayers.CustomCount];
+
+        public GameTexture[] CustomSpriteLayersTexture { get; set; } = new GameTexture[(int)Enums.CustomSpriteLayers.CustomCount];
+        public Dictionary<SpriteAnimations, GameTexture[]> CustomSpriteLayersAnimationTexture { get; set; } = new Dictionary<SpriteAnimations, GameTexture[]>();
 
         public Player(Guid id, PlayerEntityPacket packet) : base(id, packet)
         {
@@ -82,6 +90,33 @@ namespace Intersect.Client.Entities
 
                 return mParty;
             }
+        }
+
+        public virtual string[] CustomSpriteLayers
+        {
+            get => mMyCustomSpriteLayers;
+            set
+            {
+                mMyCustomSpriteLayers = value;
+                CustomSpriteLayersTexture = GetCustomSpriteTextures(value);
+            }
+        }
+
+        private GameTexture[] GetCustomSpriteTextures(string[] customSpriteLayers)
+        {
+            var textures = new GameTexture[(int)Enums.CustomSpriteLayers.CustomCount];
+            for (int i=0; i < (int)Enums.CustomSpriteLayers.CustomCount; i++)
+            {
+                switch (i)
+                {
+                    case (int)Enums.CustomSpriteLayers.Hair:
+                        textures[i] = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Hair, customSpriteLayers[i]);
+                        LoadCustomSpriteLayerAnimationTextures(customSpriteLayers[i], Enums.CustomSpriteLayers.Hair, GameContentManager.TextureType.Hair);
+                        break;
+                }  
+            }
+
+            return textures;
         }
 
         public override Guid CurrentMap
@@ -189,6 +224,17 @@ namespace Intersect.Client.Entities
                     this.Equipment = ((PlayerEntityPacket) packet).Equipment.ItemIds;
                 }
             }
+
+            for (var i = 0; i <= (int)SpriteAnimations.Weapon; i++)
+            {
+                CustomSpriteLayersAnimationTexture[(SpriteAnimations)i] = new GameTexture[(int)Enums.CustomSpriteLayers.CustomCount];
+            }
+
+            if (pkt.CustomSpriteLayers != null)
+            {
+                this.CustomSpriteLayers = pkt.CustomSpriteLayers.CustomSpriteLayers;
+            }
+
         }
 
         public override EntityTypes GetEntityType()
@@ -803,28 +849,43 @@ namespace Intersect.Client.Entities
                 movex = 1;
             }
 
+                         // Used this so I can do multiple switch case
+             var move = movex / 10 + movey;
+
             Globals.Me.MoveDir = -1;
             if (movex != 0f || movey != 0f)
             {
-                if (movey < 0)
-                {
-                    Globals.Me.MoveDir = 1;
-                }
+                switch (move)
+                    {
 
-                if (movey > 0)
-                {
-                    Globals.Me.MoveDir = 0;
-                }
+                    case 1.0f:
+                        Globals.Me.MoveDir = 0; // Up
+                    break;
+                    case -1.0f:
+                        Globals.Me.MoveDir = 1; // Down
+                        break;
+                    case -0.1f: // x = 0, y = -1
+                        Globals.Me.MoveDir = 2; // Left
 
-                if (movex < 0)
-                {
-                    Globals.Me.MoveDir = 2;
-                }
+                        break;
+                    case 0.1f:
+                        Globals.Me.MoveDir = 3; // Right
+                        
+                        break;
+                    case 0.9f:
+                        Globals.Me.MoveDir = 4; // NW
+                        break;
+                    case 1.1f:
+                        Globals.Me.MoveDir = 5; // NE
+                        break;
+                    case -1.1f:
+                        Globals.Me.MoveDir = 6; // SW
+                        break;
+                    case -0.9f:
+                        Globals.Me.MoveDir = 7; // SE
+                        break;
+                        }
 
-                if (movex > 0)
-                {
-                    Globals.Me.MoveDir = 3;
-                }
             }
         }
 
@@ -961,21 +1022,42 @@ namespace Intersect.Client.Entities
             var map = Globals.Me.CurrentMap;
             switch (Globals.Me.Dir)
             {
-                case 0:
+                case 0: //Up
                     y--;
 
                     break;
-                case 1:
+                case 1: //Down
                     y++;
 
                     break;
-                case 2:
+                case 2: //Left
                     x--;
 
                     break;
-                case 3:
+                case 3: //Right
                     x++;
 
+                    break;
+
+                case 4: // UpLeft
+                    y--;
+                    x--;
+                    
+                    break;
+                case 5: //UpRight
+                    y--;
+                    x++;
+                    
+                    break;
+                case 6: // DownLeft
+                    y++;
+                    x--;
+                    
+                    break;
+                case 7: // DownRight
+                    y++;
+                    x++;
+                    
                     break;
             }
 
@@ -1363,18 +1445,18 @@ namespace Intersect.Client.Entities
                 {
                     switch (MoveDir)
                     {
-                        case 0:
+                        case 0: //Up
                             if (IsTileBlocked(X, Y - 1, Z, CurrentMap, ref blockedBy) == -1)
                             {
                                 tmpY--;
-                                Dir = 0;
+                                Dir = 0; // Set the sprite direction
                                 IsMoving = true;
                                 OffsetY = Options.TileHeight;
                                 OffsetX = 0;
                             }
 
                             break;
-                        case 1:
+                        case 1: //Down
                             if (IsTileBlocked(X, Y + 1, Z, CurrentMap, ref blockedBy) == -1)
                             {
                                 tmpY++;
@@ -1385,7 +1467,7 @@ namespace Intersect.Client.Entities
                             }
 
                             break;
-                        case 2:
+                        case 2://Left
                             if (IsTileBlocked(X - 1, Y, Z, CurrentMap, ref blockedBy) == -1)
                             {
                                 tmpX--;
@@ -1396,7 +1478,7 @@ namespace Intersect.Client.Entities
                             }
 
                             break;
-                        case 3:
+                        case 3://Right
                             if (IsTileBlocked(X + 1, Y, Z, CurrentMap, ref blockedBy) == -1)
                             {
                                 tmpX++;
@@ -1406,6 +1488,50 @@ namespace Intersect.Client.Entities
                                 OffsetX = -Options.TileWidth;
                             }
 
+                            break;
+                        case 4: // NW
+                            if (IsTileBlocked(X - 1, Y - 1, Z, CurrentMap, ref blockedBy) == -1)
+                            {
+                                tmpY--;
+                                tmpX--;
+                                Dir = 4;
+                                IsMoving = true;
+                                OffsetY = Options.TileHeight;
+                                OffsetX = Options.TileWidth;
+                                }
+                            break;
+                        case 5: // NE
+                            if (IsTileBlocked(X + 1, Y - 1, Z, CurrentMap, ref blockedBy) == -1)
+                                {
+                                tmpY--;
+                                tmpX++;
+                                Dir = 5;
+                                IsMoving = true;
+                                OffsetY = Options.TileHeight;
+                                OffsetX = -Options.TileWidth;
+                                }
+                            break;
+                        case 6: // SW
+                            if (IsTileBlocked(X - 1, Y + 1, Z, CurrentMap, ref blockedBy) == -1)
+                                {
+                                tmpY++;
+                                tmpX--;
+                                Dir = 6;
+                                IsMoving = true;
+                                OffsetY = -Options.TileHeight;
+                                OffsetX = Options.TileWidth;
+                                }
+                            break;
+                        case 7: // SE
+                            if (IsTileBlocked(X + 1, Y + 1, Z, CurrentMap, ref blockedBy) == -1)
+                                {
+                                tmpY++;
+                                tmpX++;
+                                Dir = 7;
+                                IsMoving = true;
+                                OffsetY = -Options.TileHeight;
+                                OffsetX = -Options.TileWidth;
+                                }
                             break;
                     }
 
@@ -1470,7 +1596,7 @@ namespace Intersect.Client.Entities
                     {
                         if (MoveDir != Dir)
                         {
-                            Dir = (byte) MoveDir;
+                            Dir = (byte)MoveDir;
                             PacketSender.SendDirection(Dir);
                         }
 
@@ -1866,6 +1992,123 @@ namespace Intersect.Client.Entities
                         break;
                     }
                 }
+            }
+        }
+
+        public void LoadCustomSpriteLayerAnimationTextures(string tex, CustomSpriteLayers layer, GameContentManager.TextureType textype)
+        {
+            var file = System.IO.Path.GetFileNameWithoutExtension(tex);
+            var ext = System.IO.Path.GetExtension(tex);
+
+            foreach (var anim in Enum.GetValues(typeof(SpriteAnimations)))
+            {
+                CustomSpriteLayersAnimationTexture[(SpriteAnimations)anim][(int)layer] = Globals.ContentManager.GetTexture(textype, $@"{file}_{anim}{ext}");
+            }
+        }
+
+        public virtual void DrawCustomSpriteLayer(CustomSpriteLayers layer, GameContentManager.TextureType textype, int alpha)
+        {
+            var map = MapInstance.Get(CurrentMap);
+            if (map == null)
+            {
+                return;
+            }
+
+            if (CustomSpriteLayersAnimationTexture[SpriteAnimation][(int)layer] == null && CustomSpriteLayersTexture[(int)layer] == null) 
+            {
+                return;
+            }
+
+            var srcRectangle = new FloatRect();
+            var destRectangle = new FloatRect();
+            var d = 0;
+
+            var texture = CustomSpriteLayersAnimationTexture[SpriteAnimation][(int)layer] ?? CustomSpriteLayersTexture[(int)layer];
+
+            if (texture != null)
+            {
+                if (texture.GetHeight() / 4 > Options.TileHeight)
+                {
+                    destRectangle.X = map.GetX() + X * Options.TileWidth + OffsetX + Options.TileWidth / 2;
+                    destRectangle.Y = GetCenterPos().Y - texture.GetHeight() / 8;
+                }
+                else
+                {
+                    destRectangle.X = map.GetX() + X * Options.TileWidth + OffsetX + Options.TileWidth / 2;
+                    destRectangle.Y = map.GetY() + Y * Options.TileHeight + OffsetY;
+                }
+
+                destRectangle.X -= texture.GetWidth() / 8;
+                switch (Dir)
+                {
+                    case 0:
+                        d = 3;
+
+                        break;
+                    case 1:
+                        d = 0;
+
+                        break;
+                    case 2:
+                        d = 1;
+
+                        break;
+                    case 3:
+                        d = 2;
+
+                        break;
+                    default:
+                        Dir = 0;
+                        d = 3;
+
+                        break;
+                }
+
+                destRectangle.X = (int)Math.Ceiling(destRectangle.X);
+                destRectangle.Y = (int)Math.Ceiling(destRectangle.Y);
+                if (Options.AnimatedSprites.Contains(CustomSpriteLayers[(int)layer].ToLower()))
+                {
+                    srcRectangle = new FloatRect(
+                        AnimationFrame * (int)texture.GetWidth() / 4, d * (int)texture.GetHeight() / 4,
+                        (int)texture.GetWidth() / 4, (int)texture.GetHeight() / 4
+                    );
+                }
+                else
+                {
+                    if (SpriteAnimation == SpriteAnimations.Normal)
+                    {
+                        var attackTime = CalculateAttackTime();
+                        if (AttackTimer - CalculateAttackTime() / 2 > Globals.System.GetTimeMs() || Blocking)
+                        {
+                            srcRectangle = new FloatRect(
+                                3 * (int)texture.GetWidth() / 4, d * (int)texture.GetHeight() / 4,
+                                (int)texture.GetWidth() / 4, (int)texture.GetHeight() / 4
+                            );
+                        }
+                        else
+                        {
+                            //Restore Original Attacking/Blocking Code
+                            srcRectangle = new FloatRect(
+                                WalkFrame * (int)texture.GetWidth() / 4, d * (int)texture.GetHeight() / 4,
+                                (int)texture.GetWidth() / 4, (int)texture.GetHeight() / 4
+                            );
+                        }
+                    }
+                    else
+                    {
+                        srcRectangle = new FloatRect(
+                            SpriteFrame * (int)texture.GetWidth() / 4, d * (int)texture.GetHeight() / 4,
+                            (int)texture.GetWidth() / 4, (int)texture.GetHeight() / 4
+                        );
+                    }
+                }
+
+                destRectangle.Width = srcRectangle.Width;
+                destRectangle.Height = srcRectangle.Height;
+
+                Graphics.DrawGameTexture(
+                            texture, srcRectangle, destRectangle, new Color(alpha, 255, 255, 255)
+                        );
             }
         }
 
