@@ -1200,6 +1200,7 @@ namespace Intersect.Server.Networking
                         // Try to give the item to our player.
                         if (player.TryGiveItem(mapItem))
                         {
+                            PacketSender.SendActionMsg(player, mapItem.Descriptor.Name, CustomColors.Combat.TrueDamage);
                             // Remove Item From Map
                             MapInstance.Get(player.MapId).RemoveItem(packet.MapItemIndex);
                         } 

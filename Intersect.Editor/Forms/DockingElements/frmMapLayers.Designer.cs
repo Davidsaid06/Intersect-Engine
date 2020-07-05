@@ -1375,10 +1375,7 @@ namespace Intersect.Editor.Forms.DockingElements
 
         }
 
-        private void NudItemQuantity_ValueChanged(object sender, System.EventArgs e)
-        {
-            if (nudItemQuantity.Value < 1) nudItemQuantity.Value = 1;
-        }
+
 
         #endregion
         private System.Windows.Forms.Label lblTileType;

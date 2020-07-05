@@ -853,11 +853,6 @@ namespace Intersect.Client.Entities
             {
                 movex = 1;
             }
-                         // Used this so I can do multiple switch case
-             var move = movex / 10 + movey;
-
-
-
             // Used this so I can do multiple switch case
             var move = movex / 10 + movey;
 
@@ -1111,27 +1106,6 @@ namespace Intersect.Client.Entities
                     x++;
 
                     break;
-
-                case 4: // UpLeft
-                    y--;
-                    x--;
-                    
-                    break;
-                case 5: //UpRight
-                    y--;
-                    x++;
-                    
-                    break;
-                case 6: // DownLeft
-                    y++;
-                    x--;
-                    
-                    break;
-                case 7: // DownRight
-                    y++;
-                    x++;
-                    
-                    break;
             }
 
             if (GetRealLocation(ref x, ref y, ref map))
@@ -1240,7 +1214,7 @@ namespace Intersect.Client.Entities
             return false;
         }
 
-        public bool TryTarget()
+        public bool TryTarget(bool removeTarget)
         {
             //Check for taunt status if so don't allow to change target
             for (var i = 0; i < Status.Count; i++)
@@ -1281,7 +1255,7 @@ namespace Intersect.Client.Entities
                                 if (en.Value.CurrentMap == mapId &&
                                     en.Value.X == x &&
                                     en.Value.Y == y &&
-                                    (!en.Value.IsStealthed() || en.Value is Player player && Globals.Me.IsInMyParty(player)))
+                                    (!en.Value.IsStealthed() || en.Value is Player player && Globals.Me.IsInMyParty(player)) || removeTarget)
                                 {
                                     if (en.Value.GetType() != typeof(Projectile) &&
                                         en.Value.GetType() != typeof(Resource))
@@ -1309,7 +1283,7 @@ namespace Intersect.Client.Entities
                                             }
                                         }
 
-                                        if (TargetType == 0 && TargetIndex == en.Value.Id)
+                                        if (TargetType == 0 && TargetIndex == en.Value.Id || removeTarget)
                                         {
                                             ClearTarget();
 
@@ -2142,6 +2116,22 @@ namespace Intersect.Client.Entities
 
                         break;
                     case 3:
+                        d = 2;
+
+                        break;
+                    case 4: // UpLeft
+                        d = 1;
+
+                        break;
+                    case 5: // UpRight
+                        d = 2;
+
+                        break;
+                    case 6: // DownLeft
+                        d = 1;
+
+                        break;
+                    case 7: // DownRight
                         d = 2;
 
                         break;

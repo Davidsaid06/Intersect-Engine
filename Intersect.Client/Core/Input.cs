@@ -56,7 +56,12 @@ namespace Intersect.Client.Core
                     return;
                 }
 
-                Interface.Interface.GameUi?.EscapeMenu?.ToggleHidden();
+                if (Globals.Me?.TargetBox != null){
+
+                    Globals.Me?.TryTarget(true);
+                }else{
+                    Interface.Interface.GameUi?.EscapeMenu?.ToggleHidden();
+                }
             }
 
             if (Interface.Interface.HasInputFocus())
@@ -286,7 +291,7 @@ namespace Intersect.Client.Core
                 return;
             }
 
-            if (Globals.Me.TryTarget())
+            if (Globals.Me.TryTarget(false))
             {
                 return;
             }
