@@ -523,6 +523,9 @@
     <Compile Include="Migrations\Game\20200419075704_ItemDurabilityV3.cs" />
     <Compile Include="Migrations\Game\20200419075704_ItemDurabilityV3.designer.cs">
       <DependentUpon>20200419075704_ItemDurabilityV3.cs</DependentUpon>
+    <Compile Include="Migrations\Game\20200414015804_AddingMoveRange.cs" />
+    <Compile Include="Migrations\Game\20200414015804_AddingMoveRange.designer.cs">
+      <DependentUpon>20200414015804_AddingMoveRange.cs</DependentUpon>
     </Compile>
     <Compile Include="Networking\Client.cs" />
     <Compile Include="Entities\Npc.cs" />

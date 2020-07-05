@@ -117,6 +117,8 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbOnDeathEventKiller = new DarkUI.Controls.DarkComboBox();
             this.lblOnDeathEventKiller = new System.Windows.Forms.Label();
             this.grpBehavior = new DarkUI.Controls.DarkGroupBox();
+            this.nbrMoveRange = new DarkUI.Controls.DarkNumericUpDown();
+            this.label1 = new System.Windows.Forms.Label();
             this.lblFocusDamageDealer = new System.Windows.Forms.Label();
             this.chkFocusDamageDealer = new DarkUI.Controls.DarkCheckBox();
             this.nudFlee = new DarkUI.Controls.DarkNumericUpDown();
@@ -213,6 +215,7 @@ namespace Intersect.Editor.Forms.Editors
             ((System.ComponentModel.ISupportInitialize)(this.nudCritChance)).BeginInit();
             this.grpCommonEvents.SuspendLayout();
             this.grpBehavior.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nbrMoveRange)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudFlee)).BeginInit();
             this.grpConditions.SuspendLayout();
             this.grpRegen.SuspendLayout();
@@ -1594,6 +1597,8 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpBehavior.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpBehavior.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpBehavior.Controls.Add(this.nbrMoveRange);
+            this.grpBehavior.Controls.Add(this.label1);
             this.grpBehavior.Controls.Add(this.lblFocusDamageDealer);
             this.grpBehavior.Controls.Add(this.chkFocusDamageDealer);
             this.grpBehavior.Controls.Add(this.nudSpawnDuration);
@@ -1619,11 +1624,39 @@ namespace Intersect.Editor.Forms.Editors
             this.grpBehavior.TabStop = false;
             this.grpBehavior.Text = "Behavior:";
             // 
+            // nbrMoveRange
+            // 
+            this.nbrMoveRange.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.nbrMoveRange.ForeColor = System.Drawing.Color.Gainsboro;
+            this.nbrMoveRange.Location = new System.Drawing.Point(133, 137);
+            this.nbrMoveRange.Maximum = new decimal(new int[] {
+            50,
+            0,
+            0,
+            0});
+            this.nbrMoveRange.Name = "nbrMoveRange";
+            this.nbrMoveRange.Size = new System.Drawing.Size(87, 20);
+            this.nbrMoveRange.TabIndex = 74;
+            this.nbrMoveRange.Value = new decimal(new int[] {
+            0,
+            0,
+            0,
+            0});
+            this.nbrMoveRange.ValueChanged += new System.EventHandler(this.nbrMoveRange_ValueChanged_1);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(128, 121);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(95, 13);
+            this.label1.TabIndex = 73;
+            this.label1.Text = "Movement Range:";
+            // 
             // lblFocusDamageDealer
             // 
             this.lblFocusDamageDealer.AutoSize = true;
-            this.lblFocusDamageDealer.Location = new System.Drawing.Point(13, 188);
-            this.lblFocusDamageDealer.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblFocusDamageDealer.Location = new System.Drawing.Point(10, 159);
             this.lblFocusDamageDealer.Name = "lblFocusDamageDealer";
             this.lblFocusDamageDealer.Size = new System.Drawing.Size(205, 17);
             this.lblFocusDamageDealer.TabIndex = 72;
@@ -1632,8 +1665,7 @@ namespace Intersect.Editor.Forms.Editors
             // chkFocusDamageDealer
             // 
             this.chkFocusDamageDealer.AutoSize = true;
-            this.chkFocusDamageDealer.Location = new System.Drawing.Point(228, 188);
-            this.chkFocusDamageDealer.Margin = new System.Windows.Forms.Padding(4);
+            this.chkFocusDamageDealer.Location = new System.Drawing.Point(171, 158);
             this.chkFocusDamageDealer.Name = "chkFocusDamageDealer";
             this.chkFocusDamageDealer.Size = new System.Drawing.Size(18, 17);
             this.chkFocusDamageDealer.TabIndex = 71;
@@ -1646,7 +1678,7 @@ namespace Intersect.Editor.Forms.Editors
             this.nudFlee.Location = new System.Drawing.Point(120, 154);
             this.nudFlee.Margin = new System.Windows.Forms.Padding(4);
             this.nudFlee.Name = "nudFlee";
-            this.nudFlee.Size = new System.Drawing.Size(107, 22);
+            this.nudFlee.Size = new System.Drawing.Size(36, 20);
             this.nudFlee.TabIndex = 70;
             this.nudFlee.Value = new decimal(new int[] {
             0,
@@ -2494,6 +2526,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpCommonEvents.PerformLayout();
             this.grpBehavior.ResumeLayout(false);
             this.grpBehavior.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nbrMoveRange)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudFlee)).EndInit();
             this.grpConditions.ResumeLayout(false);
             this.grpRegen.ResumeLayout(false);
@@ -2660,5 +2693,7 @@ namespace Intersect.Editor.Forms.Editors
         private System.Windows.Forms.Label lblIce;
         private System.Windows.Forms.Label lblFire;
         private System.Windows.Forms.Label lblDark;
+        private DarkNumericUpDown nbrMoveRange;
+        private System.Windows.Forms.Label label1;
     }
 }
