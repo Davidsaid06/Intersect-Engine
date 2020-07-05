@@ -615,6 +615,15 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString globalswitch = @"\gs";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString playerclasscommand = @"\cl";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString playersexcommand = @"\ps";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString playersexpossesioncommand = @"\psp";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString globalvar = @"\gv";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
