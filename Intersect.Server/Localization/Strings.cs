@@ -130,6 +130,9 @@ namespace Intersect.Server.Localization
             public readonly LocalizedString onlytradeempty = @"Cannot trade bag unless it's empty!";
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString tradebound = @"Cannot trade bound items!";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString withdrawinvalid = @"Invalid item selected to retreive!";
 
         }
@@ -772,6 +775,14 @@ namespace Intersect.Server.Localization
 
             [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
             public readonly LocalizedString stunned = @"You cannot use this item whilst stunned.";
+
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString NotYours = @"This item does not belong to you!";
+
+            // TODO: Generalize this shit. It's everywhere!
+            [NotNull, JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public readonly LocalizedString InventoryNoSpace =
+                @"There is no space left in your inventory for that item!";
 
         }
 

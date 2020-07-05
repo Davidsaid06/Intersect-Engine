@@ -245,10 +245,10 @@ namespace Intersect.Server.Entities
             }
 
             //Regen Timers
-            if (Globals.Timing.TimeMs > CombatTimer && Globals.Timing.TimeMs > RegenTimer)
+            if (timeMs > CombatTimer && timeMs > RegenTimer)
             {
                 ProcessRegen();
-                RegenTimer = Globals.Timing.TimeMs + Options.RegenTime;
+                RegenTimer = timeMs + Options.RegenTime;
             }
 
             //Status timers
@@ -786,6 +786,22 @@ namespace Intersect.Server.Entities
                     var oldMap = MapInstance.Get(MapId);
                     oldMap?.RemoveEntity(this);
                     currentMap?.AddEntity(this);
+
+                    //Send Left Map Packet To the Maps that we are no longer with
+                    var oldMaps = oldMap?.GetSurroundingMaps(true);
+                    var newMaps = currentMap?.GetSurroundingMaps(true);
+
+                    if (oldMaps != null)
+                    {
+                        foreach (var map in oldMaps)
+                        {
+                            if (newMaps == null || !newMaps.Contains(map))
+                            {
+                                PacketSender.SendEntityLeaveMap(this, map.Id);
+                            }
+                        }
+                    }
+
                 }
 
                 MapId = tile.GetMapId();
@@ -933,28 +949,31 @@ namespace Intersect.Server.Entities
         public int GetDirectionTo(Entity target)
         {
             int xDiff = 0, yDiff = 0;
-            var myGrid = MapInstance.Get(MapId).MapGrid;
+
+            var map = MapInstance.Get(MapId);
+            var gridId = map.MapGrid;
+            var grid = DbInterface.GetGrid(gridId);
 
             //Loop through surrouding maps to generate a array of open and blocked points.
-            for (var x = MapInstance.Get(MapId).MapGridX - 1; x <= MapInstance.Get(MapId).MapGridX + 1; x++)
+            for (var x = map.MapGridX - 1; x <= map.MapGridX + 1; x++)
             {
-                if (x == -1 || x >= DbInterface.MapGrids[myGrid].Width)
+                if (x == -1 || x >= grid.Width)
                 {
                     continue;
                 }
 
-                for (var y = MapInstance.Get(MapId).MapGridY - 1; y <= MapInstance.Get(MapId).MapGridY + 1; y++)
+                for (var y = map.MapGridY - 1; y <= map.MapGridY + 1; y++)
                 {
-                    if (y == -1 || y >= DbInterface.MapGrids[myGrid].Height)
+                    if (y == -1 || y >= grid.Height)
                     {
                         continue;
                     }
 
-                    if (DbInterface.MapGrids[myGrid].MyGrid[x, y] != Guid.Empty &&
-                        DbInterface.MapGrids[myGrid].MyGrid[x, y] == target.MapId)
+                    if (grid.MyGrid[x, y] != Guid.Empty &&
+                        grid.MyGrid[x, y] == target.MapId)
                     {
-                        xDiff = (x - MapInstance.Get(MapId).MapGridX) * Options.MapWidth + target.X - X;
-                        yDiff = (y - MapInstance.Get(MapId).MapGridY) * Options.MapHeight + target.Y - Y;
+                        xDiff = (x - map.MapGridX) * Options.MapWidth + target.X - X;
+                        yDiff = (y - map.MapGridY) * Options.MapHeight + target.Y - Y;
                         if (Math.Abs(xDiff) > Math.Abs(yDiff))
                         {
                             if (xDiff < 0)
@@ -1757,21 +1776,14 @@ namespace Intersect.Server.Entities
                         dmgMap.TryGetValue(this, out var damage);
                         dmgMap[this] = damage + baseDamage;
 
-                        long dmg = baseDamage;
-                        var newTarget = this;
                         if (enemyNpc.Base.FocusHighestDamageDealer)
                         {
-                            foreach (var pair in dmgMap)
-                            {
-                                if (pair.Value > dmg)
-                                {
-                                    newTarget = pair.Key;
-                                    dmg = pair.Value;
-                                }
-                            }
+                            enemyNpc.AssignTarget(enemyNpc.DamageMapHighest);
                         }
-
-                        enemyNpc.AssignTarget(newTarget);
+                        else
+                        {
+                            enemyNpc.AssignTarget(this);
+                        }
                     }
 
                     enemy.NotifySwarm(this);
@@ -1808,21 +1820,9 @@ namespace Intersect.Server.Entities
                     //No Matter what, if we attack the entitiy, make them chase us
                     if (enemy is Npc enemyNpc)
                     {
-                        var dmgMap = enemyNpc.DamageMap;
-                        var target = this;
-                        long dmg = 0;
-                        foreach (var pair in dmgMap)
-                        {
-                            if (pair.Value > dmg)
-                            {
-                                target = pair.Key;
-                                dmg = pair.Value;
-                            }
-                        }
-
                         if (enemyNpc.Base.FocusHighestDamageDealer)
                         {
-                            enemyNpc.AssignTarget(target);
+                            enemyNpc.AssignTarget(enemyNpc.DamageMapHighest);
                         }
                         else
                         {
@@ -2139,80 +2139,36 @@ namespace Intersect.Server.Entities
         )
         {
             var spellBase = SpellBase.Get(spellId);
-            var targetsHit = new List<Entity>();
             if (spellBase != null)
             {
-                for (var x = startX - range; x <= startX + range; x++)
+                var startMap = MapInstance.Get(startMapId);
+                if (startMap != null)
                 {
-                    for (var y = startY - range; y <= startY + range; y++)
+                    var surroundingMaps = startMap.GetSurroundingMaps(true);
+                    foreach (var map in surroundingMaps)
                     {
-                        var tempMap = MapInstance.Get(startMapId);
-
-                        if (tempMap == null)
+                        foreach (var pair in map.GetEntitiesDictionary())
                         {
-                            continue;
-                        }
-
-                        var x2 = x;
-                        var y2 = y;
-
-                        if (y < 0 && tempMap.Up != Guid.Empty)
-                        {
-                            tempMap = MapInstance.Get(tempMap.Up);
-                            y2 = Options.MapHeight + y;
-                        }
-                        else if (y > Options.MapHeight - 1 && tempMap.Down != Guid.Empty)
-                        {
-                            tempMap = MapInstance.Get(tempMap.Down);
-                            y2 = y - Options.MapHeight;
-                        }
-
-                        if (x < 0 && tempMap.Left != Guid.Empty)
-                        {
-                            tempMap = MapInstance.Get(tempMap.Left);
-                            x2 = Options.MapWidth + x;
-                        }
-                        else if (x > Options.MapWidth - 1 && tempMap.Right != Guid.Empty)
-                        {
-                            tempMap = MapInstance.Get(tempMap.Right);
-                            x2 = x - Options.MapWidth;
-                        }
-
-                        if (tempMap == null)
-                        {
-                            continue;
-                        }
-
-                        var mapEntities = tempMap.GetEntities();
-                        for (var i = 0; i < mapEntities.Count; i++)
-                        {
-                            var t = mapEntities[i];
-                            if (t == null || targetsHit.Contains(t))
+                            var entity = pair.Value;
+                            if (entity != null && (entity is Player || entity is Npc))
                             {
-                                continue;
-                            }
-
-                            if (t.GetType() == typeof(Player) || t.GetType() == typeof(Npc))
-                            {
-                                if (t.MapId == tempMap.Id && t.X == x2 && t.Y == y2)
+                                if (spellTarget == null || spellTarget == entity)
                                 {
-                                    if (spellTarget == null || spellTarget == t)
+                                    if (entity.GetDistanceTo(startMap,startX,startY) <= range)
                                     {
-                                        targetsHit.Add(t);
-
                                         //Check to handle a warp to spell
                                         if (spellBase.SpellType == SpellTypes.WarpTo)
                                         {
                                             if (spellTarget != null)
                                             {
                                                 Warp(
-                                                    spellTarget.MapId, (byte) spellTarget.X, (byte) spellTarget.Y,
-                                                    (byte) Dir
+                                                    spellTarget.MapId, (byte)spellTarget.X, (byte)spellTarget.Y,
+                                                    (byte)Dir
                                                 ); //Spelltarget used to be Target. I don't know if this is correct or not.
                                             }
                                         }
 
-                                        TryAttack(t, spellBase); //Handle damage
+                                        TryAttack(entity, spellBase); //Handle damage
                                     }
                                 }
                             }
@@ -2296,21 +2252,27 @@ namespace Intersect.Server.Entities
         {
             if (target != null)
             {
-                var myMap = MapInstance.Get(MapId);
-                var targetMap = MapInstance.Get(target.MapId);
-                if (myMap != null && targetMap != null && myMap.MapGrid == targetMap.MapGrid
-                ) //Make sure both maps exist and that they are in the same dimension
-                {
-                    //Calculate World Tile of Me
-                    var x1 = X + myMap.MapGridX * Options.MapWidth;
-                    var y1 = Y + myMap.MapGridY * Options.MapHeight;
+                return GetDistanceTo(target.Map, target.X, target.Y);
+            }
+            //Something is null.. return a value that is out of range :) 
+            return 9999;
+        }
 
-                    //Calculate world tile of target
-                    var x2 = target.X + targetMap.MapGridX * Options.MapWidth;
-                    var y2 = target.Y + targetMap.MapGridY * Options.MapHeight;
+        protected int GetDistanceTo(MapInstance targetMap, int targetX, int targetY)
+        {
+            var myMap = MapInstance.Get(MapId);
+            if (myMap != null && targetMap != null && myMap.MapGrid == targetMap.MapGrid
+            ) //Make sure both maps exist and that they are in the same dimension
+            {
+                //Calculate World Tile of Me
+                var x1 = X + myMap.MapGridX * Options.MapWidth;
+                var y1 = Y + myMap.MapGridY * Options.MapHeight;
 
-                    return (int) Math.Sqrt(Math.Pow(x1 - x2, 2) + Math.Pow(y1 - y2, 2));
-                }
+                //Calculate world tile of target
+                var x2 = targetX + targetMap.MapGridX * Options.MapWidth;
+                var y2 = targetY + targetMap.MapGridY * Options.MapHeight;
+
+                return (int) Math.Sqrt(Math.Pow(x1 - x2, 2) + Math.Pow(y1 - y2, 2));
             }
 
             //Something is null.. return a value that is out of range :) 
@@ -2457,11 +2419,31 @@ namespace Intersect.Server.Entities
                         continue;
                     }
 
-                    var map = MapInstance.Get(MapId);
-                    map?.SpawnItem(X, Y, item, item.Quantity);
+                    // Decide if we want to have a loot ownership timer or not.
+                    Guid lootOwner = Guid.Empty;
+                    if (this is Npc thisNpc)
+                    {
+                        // Check if we have someone that tagged this NPC.
+                        var taggedBy = thisNpc.DamageMapHighest;
+                        if (taggedBy != null && taggedBy is Player)
+                        {
+                            // Spawn with ownership!
+                            lootOwner = taggedBy.Id;
+                        }
+                    } 
+                    else
+                    {
+                        // There's no tracking of who damaged what player as of now, so going by last hit.. Or set ownership to the player themselves.
+                        lootOwner = playerKiller?.Id ?? Id;
+                    }
 
+                    // Spawn the actual item!
+                    var map = MapInstance.Get(MapId);
+                    map?.SpawnItem(X, Y, item, item.Quantity, lootOwner);
+
+                    // Remove the item from inventory if a player.
                     var player = this as Player;
-                    player?.TakeItemsBySlot(n, item.Quantity);
+                    player?.TryTakeItem(Items[n], item.Quantity);
                 }
             }
 
