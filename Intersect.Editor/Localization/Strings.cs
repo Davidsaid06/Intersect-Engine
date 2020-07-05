@@ -49,6 +49,16 @@ namespace Intersect.Editor.Localization
             return Strings.EventConditionDesc.hasitemequipped.ToString(ItemBase.GetName(condition.ItemId));
         }
 
+        public static string GetEventConditionalDesc(EquippedItemTagIsCondition condition)
+        {
+            return Strings.EventConditionDesc.itemequippedtagis.ToString(condition.Tag ?? ItemBase.Deleted);
+        }
+
+        public static string GetEventConditionalDesc(HasItemWTagCondition condition)
+        {
+            return Strings.EventConditionDesc.hasitemwithtag.ToString(condition.Tag ?? ItemBase.Deleted);
+        }
+
         public static string GetEventConditionalDesc(ClassIsCondition condition)
         {
             return Strings.EventConditionDesc.Class.ToString(ClassBase.GetName(condition.ClassId));
@@ -220,6 +230,16 @@ namespace Intersect.Editor.Localization
         public static string GetEventConditionalDesc(NoNpcsOnMapCondition condition)
         {
             return Strings.EventConditionDesc.nonpcsonmap;
+        }
+
+        public static string GetEventConditionalDesc(MapHasNPCWTag condition)
+        {
+            return Strings.EventConditionDesc.maphasnpcwithtag.ToString(condition.Tag ?? ItemBase.Deleted);
+        }
+
+        public static string GetEventConditionalDesc(MapHasTag condition)
+        {
+            return Strings.EventConditionDesc.maphastag.ToString(condition.Tag ?? ItemBase.Deleted);
         }
 
         public static string GetEventConditionalDesc(GenderIsCondition condition)
@@ -1293,6 +1313,27 @@ Tick timer saved in server config.json.";
 
         }
 
+        public struct EventChangeItemsByTag
+        {
+
+            public static LocalizedString tag = @"Tag:";
+
+            public static Dictionary<int, LocalizedString> actions = new Dictionary<int, LocalizedString>
+            {
+                {0, @"Give"},
+                {1, @"Take"},
+            };
+
+            public static LocalizedString amount = @"Amount:";
+
+            public static LocalizedString cancel = @"Cancel";
+
+            public static LocalizedString okay = @"Ok";
+
+            public static LocalizedString title = @"Change Items By Tag";
+
+        }
+
         public struct EventEquipItems
         {
 
@@ -1531,6 +1572,8 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString enditemchange = @"End Item Change";
 
+            public static LocalizedString endchangeitemsbytag = @"End Change Items by Tag";
+
             public static LocalizedString endoptions = @"End Options";
 
             public static LocalizedString endquest = @"End Quest [{00}, {01}]";
@@ -1571,7 +1614,11 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString itemnotchanged = @"Item(s) Not Given/Taken (Doesn't have/Inventory full)";
 
+            public static LocalizedString itemnotchangedbytag = @"Item(s) Not Given/Taken (Doesn't have/Inventory full)";
+
             public static LocalizedString itemschanged = @"Item(s) Given/Taken Successfully";
+
+            public static LocalizedString itemchangedbytag = @"Item(s) Given/Taken Successfully";
 
             public static LocalizedString label = @"Label: {00}";
 
@@ -1709,6 +1756,8 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString take = @"Take: Item {00}";
 
+            public static LocalizedString changeitemsbytag = @"Change Items by Tag: {00}";
+
             public static LocalizedString taskundefined = @"Undefined";
 
             public static LocalizedString teach = @"Teach: Spell {00}";
@@ -1794,6 +1843,7 @@ Tick timer saved in server config.json.";
                 {"changeplayerlabel", @"Change Player Label"},
                 {"changehair", @"Change Hair"},
                 {"changestats", @"Change Stat"},
+                {"changeitemsbytag", "Change Items By Tag" },
             };
 
         }
@@ -1873,7 +1923,11 @@ Tick timer saved in server config.json.";
                 {15, @"Gender is..."},
                 {16, @"Map is..."},
                 {17, @"Item Equipped is..."},
-                {18, @"Has X free Inventory slots..." }
+                {18, @"Has X free Inventory slots..." },
+                {19, @"Item Equipped Has Tag..."},
+                {20, @"Has Item With Tag..."},
+                {21, @"Map has Npc With Tag..."},
+                {22, @"Map has Tag..." },
             };
 
             public static LocalizedString endrange = @"End Range:";
@@ -1898,9 +1952,17 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString hasitemequipped = @"Has Equipped Item";
 
+            public static LocalizedString itemequippedhastag = @"Item Equipped Has Tag";
+
+            public static LocalizedString hasitemwithtag = @"Has Item With Tag";
+
+            public static LocalizedString maphasnpcwithtag = @"Map Has NPCs With Tag";
+
             public static LocalizedString ignorestatbuffs = @"Ignore equipment & spell buffs.";
 
             public static LocalizedString item = @"Item:";
+
+            public static LocalizedString tag = @"Tag:";
 
             public static LocalizedString knowsspell = @"Knows Spell";
 
@@ -1915,6 +1977,8 @@ Tick timer saved in server config.json.";
             public static LocalizedString male = @"Male";
 
             public static LocalizedString mapis = @"Map Is...";
+
+            public static LocalizedString maphastag = @"Map Has Tag...";
 
             public static LocalizedString negated = @"Negated";
 
@@ -2030,6 +2094,10 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString hasitemequipped = @"Player has Item {00} equipped";
 
+            public static LocalizedString itemequippedtagis = @"Player equipped Item tag is {00} ";
+
+            public static LocalizedString hasitemwithtag = @"Player has Item with tag {00}";
+
             public static LocalizedString knowsspell = @"Player knows Spell {00}";
 
             public static LocalizedString lessthan = @"is less than {00}";
@@ -2051,6 +2119,10 @@ Tick timer saved in server config.json.";
             public static LocalizedString negated = @"NOT [{00}]";
 
             public static LocalizedString nonpcsonmap = @"No NPCs on the map";
+
+            public static LocalizedString maphasnpcwithtag = @"Map has NPCs with tag {00}";
+
+            public static LocalizedString maphastag = @"Map has tag {00}";
 
             public static LocalizedString notequal = @"does not equal {00}";
 
@@ -2883,6 +2955,8 @@ Tick timer saved in server config.json.";
 
             public static LocalizedString deletetitle = @"Delete Item";
 
+            public static LocalizedString tag = @"Tag:";
+
             public static LocalizedString description = @"Desc:";
 
             public static LocalizedString equipment = @"Equipment";
@@ -3003,6 +3077,10 @@ Tick timer saved in server config.json.";
             public static LocalizedString vitalbonuses = @"Vital Bonuses";
 
             public static LocalizedString weaponproperties = @"Weapon Properties";
+
+            public static LocalizedString tagparseerrortitle = @"Tag Parse Error";
+
+            public static LocalizedString tagparseerror = @"There was an issue with your Tags, they could not the split properly on ';'.\b\nPlease check your formatting!";
 
         }
 
@@ -3380,6 +3458,7 @@ Tick timer saved in server config.json.";
                 {"weatherxspeed", @"Weather X Speed"},
                 {"weatheryspeed", @"Weather Y Speed"},
                 {"weatherintensity", @"Weather Intensity"},
+                {"tags", @"Tags" },
             };
 
             public static Dictionary<string, string> descriptions = new Dictionary<string, string>()
@@ -3420,6 +3499,7 @@ Tick timer saved in server config.json.";
                 },
                 {"weatheryspeeddesc", @"How fast vertically weather particles move across the screen. (Range -5 to 5)"},
                 {"weatherintensitydesc", @"How intence the weather is (number of particles). (Range 0 to 100)"},
+                {"tagsdesc", @"The tags that apply to this map. (Semi-Colon ( ; ) separated)" },
             };
 
             public static LocalizedString title = @"Map Properties";
@@ -3623,6 +3703,10 @@ Tick timer saved in server config.json.";
                 @"Are you sure you want to undo changes made to this npc? This action cannot be reverted!";
 
             public static LocalizedString undotitle = @"Undo Changes";
+
+            public static LocalizedString tagparseerrortitle = @"Tag Parse Error";
+
+            public static LocalizedString tagparseerror = @"There was an issue with your Tags, they could not the split properly on ';'.\b\nPlease check your formatting!";
 
         }
 

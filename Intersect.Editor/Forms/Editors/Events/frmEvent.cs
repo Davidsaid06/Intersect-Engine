@@ -719,6 +719,11 @@ namespace Intersect.Editor.Forms.Editors.Events
                     tmpCommand = new ShowPlayerCommand();
 
                     break;
+
+                case EventCommandType.ChangeItemsByTag:
+                    tmpCommand = new ChangeItemsByTag(CurrentPage.CommandLists);
+
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -1294,6 +1299,10 @@ namespace Intersect.Editor.Forms.Editors.Events
                     break;
                 case EventCommandType.EndQuest:
                     cmdWindow = new EventCommandEndQuest((EndQuestCommand) command, this);
+
+                    break;
+                case EventCommandType.ChangeItemsByTag:
+                    cmdWindow = new EventCommandChangeItemsBytag((ChangeItemsByTag)command, CurrentPage, this);
 
                     break;
                 default:

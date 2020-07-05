@@ -527,6 +527,13 @@
     <Compile Include="Migrations\Game\20200414015804_AddingMoveRange.cs" />
     <Compile Include="Migrations\Game\20200414015804_AddingMoveRange.designer.cs">
       <DependentUpon>20200414015804_AddingMoveRange.cs</DependentUpon>
+    <Compile Include="Migrations\Game\20200423004850_AddingTagSystem.cs" />
+    <Compile Include="Migrations\Game\20200423004850_AddingTagSystem.designer.cs">
+      <DependentUpon>20200423004850_AddingTagSystem.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Game\20200424140012_MapTags.cs" />
+    <Compile Include="Migrations\Game\20200424140012_MapTags.designer.cs">
+      <DependentUpon>20200424140012_MapTags.cs</DependentUpon>
     </Compile>
     <Compile Include="Networking\Client.cs" />
     <Compile Include="Entities\Npc.cs" />

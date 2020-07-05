@@ -97,6 +97,11 @@
     </Compile>
     <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeStat.Designer.cs">
       <DependentUpon>EventCommand_ChangeStat.cs</DependentUpon>
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeItemsByTag.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeItemsByTag.Designer.cs">
+      <DependentUpon>EventCommand_ChangeItemsByTag.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\frmUpdate.cs">
       <SubType>Form</SubType>
@@ -671,6 +676,8 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeStat.resx">
       <DependentUpon>EventCommand_ChangeStat.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeItemsByTag.resx">
+      <DependentUpon>EventCommand_ChangeItemsByTag.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeVital.resx">
       <DependentUpon>EventCommand_ChangeVital.cs</DependentUpon>

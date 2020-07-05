@@ -228,6 +228,9 @@
 
         //Change Stat
         ChangeStat,
+		
+        // Take Items By tag
+        ChangeItemsByTag,
 
     }
 

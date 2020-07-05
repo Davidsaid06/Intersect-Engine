@@ -66,16 +66,17 @@ namespace Intersect.Editor.Forms.Editors.Events
             System.Windows.Forms.TreeNode treeNode19 = new System.Windows.Forms.TreeNode("Change Stats");
             System.Windows.Forms.TreeNode treeNode20 = new System.Windows.Forms.TreeNode("Change Spells");
             System.Windows.Forms.TreeNode treeNode21 = new System.Windows.Forms.TreeNode("Change Items");
-            System.Windows.Forms.TreeNode treeNode22 = new System.Windows.Forms.TreeNode("Change Sprite");
-            System.Windows.Forms.TreeNode treeNode23 = new System.Windows.Forms.TreeNode("Change Face");
-            System.Windows.Forms.TreeNode treeNode24 = new System.Windows.Forms.TreeNode("Change Hair");
-            System.Windows.Forms.TreeNode treeNode25 = new System.Windows.Forms.TreeNode("Change Gender");
-            System.Windows.Forms.TreeNode treeNode26 = new System.Windows.Forms.TreeNode("Set Access");
-            System.Windows.Forms.TreeNode treeNode27 = new System.Windows.Forms.TreeNode("Change Class");
-            System.Windows.Forms.TreeNode treeNode28 = new System.Windows.Forms.TreeNode("Equip Item");
-            System.Windows.Forms.TreeNode treeNode29 = new System.Windows.Forms.TreeNode("Change Name Color");
-            System.Windows.Forms.TreeNode treeNode30 = new System.Windows.Forms.TreeNode("Change Player Label");
-            System.Windows.Forms.TreeNode treeNode31 = new System.Windows.Forms.TreeNode("Player Control", new System.Windows.Forms.TreeNode[] {
+			System.Windows.Forms.TreeNode treeNode22 = new System.Windows.Forms.TreeNode("Change Items By Tag");
+            System.Windows.Forms.TreeNode treeNode23 = new System.Windows.Forms.TreeNode("Change Sprite");
+            System.Windows.Forms.TreeNode treeNode24 = new System.Windows.Forms.TreeNode("Change Face");
+            System.Windows.Forms.TreeNode treeNode25 = new System.Windows.Forms.TreeNode("Change Hair");
+            System.Windows.Forms.TreeNode treeNode26 = new System.Windows.Forms.TreeNode("Change Gender");
+            System.Windows.Forms.TreeNode treeNode27 = new System.Windows.Forms.TreeNode("Set Access");
+            System.Windows.Forms.TreeNode treeNode28 = new System.Windows.Forms.TreeNode("Change Class");
+            System.Windows.Forms.TreeNode treeNode29 = new System.Windows.Forms.TreeNode("Equip Item");
+            System.Windows.Forms.TreeNode treeNode30 = new System.Windows.Forms.TreeNode("Change Name Color");
+            System.Windows.Forms.TreeNode treeNode31 = new System.Windows.Forms.TreeNode("Change Player Label");
+            System.Windows.Forms.TreeNode treeNode32 = new System.Windows.Forms.TreeNode("Player Control", new System.Windows.Forms.TreeNode[] {
             treeNode14,
             treeNode15,
             treeNode16,
@@ -93,16 +94,16 @@ namespace Intersect.Editor.Forms.Editors.Events
             treeNode28,
             treeNode29,
             treeNode30});
-            System.Windows.Forms.TreeNode treeNode32 = new System.Windows.Forms.TreeNode("Warp Player");
-            System.Windows.Forms.TreeNode treeNode33 = new System.Windows.Forms.TreeNode("Set Move Route");
-            System.Windows.Forms.TreeNode treeNode34 = new System.Windows.Forms.TreeNode("Wait for Route Completion");
-            System.Windows.Forms.TreeNode treeNode35 = new System.Windows.Forms.TreeNode("Hold Player");
-            System.Windows.Forms.TreeNode treeNode36 = new System.Windows.Forms.TreeNode("Release Player");
-            System.Windows.Forms.TreeNode treeNode37 = new System.Windows.Forms.TreeNode("Spawn NPC");
-            System.Windows.Forms.TreeNode treeNode38 = new System.Windows.Forms.TreeNode("Despawn NPC");
-            System.Windows.Forms.TreeNode treeNode39 = new System.Windows.Forms.TreeNode("Hide Player");
-            System.Windows.Forms.TreeNode treeNode40 = new System.Windows.Forms.TreeNode("Show Player");
-            System.Windows.Forms.TreeNode treeNode41 = new System.Windows.Forms.TreeNode("Movement", new System.Windows.Forms.TreeNode[] {
+            System.Windows.Forms.TreeNode treeNode33 = new System.Windows.Forms.TreeNode("Warp Player");
+            System.Windows.Forms.TreeNode treeNode34 = new System.Windows.Forms.TreeNode("Set Move Route");
+            System.Windows.Forms.TreeNode treeNode35 = new System.Windows.Forms.TreeNode("Wait for Route Completion");
+            System.Windows.Forms.TreeNode treeNode36 = new System.Windows.Forms.TreeNode("Hold Player");
+            System.Windows.Forms.TreeNode treeNode37 = new System.Windows.Forms.TreeNode("Release Player");
+            System.Windows.Forms.TreeNode treeNode38 = new System.Windows.Forms.TreeNode("Spawn NPC");
+            System.Windows.Forms.TreeNode treeNode39 = new System.Windows.Forms.TreeNode("Despawn NPC");
+            System.Windows.Forms.TreeNode treeNode40 = new System.Windows.Forms.TreeNode("Hide Player");
+            System.Windows.Forms.TreeNode treeNode41 = new System.Windows.Forms.TreeNode("Show Player");
+            System.Windows.Forms.TreeNode treeNode42 = new System.Windows.Forms.TreeNode("Movement", new System.Windows.Forms.TreeNode[] {
             treeNode31,
             treeNode32,
             treeNode33,
@@ -113,14 +114,14 @@ namespace Intersect.Editor.Forms.Editors.Events
             treeNode38,
             treeNode39,
             treeNode40});
-            System.Windows.Forms.TreeNode treeNode42 = new System.Windows.Forms.TreeNode("Play Animation");
-            System.Windows.Forms.TreeNode treeNode43 = new System.Windows.Forms.TreeNode("Play BGM");
-            System.Windows.Forms.TreeNode treeNode44 = new System.Windows.Forms.TreeNode("Fadeout BGM");
-            System.Windows.Forms.TreeNode treeNode45 = new System.Windows.Forms.TreeNode("Play Sound");
-            System.Windows.Forms.TreeNode treeNode46 = new System.Windows.Forms.TreeNode("Stop Sounds");
-            System.Windows.Forms.TreeNode treeNode47 = new System.Windows.Forms.TreeNode("Show Picture");
-            System.Windows.Forms.TreeNode treeNode48 = new System.Windows.Forms.TreeNode("Hide Picture");
-            System.Windows.Forms.TreeNode treeNode49 = new System.Windows.Forms.TreeNode("Special Effects", new System.Windows.Forms.TreeNode[] {
+            System.Windows.Forms.TreeNode treeNode43 = new System.Windows.Forms.TreeNode("Play Animation");
+            System.Windows.Forms.TreeNode treeNode44 = new System.Windows.Forms.TreeNode("Play BGM");
+            System.Windows.Forms.TreeNode treeNode45 = new System.Windows.Forms.TreeNode("Fadeout BGM");
+            System.Windows.Forms.TreeNode treeNode46 = new System.Windows.Forms.TreeNode("Play Sound");
+            System.Windows.Forms.TreeNode treeNode47 = new System.Windows.Forms.TreeNode("Stop Sounds");
+            System.Windows.Forms.TreeNode treeNode48 = new System.Windows.Forms.TreeNode("Show Picture");
+            System.Windows.Forms.TreeNode treeNode49 = new System.Windows.Forms.TreeNode("Hide Picture");
+            System.Windows.Forms.TreeNode treeNode50 = new System.Windows.Forms.TreeNode("Special Effects", new System.Windows.Forms.TreeNode[] {
             treeNode41,
             treeNode42,
             treeNode43,
@@ -129,23 +130,25 @@ namespace Intersect.Editor.Forms.Editors.Events
             treeNode46,
             treeNode47,
             treeNode48});
-            System.Windows.Forms.TreeNode treeNode50 = new System.Windows.Forms.TreeNode("Start Quest");
-            System.Windows.Forms.TreeNode treeNode51 = new System.Windows.Forms.TreeNode("Complete Quest Task");
-            System.Windows.Forms.TreeNode treeNode52 = new System.Windows.Forms.TreeNode("End Quest");
-            System.Windows.Forms.TreeNode treeNode53 = new System.Windows.Forms.TreeNode("Quest Control", new System.Windows.Forms.TreeNode[] {
+            System.Windows.Forms.TreeNode treeNode51 = new System.Windows.Forms.TreeNode("Start Quest");
+            System.Windows.Forms.TreeNode treeNode52 = new System.Windows.Forms.TreeNode("Complete Quest Task");
+            System.Windows.Forms.TreeNode treeNode53 = new System.Windows.Forms.TreeNode("End Quest");
+            System.Windows.Forms.TreeNode treeNode54 = new System.Windows.Forms.TreeNode("Quest Control", new System.Windows.Forms.TreeNode[] {
             treeNode50,
             treeNode51,
             treeNode52});
-            System.Windows.Forms.TreeNode treeNode54 = new System.Windows.Forms.TreeNode("Wait...");
-            System.Windows.Forms.TreeNode treeNode55 = new System.Windows.Forms.TreeNode("Etc", new System.Windows.Forms.TreeNode[] {
+            System.Windows.Forms.TreeNode treeNode55 = new System.Windows.Forms.TreeNode("Wait...");
+            System.Windows.Forms.TreeNode treeNode56 = new System.Windows.Forms.TreeNode("Etc", new System.Windows.Forms.TreeNode[] {
             treeNode54});
-            System.Windows.Forms.TreeNode treeNode56 = new System.Windows.Forms.TreeNode("Open Bank");
-            System.Windows.Forms.TreeNode treeNode57 = new System.Windows.Forms.TreeNode("Open Shop");
-            System.Windows.Forms.TreeNode treeNode58 = new System.Windows.Forms.TreeNode("Open Crafting Station");
-            System.Windows.Forms.TreeNode treeNode59 = new System.Windows.Forms.TreeNode("Shop and Bank", new System.Windows.Forms.TreeNode[] {
+            System.Windows.Forms.TreeNode treeNode57 = new System.Windows.Forms.TreeNode("Open Bank");
+            System.Windows.Forms.TreeNode treeNode58 = new System.Windows.Forms.TreeNode("Open Shop");
+            System.Windows.Forms.TreeNode treeNode59 = new System.Windows.Forms.TreeNode("Open Crafting Station");
+            System.Windows.Forms.TreeNode treeNode60 = new System.Windows.Forms.TreeNode("Shop and Bank", new System.Windows.Forms.TreeNode[] {
             treeNode56,
             treeNode57,
-            treeNode58});
+            treeNode58,
+			treeNode59,
+			treeNode60});
             this.lblName = new System.Windows.Forms.Label();
             this.txtEventname = new DarkUI.Controls.DarkTextBox();
             this.grpEntityOptions = new DarkUI.Controls.DarkGroupBox();
@@ -914,6 +917,9 @@ namespace Intersect.Editor.Forms.Editors.Events
             treeNode21.Name = "changeitems";
             treeNode21.Tag = "18";
             treeNode21.Text = "Change Items";
+            treeNode21.Name = "changeitemsbytag";
+            treeNode21.Tag = "51";
+            treeNode21.Text = "Change Items By Tag";
             treeNode22.Name = "changesprite";
             treeNode22.Tag = "19";
             treeNode22.Text = "Change Sprite";
