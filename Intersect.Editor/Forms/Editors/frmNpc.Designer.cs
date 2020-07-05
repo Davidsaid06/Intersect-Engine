@@ -1628,14 +1628,14 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.nbrMoveRange.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.nbrMoveRange.ForeColor = System.Drawing.Color.Gainsboro;
-            this.nbrMoveRange.Location = new System.Drawing.Point(133, 137);
+            this.nbrMoveRange.Location = new System.Drawing.Point(144, 200);
             this.nbrMoveRange.Maximum = new decimal(new int[] {
             50,
             0,
             0,
             0});
             this.nbrMoveRange.Name = "nbrMoveRange";
-            this.nbrMoveRange.Size = new System.Drawing.Size(87, 20);
+            this.nbrMoveRange.Size = new System.Drawing.Size(87, 22);
             this.nbrMoveRange.TabIndex = 74;
             this.nbrMoveRange.Value = new decimal(new int[] {
             0,
@@ -1647,16 +1647,16 @@ namespace Intersect.Editor.Forms.Editors
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(128, 121);
+            this.label1.Location = new System.Drawing.Point(13, 200);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(95, 13);
+            this.label1.Size = new System.Drawing.Size(123, 17);
             this.label1.TabIndex = 73;
             this.label1.Text = "Movement Range:";
             // 
             // lblFocusDamageDealer
             // 
             this.lblFocusDamageDealer.AutoSize = true;
-            this.lblFocusDamageDealer.Location = new System.Drawing.Point(10, 159);
+            this.lblFocusDamageDealer.Location = new System.Drawing.Point(12, 180);
             this.lblFocusDamageDealer.Name = "lblFocusDamageDealer";
             this.lblFocusDamageDealer.Size = new System.Drawing.Size(205, 17);
             this.lblFocusDamageDealer.TabIndex = 72;
@@ -1665,7 +1665,7 @@ namespace Intersect.Editor.Forms.Editors
             // chkFocusDamageDealer
             // 
             this.chkFocusDamageDealer.AutoSize = true;
-            this.chkFocusDamageDealer.Location = new System.Drawing.Point(171, 158);
+            this.chkFocusDamageDealer.Location = new System.Drawing.Point(229, 180);
             this.chkFocusDamageDealer.Name = "chkFocusDamageDealer";
             this.chkFocusDamageDealer.Size = new System.Drawing.Size(18, 17);
             this.chkFocusDamageDealer.TabIndex = 71;
@@ -1678,7 +1678,7 @@ namespace Intersect.Editor.Forms.Editors
             this.nudFlee.Location = new System.Drawing.Point(120, 154);
             this.nudFlee.Margin = new System.Windows.Forms.Padding(4);
             this.nudFlee.Name = "nudFlee";
-            this.nudFlee.Size = new System.Drawing.Size(36, 20);
+            this.nudFlee.Size = new System.Drawing.Size(53, 22);
             this.nudFlee.TabIndex = 70;
             this.nudFlee.Value = new decimal(new int[] {
             0,

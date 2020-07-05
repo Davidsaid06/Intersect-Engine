@@ -1186,10 +1186,12 @@ namespace Intersect.Editor.Forms.Editors
         private void ToolStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
 
-        private void nbrMoveRange_ValueChanged_1(object sender, EventArgs e)
-        {
+        }
+        private void nbrMoveRange_ValueChanged_1(object sender, EventArgs e){
             mEditorItem.MoveRange = (int)nbrMoveRange.Value;
         }
-    }
+
+            
+        }
 
 }
