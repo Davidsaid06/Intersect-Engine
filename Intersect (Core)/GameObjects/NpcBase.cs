@@ -73,6 +73,8 @@ namespace Intersect.GameObjects
 
         public byte Movement { get; set; }
 
+        public int MoveRange { get; set; } = 1;
+
         public bool Swarm { get; set; }
 
         public byte FleeHealthPercentage { get; set; }

@@ -3,9 +3,11 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Numerics;
 
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.GameObjects.Maps;
 using Intersect.Logging;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
@@ -64,12 +66,17 @@ namespace Intersect.Server.Entities
         private Task mPathfindingTask;
 
         public byte Range;
+        public byte MRange;
 
         //Respawn/Despawn
         public long RespawnTime;
 
         public long FindTargetWaitTime;
         public int FindTargetDelay = 500;
+
+        public byte[] moveTarget = new byte[2];
+        public Guid moveTargetMap;
+        long NextPathWaitTime;
 
         public Npc([NotNull] NpcBase myBase, bool despawnable = false) : base()
         {
@@ -116,6 +123,7 @@ namespace Intersect.Server.Entities
             }
 
             Range = (byte) myBase.SightRange;
+            MRange = (byte)myBase.MoveRange;
             mPathFinder = new Pathfinder(this);
         }
 
@@ -423,6 +431,11 @@ namespace Intersect.Server.Entities
 
         private void TryCastSpells()
         {
+            // There's not even a fucking target check here lol. Good god
+            if (Target == null)
+            {
+                return;
+            }
             // Check if NPC is stunned/sleeping
             if (IsStunnedOrSleeping)
             {
@@ -690,6 +703,23 @@ namespace Intersect.Server.Entities
                     }
                 }
 
+                // 19 11 25 //
+                // 
+                if (MRange > 1 && Target == null)
+                {
+                    if (moveTargetMap == Guid.Empty)
+                    {
+                        FindMoveTarget();
+                    }
+                    else
+                    {
+                        targetMap = moveTargetMap;
+                        targetX = (int)moveTarget[0];
+                        targetY = (int)moveTarget[1];
+                        targetZ = Z;
+                    }
+                }
+
                 if (targetMap != Guid.Empty)
                 {
                     //Check if target map is on one of the surrounding maps, if not then we are not even going to look.
@@ -707,12 +737,14 @@ namespace Intersect.Server.Entities
                                 if (x == MapInstance.Get(MapId).SurroundingMaps.Count - 1)
                                 {
                                     targetMap = Guid.Empty;
+                                    moveTargetMap = Guid.Empty;
                                 }
                             }
                         }
                         else
                         {
                             targetMap = Guid.Empty;
+                            moveTargetMap = Guid.Empty;
                         }
                     }
                 }
@@ -797,20 +829,22 @@ namespace Intersect.Server.Entities
                                 case PathfinderResult.OutOfRange:
                                     RemoveTarget();
                                     targetMap = Guid.Empty;
-
+                                    moveTargetMap = Guid.Empty;
                                     break;
                                 case PathfinderResult.NoPathToTarget:
                                     TryFindNewTarget(timeMs, Target?.Id ?? Guid.Empty);
                                     targetMap = Guid.Empty;
-
+                                    moveTargetMap = Guid.Empty;
                                     break;
                                 case PathfinderResult.Failure:
                                     targetMap = Guid.Empty;
+                                    moveTargetMap = Guid.Empty;
                                     RemoveTarget();
 
                                     break;
                                 case PathfinderResult.Wait:
                                     targetMap = Guid.Empty;
+                                    moveTargetMap = Guid.Empty;
 
                                     break;
                                 default:
@@ -862,7 +896,7 @@ namespace Intersect.Server.Entities
                                 }
                             }
 
-                            if (!fleed)
+                            if (!fleed && Target != null)
                             {
                                 if (Dir != DirToEnemy(Target) && DirToEnemy(Target) != -1)
                                 {
@@ -883,12 +917,23 @@ namespace Intersect.Server.Entities
                                     }
                                 }
                             }
+
+                            if (!fleed && Target == null)
+                            {
+                                moveTargetMap = Guid.Empty;
+                                NextPathWaitTime = Globals.Timing.TimeMs + Randomization.Next(500, 2000);
+                            }
                         }
                     }
                 }
 
                 //Move randomly
                 if (targetMap != Guid.Empty)
+                {
+                    return;
+                }
+
+                if (MRange > 1)
                 {
                     return;
                 }
@@ -1042,6 +1087,35 @@ namespace Intersect.Server.Entities
             return false;
         }
 
+        
+        public void FindMoveTarget()
+        {
+            if (NextPathWaitTime > Globals.Timing.TimeMs)
+            {
+                moveTargetMap = Guid.Empty;
+                moveTarget[0] = 0;
+                moveTarget[0] = 0;
+                return;
+            }
+      
+			 Random r = new Random();
+			 Random r2 = new Random();
+            int x = r.Next(-MRange, MRange);
+            int y = r2.Next(-MRange, MRange);  
+     
+            var tile = new TileHelper(MapId, X, Y);
+            if (tile.Translate(x, y)) {
+                moveTargetMap = tile.GetMapId();
+                moveTarget[0] = tile.GetX();
+                moveTarget[1] = tile.GetY();
+            }
+            else
+            {
+                moveTargetMap = Guid.Empty;
+                moveTarget[0] = 0;
+                moveTarget[0] = 0;
+            }
+        }
         private void TryFindNewTarget(long timeMs, Guid avoidId = new Guid())
         {
             if (FindTargetWaitTime > timeMs)

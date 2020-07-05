@@ -254,6 +254,7 @@ namespace Intersect.Editor.Forms.Editors
                 }
 
                 nudSightRange.Value = mEditorItem.SightRange;
+                nbrMoveRange.Value = mEditorItem.MoveRange;
                 cmbMovement.SelectedIndex = Math.Min(mEditorItem.Movement, cmbMovement.Items.Count - 1);
                 chkSwarm.Checked = mEditorItem.Swarm;
                 nudFlee.Value = mEditorItem.FleeHealthPercentage;
@@ -1112,6 +1113,10 @@ namespace Intersect.Editor.Forms.Editors
 
         #endregion
 
+        private void nbrMoveRange_ValueChanged_1(object sender, EventArgs e)
+        {
+            mEditorItem.MoveRange = (int)nbrMoveRange.Value;
+        }
     }
 
 }
