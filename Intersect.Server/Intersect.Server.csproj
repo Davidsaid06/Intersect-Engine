@@ -527,6 +527,7 @@
     <Compile Include="Migrations\Game\20200414015804_AddingMoveRange.cs" />
     <Compile Include="Migrations\Game\20200414015804_AddingMoveRange.designer.cs">
       <DependentUpon>20200414015804_AddingMoveRange.cs</DependentUpon>
+      </Compile>
     <Compile Include="Migrations\Game\20200423004850_AddingTagSystem.cs" />
     <Compile Include="Migrations\Game\20200423004850_AddingTagSystem.designer.cs">
       <DependentUpon>20200423004850_AddingTagSystem.cs</DependentUpon>
