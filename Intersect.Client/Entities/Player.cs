@@ -804,6 +804,7 @@ namespace Intersect.Client.Entities
             }
 
 
+
             // Used this so I can do multiple switch case
             var move = movex / 10 + movey;
 
@@ -846,6 +847,10 @@ namespace Intersect.Client.Entities
                         break;
                 }
 
+                if (movex > 0)
+                {
+                    Globals.Me.MoveDir = 3;
+                }
             }
         }
 
@@ -1020,6 +1025,7 @@ namespace Intersect.Client.Entities
                     x++;
 
                     break;
+
             }
 
             if (GetRealLocation(ref x, ref y, ref map))
@@ -1561,7 +1567,7 @@ namespace Intersect.Client.Entities
                     {
                         if (MoveDir != Dir)
                         {
-                            Dir = (byte)MoveDir;
+                            Dir = (byte) MoveDir;
                             PacketSender.SendDirection(Dir);
                         }
 
