@@ -318,6 +318,7 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
+
     public class LevelUpCommand : EventCommand
     {
 

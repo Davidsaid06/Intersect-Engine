@@ -58,11 +58,16 @@ namespace Intersect.Client.Interface.Menu
 
         private ImagePanel mGenderBackground;
 
+
         private Label mGenderLabel;
 
         private Label mHint2Label;
 
         private Label mHintLabel;
+
+        private ImagePanel mClassDescription;
+
+        private ImagePanel mClassStats;
 
         //Parent
         private MainMenu mMainMenu;
@@ -156,6 +161,11 @@ namespace Intersect.Client.Interface.Menu
             mClassCombobox = new ComboBox(mClassBackground, "ClassCombobox");
             mClassCombobox.ItemSelected += classCombobox_ItemSelected;
 
+            //ClassDescription
+            mClassDescription = new ImagePanel(mCharCreationPanel, "ClassDescription");
+            mClassDescription.IsHidden = true;
+
+
             //Hint Label
             mHintLabel = new Label(mCharCreationPanel, "HintLabel");
             mHintLabel.SetText(Strings.CharacterCreation.hint);
@@ -172,6 +182,10 @@ namespace Intersect.Client.Interface.Menu
             //Character sprite
             mCharacterPortrait = new ImagePanel(mCharacterContainer, "CharacterPortait");
             mCharacterPortrait.SetSize(48, 48);
+
+            //Character sprite
+            mClassStats = new ImagePanel(mCharCreationPanel, "ClassStats");
+            mClassStats.SetSize(560, 150);
 
             // Hair Sprite
             mCharacterHair = new ImagePanel(mCharacterContainer, "CharacterHair");
@@ -302,10 +316,19 @@ namespace Intersect.Client.Interface.Menu
             var isFace = true;
             if (GetClass() != null && mDisplaySpriteIndex != -1)
             {
+
                 mCharacterPortrait.IsHidden = false;
                 mCharacterHair.IsHidden = false;
                 if (GetClass().Sprites.Count > 0)
                 {
+                    mClassStats.Texture = Globals.ContentManager.GetTexture(
+                           GameContentManager.TextureType.Image, GetClass().Name.ToLower()+"_stats.png"
+                       );
+
+                    mClassDescription.Texture = Globals.ContentManager.GetTexture(
+                           GameContentManager.TextureType.Image,GetClass().Name.ToLower()+"_desc.png"
+                        );
+
                     if (mMaleChk.IsChecked)
                     {
                         mCharacterPortrait.Texture = Globals.ContentManager.GetTexture(

@@ -12,13 +12,13 @@ namespace Intersect.Client.Items
 
         public int Y;
 
-        public int MaxDurability { get; private set; }
+        public int MaxDurability;
 
-        public int CurrentDurability { get; private set; }
+        public int CurrentDurability;
 
-        public int MaxWeaponSkillsPoint { get; private set; }
+        public int MaxWeaponSkillsPoint;
 
-        public int CurrentWeaponSkillPoint { get; private set; }
+        public int CurrentWeaponSkillPoint;
 
         public Guid Owner;
 

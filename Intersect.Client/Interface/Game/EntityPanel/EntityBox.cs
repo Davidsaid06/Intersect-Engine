@@ -75,6 +75,10 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
         public Framework.Gwen.Control.Label HpLbl;
 
+        public Framework.Gwen.Control.Label HungerLbl;
+
+        public Framework.Gwen.Control.Label ActivityLbl;
+
         public Framework.Gwen.Control.Label HpTitle;
 
         private Dictionary<Guid, SpellStatus> mActiveStatuses = new Dictionary<Guid, SpellStatus>();
@@ -153,6 +157,10 @@ namespace Intersect.Client.Interface.Game.EntityPanel
 
             EventDesc = new RichLabel(EntityInfoPanel, "EventDescLabel");
 
+            HungerLbl = new Framework.Gwen.Control.Label(EntityInfoPanel, "HungerLabel");
+            HungerLbl.SetToolTipText("When your hunger drops to 0, you will retreat back to your checkpoint. Eat food or stay on safe zones");
+            ActivityLbl = new Framework.Gwen.Control.Label(EntityInfoPanel, "ActivityLabel");
+            ActivityLbl.SetToolTipText("Use activity points to do certain activities. The activity points will refill evety 2 hours.");
             HpBackground = new ImagePanel(EntityInfoPanel, "HPBarBackground");
             HpBar = new ImagePanel(EntityInfoPanel, "HPBar");
             ShieldBar = new ImagePanel(EntityInfoPanel, "ShieldBar");
@@ -240,6 +248,8 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                         ExpBackground.Hide();
                         ExpBar.Hide();
                         ExpLbl.Hide();
+                        HungerLbl.Hide();
+                        ActivityLbl.Hide();
                         ExpTitle.Hide();
                         EntityMap.Hide();
                     }
@@ -253,6 +263,8 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                     ExpBar.Hide();
                     ExpLbl.Hide();
                     ExpTitle.Hide();
+                    HungerLbl.Hide();
+                    ActivityLbl.Hide();
                     TradeLabel.Hide();
                     PartyLabel.Hide();
                     FriendLabel.Hide();
@@ -264,6 +276,8 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                     ExpBar.Hide();
                     ExpLbl.Hide();
                     ExpTitle.Hide();
+                    HungerLbl.Hide();
+                    ActivityLbl.Hide();
                     MpBackground.Hide();
                     MpBar.Hide();
                     MpTitle.Hide();
@@ -271,6 +285,8 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                     HpBackground.Hide();
                     HpBar.Hide();
                     HpLbl.Hide();
+                    HungerLbl.Hide();
+                    ActivityLbl.Hide();
                     HpTitle.Hide();
                     TradeLabel.Hide();
                     PartyLabel.Hide();
@@ -332,6 +348,8 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                 UpdateMap();
                 UpdateHpBar(elapsedTime);
                 UpdateMpBar(elapsedTime);
+                UpdateHunger();
+                UpdateActivity();
             }
             else
             {
@@ -629,6 +647,19 @@ namespace Intersect.Client.Interface.Game.EntityPanel
                     MpBar.IsHidden = false;
                 }
             }
+        }
+
+        private void UpdateHunger()
+        {
+
+                HungerLbl.Text = Globals.Me.mCustomStat[16].CurrentExp + " /" + Globals.Me.mCustomStat[16].NextExp;            
+        }
+
+        private void UpdateActivity()
+        {
+                ActivityLbl.Text = Globals.Me.mCustomStat[17].CurrentExp + " /" + Globals.Me.mCustomStat[17].NextExp;
+
+
         }
 
         private void UpdateXpBar(float elapsedTime)

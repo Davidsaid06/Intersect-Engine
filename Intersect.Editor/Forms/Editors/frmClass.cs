@@ -169,6 +169,8 @@ namespace Intersect.Editor.Forms.Editors
                 );
 
                 nudBaseMana.Value = mEditorItem.BaseVital[(int) Vitals.Mana];
+                nudBaseHunger.Value = mEditorItem.BaseVital[(int)Vitals.Hunger];
+                nudBaseActivity.Value = mEditorItem.BaseVital[(int)Vitals.Activity];
                 nudPoints.Value = mEditorItem.BasePoints;
                 chkLocked.Checked = Convert.ToBoolean(mEditorItem.Locked);
 
@@ -188,6 +190,8 @@ namespace Intersect.Editor.Forms.Editors
                 //Regen
                 nudHPRegen.Value = mEditorItem.VitalRegen[(int) Vitals.Health];
                 nudMpRegen.Value = mEditorItem.VitalRegen[(int) Vitals.Mana];
+                nudHungerRegen.Value = mEditorItem.VitalRegen[(int)Vitals.Hunger];
+                nudActivityRegen.Value = mEditorItem.VitalRegen[(int)Vitals.Activity];
 
                 //Exp
                 nudBaseExp.Value = mEditorItem.BaseExp;
@@ -919,6 +923,8 @@ namespace Intersect.Editor.Forms.Editors
             {
                 nudHpIncrease.Maximum = 10000;
                 nudMpIncrease.Maximum = 10000;
+                nudHungerIncrease.Maximum = 10000;
+                nudActivityIncrease.Maximum = 10000;
                 nudStrengthIncrease.Maximum = Options.MaxStatValue;
                 nudArmorIncrease.Maximum = Options.MaxStatValue;
                 nudMagicIncrease.Maximum = Options.MaxStatValue;
@@ -926,11 +932,14 @@ namespace Intersect.Editor.Forms.Editors
                 nudSpeedIncrease.Maximum = Options.MaxStatValue;
                 nudFaithIncrease.Maximum = Options.MaxStatValue;
                 nudCapacityIncrease.Maximum = Options.MaxStatValue;
+
             }
             else
             {
                 nudHpIncrease.Maximum = 100;
                 nudMpIncrease.Maximum = 100;
+                nudHungerIncrease.Maximum = 100;
+                nudActivityIncrease.Maximum = 100;
                 nudStrengthIncrease.Maximum = 100;
                 nudArmorIncrease.Maximum = 100;
                 nudMagicIncrease.Maximum = 100;
@@ -942,6 +951,8 @@ namespace Intersect.Editor.Forms.Editors
 
             nudHpIncrease.Value = Math.Min(nudHpIncrease.Maximum, mEditorItem.VitalIncrease[(int) Vitals.Health]);
             nudMpIncrease.Value = Math.Min(nudMpIncrease.Maximum, mEditorItem.VitalIncrease[(int) Vitals.Mana]);
+            nudHungerIncrease.Value = Math.Min(nudHungerIncrease.Maximum, mEditorItem.VitalIncrease[(int)Vitals.Hunger]);
+            nudActivityIncrease.Value = Math.Min(nudActivityIncrease.Maximum, mEditorItem.VitalIncrease[(int)Vitals.Activity]);
 
             nudStrengthIncrease.Value = Math.Min(
                 nudStrengthIncrease.Maximum, mEditorItem.StatIncrease[(int) Stats.Attack]
@@ -1269,6 +1280,19 @@ namespace Intersect.Editor.Forms.Editors
             UpdateIncreases();
         }
 
+        private void nudHungerRegen_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.VitalRegen[(int)Vitals.Hunger] = (int)nudHungerRegen.Value;
+            UpdateIncreases();
+        }
+
+        private void nudActivityRegen_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.VitalRegen[(int)Vitals.Activity] = (int)nudActivityRegen.Value;
+            UpdateIncreases();
+        }
+
+
         private void nudDamage_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.Damage = (int) nudDamage.Value;
@@ -1287,6 +1311,16 @@ namespace Intersect.Editor.Forms.Editors
         private void nudHpIncrease_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.VitalIncrease[(int) Vitals.Health] = (int) nudHpIncrease.Value;
+        }
+
+        private void nudHungerIncrease_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.VitalIncrease[(int)Vitals.Hunger] = (int)nudHungerIncrease.Value;
+        }
+
+        private void nudActivityIncrease_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.VitalIncrease[(int)Vitals.Activity] = (int)nudActivityIncrease.Value;
         }
 
         private void nudMpIncrease_ValueChanged(object sender, EventArgs e)
@@ -1350,6 +1384,16 @@ namespace Intersect.Editor.Forms.Editors
         private void nudBaseHP_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.BaseVital[(int) Vitals.Health] = (int) nudBaseHP.Value;
+        }
+
+        private void nudBaseHunger_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.BaseVital[(int)Vitals.Hunger] = (int)nudBaseHunger.Value;
+        }
+
+        private void nudBaseActivity_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.BaseVital[(int)Vitals.Activity] = (int)nudBaseActivity.Value;
         }
 
         private void nudBaseMana_ValueChanged(object sender, EventArgs e)

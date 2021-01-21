@@ -64,6 +64,8 @@ namespace Intersect.Client.Entities
         
         protected string[] mMyCustomSpriteLayers { get; set; } = new string[(int)Enums.CustomSpriteLayers.CustomCount];
 
+        public Network.Packets.CustomStat[] mCustomStat { get; set; }
+
         public GameTexture[] CustomSpriteLayersTexture { get; set; } = new GameTexture[(int)Enums.CustomSpriteLayers.CustomCount];
         public Dictionary<SpriteAnimations, GameTexture[]> CustomSpriteLayersAnimationTexture { get; set; } = new Dictionary<SpriteAnimations, GameTexture[]>();
         public long[] MoveDirectionTimers = new long[4];
@@ -124,6 +126,8 @@ namespace Intersect.Client.Entities
 
             return textures;
         }
+
+
 
         public override Guid CurrentMap
         {
@@ -197,6 +201,25 @@ namespace Intersect.Client.Entities
                         }
                     }
                 }
+                if (Controls.KeyDown(Control.Block))
+                {
+                    if (Options.ShieldIndex > -1 && Globals.Me.MyEquipment[Options.ShieldIndex] > -1)
+                    {
+                        var item = ItemBase.Get(Globals.Me.Inventory[Globals.Me.MyEquipment[Options.ShieldIndex]].ItemId);
+                        if (item.Damage >0)
+                        {
+                            if (!Globals.Me.TryAttack())
+                            {
+                                if (Globals.Me.AttackTimer < Globals.System.GetTimeMs())
+                                {
+                                    Globals.Me.AttackTimer = Globals.System.GetTimeMs() + Globals.Me.CalculateAttackTime();
+                                }
+                            }
+
+                        }
+                    }
+                }
+
             }
 
             if (TargetBox != null)
@@ -312,6 +335,7 @@ namespace Intersect.Client.Entities
                 PacketSender.SendUseItem(index, TargetIndex);
             }
         }
+
 
         public long GetItemCooldown(Guid id)
         {
@@ -1392,7 +1416,7 @@ namespace Intersect.Client.Entities
                         return false;
                     }
 
-                    PacketSender.SendPickupItem(item.Key);
+                     PacketSender.SendPickupItem(item.Key);
 
                     return true;
                 }

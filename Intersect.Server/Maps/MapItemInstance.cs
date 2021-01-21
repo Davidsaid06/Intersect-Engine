@@ -44,12 +44,30 @@ namespace Intersect.Server.Maps
             this.CurrentWeaponSkillPoint = 0;
         }
 
+        public MapItem(Guid itemId, int quantity,int currentDurability,int currentWeaponSkill) : base(itemId, quantity, null, null)
+        {
+            this.MaxDurability = Descriptor.Durability;
+            this.MaxWeaponSkillsPoint = Descriptor.WeaponSkill;
+            this.CurrentDurability = currentDurability;
+            this.CurrentWeaponSkillPoint = currentWeaponSkill;
+        }
+
+
         public MapItem(Guid itemId, int quantity, Guid? bagId, Bag bag) : base(itemId, quantity, bagId, bag)
         {
             this.MaxDurability = Descriptor.Durability;
             this.MaxWeaponSkillsPoint = Descriptor.WeaponSkill;
             this.CurrentDurability = MaxDurability;
             this.CurrentWeaponSkillPoint = 0;
+
+        }
+
+        public MapItem(Guid itemId, int quantity, Guid? bagId, Bag bag, int currentDurability, int currentWeaponSkill) : base(itemId, quantity, bagId, bag)
+        {
+            this.MaxDurability = Descriptor.Durability;
+            this.MaxWeaponSkillsPoint = Descriptor.WeaponSkill;
+            this.CurrentDurability = currentDurability;
+            this.CurrentWeaponSkillPoint = currentWeaponSkill;
 
         }
 

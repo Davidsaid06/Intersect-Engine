@@ -398,7 +398,9 @@ namespace Intersect.Server.Localization
                 new Dictionary<int, LocalizedString>
                 {
                     {0, @"Health"},
-                    {1, @"Mana"}
+                    {1, @"Mana"},
+                    {2, @"Hunger"},
+                    {3, @"Activity"}
                 }
             );
 

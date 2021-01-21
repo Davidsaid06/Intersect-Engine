@@ -78,6 +78,11 @@ namespace Intersect.GameObjects
 
         public bool Swarm { get; set; }
 
+        public string Description { get; set; }
+
+        public string Localization { get; set; }
+
+
         public byte FleeHealthPercentage { get; set; }
 
         public bool FocusHighestDamageDealer { get; set; } = true;

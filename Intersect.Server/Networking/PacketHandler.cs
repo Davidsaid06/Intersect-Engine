@@ -19,6 +19,7 @@ using Intersect.Server.Admin.Actions;
 using Intersect.Server.Core;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData;
+using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Entities;
 using Intersect.Server.General;
@@ -356,6 +357,7 @@ namespace Intersect.Server.Networking
             }
         }
 
+
         //LogoutPacket
         public void HandlePacket(Client client, Player player, LogoutPacket packet)
         {
@@ -365,6 +367,8 @@ namespace Intersect.Server.Networking
                 PacketSender.SendPlayerCharacters(client);
             }
         }
+
+        
 
         //NeedMapPacket
         public void HandlePacket(Client client, Player player, NeedMapPacket packet)
@@ -1134,6 +1138,8 @@ namespace Intersect.Server.Networking
 
                 newChar.SetVital(Vitals.Health, classBase.BaseVital[(int) Vitals.Health]);
                 newChar.SetVital(Vitals.Mana, classBase.BaseVital[(int) Vitals.Mana]);
+                newChar.SetVital(Vitals.Hunger, classBase.BaseVital[(int)Vitals.Hunger]);
+                newChar.SetVital(Vitals.Activity, classBase.BaseVital[(int)Vitals.Activity]);
 
                 for (var i = 0; i < (int) Stats.StatCount; i++)
                 {
@@ -1170,7 +1176,7 @@ namespace Intersect.Server.Networking
         //PickupItemPacket
         public void HandlePacket(Client client, Player player, PickupItemPacket packet)
         {
-            if (player == null)
+             if (player == null)
             {
                 return;
             }

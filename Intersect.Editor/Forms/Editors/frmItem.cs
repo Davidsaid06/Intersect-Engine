@@ -577,7 +577,7 @@ namespace Intersect.Editor.Forms.Editors
         private void cmbEquipmentSlot_SelectedIndexChanged(object sender, EventArgs e)
         {
             mEditorItem.EquipmentSlot = cmbEquipmentSlot.SelectedIndex;
-            if (cmbEquipmentSlot.SelectedIndex == Options.WeaponIndex)
+            if (cmbEquipmentSlot.SelectedIndex == Options.WeaponIndex || cmbEquipmentSlot.SelectedIndex==Options.ShieldIndex)
             {
                 grpWeaponProperties.Show();
             }

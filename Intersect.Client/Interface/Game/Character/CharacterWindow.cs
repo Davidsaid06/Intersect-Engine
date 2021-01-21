@@ -33,6 +33,8 @@ namespace Intersect.Client.Interface.Game.Character
 
         Button mAddSpeedBtn;
 
+        Button mAddFaithBtn;
+
         //Stats
         Label mAttackLabel;
 
@@ -82,6 +84,14 @@ namespace Intersect.Client.Interface.Game.Character
         Label mSpeedLabel;
 
         Label mCapacityLabel;
+
+        Label mRoyalAlignementLabel;
+
+        Label mNaturalAlignementLabel;
+
+        Label mRoyalAlignementValue;
+
+        Label mNaturalAlignementValue;
 
         public ImagePanel[] PaperdollPanels;
 
@@ -147,6 +157,8 @@ namespace Intersect.Client.Interface.Game.Character
             mAddMagicResistBtn.Clicked += _addMagicResistBtn_Clicked;
 
             mFaithLabel = new Label(mCharacterWindow, "FaithLabel");
+            mAddFaithBtn = new Button(mCharacterWindow, "IncreaseFaithButton");
+            mAddFaithBtn.Clicked += _addFaithBtn_Clicked;
 
             mFireLabel = new Label(mCharacterWindow, "FireLabel");
 
@@ -168,6 +180,14 @@ namespace Intersect.Client.Interface.Game.Character
 
             mCapacityLabel = new Label(mCharacterWindow, "CapacityLabel");
 
+            mRoyalAlignementValue = new Label(mCharacterWindow, "RoyalAlignmentValue");
+
+            mRoyalAlignementLabel = new Label(mCharacterWindow, "RoyalAlignmentLabel");
+
+            mNaturalAlignementLabel = new Label(mCharacterWindow, "NaturalAlignmentLabel");
+
+            mNaturalAlignementValue = new Label(mCharacterWindow, "NaturalAlignmentValue");
+
 
             mPointsLabel = new Label(mCharacterWindow, "PointsLabel");
 
@@ -185,6 +205,11 @@ namespace Intersect.Client.Interface.Game.Character
         void _addMagicResistBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
             PacketSender.SendUpgradeStat((int) Stats.MagicResist);
+        }
+
+        void _addFaithBtn_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            PacketSender.SendUpgradeStat((int)Stats.Faith);
         }
 
         void _addAbilityPwrBtn_Clicked(Base sender, ClickedEventArgs arguments)
@@ -396,6 +421,38 @@ namespace Intersect.Client.Interface.Game.Character
             mCapacityLabel.SetText(
                 Strings.Character.stat15.ToString(Strings.Combat.stat15, Globals.Me.Stat[(int)Stats.Capacity])
             );
+                
+            mRoyalAlignementLabel.SetText("Royal Alignment");
+            int royalVal = Int32.Parse(Globals.Me.mCustomStat[19].StatValue);
+            mRoyalAlignementValue.SetText(Globals.Me.mCustomStat[19].StatValue);
+            if (royalVal > 0)
+            {
+                mRoyalAlignementValue.SetTextColor(new Color(255, 0, 255, 0), Label.ControlState.Normal);
+
+            }else if (royalVal < 0)
+            {
+                mRoyalAlignementValue.SetTextColor(new Color(255, 255, 0, 0), Label.ControlState.Normal);
+            }
+            else
+            {
+                mRoyalAlignementValue.SetTextColor(new Color(255, 255, 255, 255), Label.ControlState.Normal);
+            }
+            mNaturalAlignementLabel.SetText("Natural Alignment");
+            int naturalVal = Int32.Parse(Globals.Me.mCustomStat[20].StatValue);
+            mNaturalAlignementValue.SetText(Globals.Me.mCustomStat[20].StatValue);
+            if (naturalVal > 0)
+            {
+                mNaturalAlignementValue.SetTextColor(new Color(255, 0, 255, 0), Label.ControlState.Normal);
+
+            }
+            else if (naturalVal < 0)
+            {
+                mNaturalAlignementValue.SetTextColor(new Color(255, 255, 0, 0), Label.ControlState.Normal);
+            }
+            else
+            {
+                mNaturalAlignementValue.SetTextColor(new Color(255, 255, 255, 255), Label.ControlState.Normal);
+            }
 
 
             mPointsLabel.SetText(Strings.Character.points.ToString(Globals.Me.StatPoints));
@@ -413,6 +470,9 @@ namespace Intersect.Client.Interface.Game.Character
 
             mAddSpeedBtn.IsHidden =
                 Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int) Stats.Speed] == Options.MaxStatValue;
+
+            mAddFaithBtn.IsHidden =
+                Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int)Stats.Faith] == Options.MaxStatValue;
 
             for (var i = 0; i < Options.EquipmentSlots.Count; i++)
             {

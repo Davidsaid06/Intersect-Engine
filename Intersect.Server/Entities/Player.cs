@@ -324,6 +324,93 @@ namespace Intersect.Server.Entities
             }
         }
 
+
+        public void loadCustomStats()
+        {
+            int count = Network.Packets.CustomStat.getCountStats();
+            Network.Packets.CustomStat[] Stats = new Network.Packets.CustomStat[Network.Packets.CustomStat.getCountStatsSystem()];
+            String statName="";
+            int statType=-1;
+            for (int i=0; i < count; i++)
+            {
+                if (i < (int)Network.Packets.CustomStat.PrimaryJobs.Count)
+                {
+                    statType = 0;
+                    statName = Enum.GetName(typeof(Network.Packets.CustomStat.PrimaryJobs), i);
+                }
+                else if (i < (int)Network.Packets.CustomStat.PrimaryJobs.Count + (int)Network.Packets.CustomStat.SecondaryJobs.Count)
+                {
+                    statType = 1;
+                    statName = Enum.GetName(typeof(Network.Packets.CustomStat.SecondaryJobs), i- (int)Network.Packets.CustomStat.PrimaryJobs.Count);
+                }
+                else if(i < (int)Network.Packets.CustomStat.PrimaryJobs.Count + (int)Network.Packets.CustomStat.SecondaryJobs.Count+ (int)Network.Packets.CustomStat.ShortRangeWeapons.Count)
+                {
+                    statType = 2;
+                    statName = Enum.GetName(typeof(Network.Packets.CustomStat.ShortRangeWeapons), i - (int)Network.Packets.CustomStat.PrimaryJobs.Count - (int)Network.Packets.CustomStat.SecondaryJobs.Count);
+                }
+                else if(i < (int)Network.Packets.CustomStat.PrimaryJobs.Count + (int)Network.Packets.CustomStat.SecondaryJobs.Count + (int)Network.Packets.CustomStat.ShortRangeWeapons.Count+ (int)Network.Packets.CustomStat.LargeRangeWeapons.Count)
+                {
+                    statType = 3;
+                    statName = Enum.GetName(typeof(Network.Packets.CustomStat.LargeRangeWeapons), i - (int)Network.Packets.CustomStat.PrimaryJobs.Count - (int)Network.Packets.CustomStat.SecondaryJobs.Count - (int)Network.Packets.CustomStat.ShortRangeWeapons.Count);
+                }
+
+                string level = CommandProcessing.ParseEventText("\\pv{"+statName+"}", this, null);
+                int exp;
+                Int32.TryParse(CommandProcessing.ParseEventText("\\pv{"+statName+"Exp}", this, null), out exp);
+                int nextExp;
+                Int32.TryParse(CommandProcessing.ParseEventText("\\pv{next"+statName+"Exp}", this, null), out nextExp);
+                Network.Packets.CustomStat st = new Network.Packets.CustomStat(statName, level, exp, nextExp, statType);
+                Stats[i] = st;
+            }
+
+            statType = 4;
+            string name; 
+            string value;
+            int exp2;
+            int nextExp2;
+
+            name = "Hunger";
+            value = "";
+            Int32.TryParse(CommandProcessing.ParseEventText("\\pv{14}", this, null), out exp2);
+            Int32.TryParse(CommandProcessing.ParseEventText("\\pv{15}", this, null), out nextExp2);
+            Network.Packets.CustomStat st1 = new Network.Packets.CustomStat(name, value, exp2, nextExp2, statType);
+            Stats[count] = st1;
+
+            name = "Activity";
+            value = "";
+            Int32.TryParse(CommandProcessing.ParseEventText("\\pv{ActivityPoints}", this, null), out exp2);
+            Int32.TryParse(CommandProcessing.ParseEventText("\\pv{MaxActivityPoints}", this, null), out nextExp2);
+            Network.Packets.CustomStat st2 = new Network.Packets.CustomStat(name, value, exp2, nextExp2, statType);
+            Stats[count + 1] = st2;
+
+            name = "Time";
+            value = CommandProcessing.ParseEventText("\\hour:\\minute \\period", this, null);
+            Int32.TryParse(CommandProcessing.ParseEventText("\\pv{weather}", this, null), out exp2);
+            Int32.TryParse(CommandProcessing.ParseEventText("\\gv{day}", this, null), out nextExp2);
+            Network.Packets.CustomStat st3 = new Network.Packets.CustomStat(name, value, exp2, nextExp2, statType);
+            Stats[count + 2] = st3;
+
+
+            name = "RoyalAlignment";
+            value = CommandProcessing.ParseEventText("\\pv{ralignement}", this, null);
+            exp2 = 0;
+            nextExp2=0;
+            Network.Packets.CustomStat st4 = new Network.Packets.CustomStat(name, value, exp2, nextExp2, statType);
+            Stats[count + 3] = st4;
+
+            name = "NaturalAlignment";
+            value = CommandProcessing.ParseEventText("\\pv{nalignement}", this, null);
+            exp2 = 0;
+            nextExp2 = 0;
+            Network.Packets.CustomStat st5 = new Network.Packets.CustomStat(name, value, exp2, nextExp2, statType);
+            Stats[count + 4] = st5;
+
+
+            PacketSender.SendCustomStat(this, Stats);
+
+        }
+
+
         //Update
         public override void Update(long timeMs)
         {
@@ -470,6 +557,9 @@ namespace Intersect.Server.Entities
                     StartCommonEvent(evt, CommonEventTrigger.Autorun);
                 }
             }
+
+            //Custom stats player refresh;
+            loadCustomStats();
 
             //If we have a move route then let's process it....
             if (MoveRoute != null && MoveTimer < timeMs)
@@ -683,6 +773,7 @@ namespace Intersect.Server.Entities
                 pkt.CustomSpriteLayers =
                     PacketSender.GenerateCustomSpriteLayersPacket((Player)this);
             }
+            
 
             return pkt;
         }
@@ -769,10 +860,19 @@ namespace Intersect.Server.Entities
                 {
                     continue;
                 }
-
                 var vitalRegenRate = (playerClass.VitalRegen[vitalId] + GetEquipmentVitalRegen(vital)) / 100f;
-                var regenValue = (int) Math.Max(1, maxVitalValue * vitalRegenRate) *
-                                 Math.Abs(Math.Sign(vitalRegenRate));
+                var regenValue=0;
+                if (vitalId == 2)
+                {
+                     regenValue = (int)(maxVitalValue * vitalRegenRate);
+                }
+                else
+                {
+                    regenValue = (int)Math.Max(1, maxVitalValue * vitalRegenRate) *
+                    Math.Abs(Math.Sign(vitalRegenRate));
+                }
+
+
 
                 AddVital(vital, regenValue);
             }
@@ -825,6 +925,12 @@ namespace Intersect.Server.Entities
                 classVital = Math.Max(classVital, 1);
             }
             else if (vital == (int) Vitals.Mana)
+            {
+                classVital = Math.Max(classVital, 0);
+            }else if(vital == (int)Vitals.Hunger)
+            {
+                classVital = Math.Max(classVital, 0);
+            }else if(vital == (int)Vitals.Activity)
             {
                 classVital = Math.Max(classVital, 0);
             }
@@ -1326,6 +1432,8 @@ namespace Intersect.Server.Entities
         {
             var playerClass = ClassBase.Get(ClassId);
 
+            loadCustomStats();
+
             if (playerClass != null)
             {
                 for (var i = 0; i < (int) Stats.StatCount; i++)
@@ -1583,6 +1691,7 @@ namespace Intersect.Server.Entities
         /// <param name="item">The <see cref="Item"/> to give to the player.</param>
         /// <returns>Whether the player received the item or not.</returns>
         public bool TryGiveItem(Item item) => TryGiveItem(item, ItemHandling.Normal, false, true);
+        public bool TryGiveItem(MapItem item) => TryGiveItem(item, ItemHandling.Normal, false, true);
 
         /// <summary>
         /// Attempts to give the player an item. Returns whether or not it succeeds.
@@ -1696,6 +1805,82 @@ namespace Intersect.Server.Entities
                     }
 
                     break;
+                // Did you forget to change this method when you added something? ;)
+                default:
+                    throw new NotImplementedException();
+            }
+
+            return bankOverflow && TryDepositItem(item, sendUpdate);
+        }
+
+        public bool TryGiveItem(MapItem item, ItemHandling handler = ItemHandling.Normal, bool bankOverflow = false, bool sendUpdate = true)
+        {
+            // Is this a valid item?
+            if (item.Descriptor == null)
+            {
+                return false;
+            }
+
+            // Get this information so we can use it later.
+            var openSlots = FindOpenInventorySlots().Count;
+            var hasItem = FindInventoryItemSlot(item.ItemId) != null;
+            int spawnAmount = 0;
+
+            // How are we going to be handling this?
+            switch (handler)
+            {
+                // Handle this item like normal, there's no special rules attached to this method.
+                case ItemHandling.Normal:
+                    if (CanGiveItem(item)) // Can receive item under regular rules.
+                    {
+                        GiveItem(item, sendUpdate);
+                        return true;
+                    }
+
+                    break;
+                case ItemHandling.Overflow:
+                    if (CanGiveItem(item)) // Can receive item under regular rules.
+                    {
+                        GiveItem(item, sendUpdate);
+                        return true;
+                    }
+                    else if (item.Descriptor.Stackable && openSlots == 0) // Is stackable, but no inventory space.
+                    {
+                        spawnAmount = item.Quantity;
+                    }
+                    else // Time to give them as much as they can take, and spawn the rest on the map!
+                    {
+                        spawnAmount = item.Quantity - openSlots;
+
+                        if (openSlots > 0)
+                        {
+                            item.Quantity = openSlots;
+                            GiveItem(item, sendUpdate);
+                        }
+                    }
+
+                    // Do we have any items to spawn to the map?
+                    if (spawnAmount > 0)
+                    {
+                        Map.SpawnItem(X, Y, item, spawnAmount, Id);
+                        return true;
+                    }
+
+                    break;
+                case ItemHandling.UpTo:
+                    if (CanGiveItem(item)) // Can receive item under regular rules.
+                    {
+                        GiveItem(item, sendUpdate);
+                        return true;
+                    }
+                    else if (!item.Descriptor.Stackable && openSlots > 0) // Is not stackable, has space for some.
+                    {
+                        item.Quantity = openSlots;
+                        GiveItem(item, sendUpdate);
+                        return true;
+                    }
+
+                    break;
                     // Did you forget to change this method when you added something? ;)
                 default:
                     throw new NotImplementedException();
@@ -1728,6 +1913,10 @@ namespace Intersect.Server.Entities
                 for (var slot = 0; slot < item.Quantity; slot++)
                 {
                     openSlots[slot].Set(new Item(item.ItemId, 1));
+                    openSlots[slot].MaxDurability = openSlots[slot].Durability;
+                    openSlots[slot].currentDurability = openSlots[slot].Durability;
+                    openSlots[slot].MaxWeaponSkillsPoint = openSlots[slot].WeaponSkill;
+                    openSlots[slot].currentWeaponSkillPoint = 0;
                     updateSlots.Add(openSlots[slot].Slot);
                 }
             }
@@ -1735,6 +1924,10 @@ namespace Intersect.Server.Entities
             {
                 var newSlot = FindOpenInventorySlot();
                 newSlot.Set(item);
+                newSlot.MaxDurability = newSlot.Durability;
+                newSlot.currentDurability = newSlot.Durability;
+                newSlot.MaxWeaponSkillsPoint = newSlot.WeaponSkill;
+                newSlot.currentWeaponSkillPoint = 0;
                 updateSlots.Add(newSlot.Slot);
             }
 
@@ -1750,6 +1943,75 @@ namespace Intersect.Server.Entities
             {
                 var newSlot = FindOpenInventorySlot();
                 newSlot.Set(item);
+                newSlot.MaxDurability = newSlot.Durability;
+                newSlot.currentDurability = newSlot.Durability;
+                newSlot.MaxWeaponSkillsPoint = newSlot.WeaponSkill;
+                newSlot.currentWeaponSkillPoint = 0;
+                updateSlots.Add(newSlot.Slot);
+            }
+
+            // Do we need to update the player's inventory?
+            if (sendUpdate)
+            {
+                foreach (var slot in updateSlots)
+                {
+                    PacketSender.SendInventoryItemUpdate(this, slot);
+                }
+            }
+
+
+            // Update quests for this item.
+            UpdateGatherItemQuests(item.ItemId);
+
+        }
+
+        private void GiveItem(MapItem item, bool sendUpdate)
+        {
+
+            // Decide how we're going to handle this item.
+            var existingSlot = FindInventoryItemSlot(item.Descriptor.Id);
+            var updateSlots = new List<int>();
+            if (item.Descriptor.Stackable && existingSlot != null) // Stackable, but already exists in the inventory.
+            {
+                Items[existingSlot.Slot].Quantity += item.Quantity;
+                updateSlots.Add(existingSlot.Slot);
+            }
+            else if (!item.Descriptor.Stackable && item.Quantity > 1) // Not stackable, but multiple items.
+            {
+                var openSlots = FindOpenInventorySlots();
+                for (var slot = 0; slot < item.Quantity; slot++)
+                {
+                    openSlots[slot].Set(new Item(item.ItemId, 1));
+                    updateSlots.Add(openSlots[slot].Slot);
+                }
+            }
+            else // Hand out without any special treatment. Either a single item or a stackable item we don't have yet.
+            {
+                var newSlot = FindOpenInventorySlot();
+                newSlot.Set(item);
+                newSlot.MaxDurability = item.MaxDurability;
+                newSlot.MaxWeaponSkillsPoint = item.MaxWeaponSkillsPoint;
+                newSlot.currentDurability = item.CurrentDurability;
+                newSlot.currentWeaponSkillPoint = item.CurrentWeaponSkillPoint;
+                updateSlots.Add(newSlot.Slot);
+            }
+
+            // Do we need to update the player's inventory?
+            if (sendUpdate)
+            {
+                foreach (var slot in updateSlots)
+                {
+                    PacketSender.SendInventoryItemUpdate(this, slot);
+                }
+            }
+            else // Hand out without any special treatment. Either a single item or a stackable item we don't have yet.
+            {
+                var newSlot = FindOpenInventorySlot();
+                newSlot.Set(item);
+                newSlot.MaxDurability = item.MaxDurability;
+                newSlot.MaxWeaponSkillsPoint = item.MaxWeaponSkillsPoint;
+                newSlot.currentDurability = item.CurrentDurability;
+                newSlot.currentWeaponSkillPoint = item.CurrentWeaponSkillPoint;
                 updateSlots.Add(newSlot.Slot);
             }
 
@@ -1804,8 +2066,21 @@ namespace Intersect.Server.Entities
             TryGetSlot(toSlotIndex, out var toSlot, true);
 
             var toSlotClone = toSlot.Clone();
+            //para que se clone la durabilidad y puntos de arma
+            int currDurability = toSlot.currentDurability;
+            int currWeaponS = toSlot.currentWeaponSkillPoint;
+            int maxDurability = toSlot.MaxDurability;
+            int maxSkillPoints = toSlot.MaxWeaponSkillsPoint;
             toSlot.Set(fromSlot);
+            toSlot.currentDurability = fromSlot.currentDurability;
+            toSlot.currentWeaponSkillPoint = fromSlot.currentWeaponSkillPoint;
+            toSlot.MaxDurability = fromSlot.MaxDurability;
+            toSlot.MaxWeaponSkillsPoint = fromSlot.MaxWeaponSkillsPoint;
             fromSlot.Set(toSlotClone);
+            fromSlot.currentDurability = currDurability;
+            fromSlot.currentWeaponSkillPoint = currWeaponS;
+            fromSlot.MaxDurability = maxDurability;
+            fromSlot.MaxWeaponSkillsPoint = maxSkillPoints;
 
             PacketSender.SendInventoryItemUpdate(this, fromSlotIndex);
             PacketSender.SendInventoryItemUpdate(this, toSlotIndex);
@@ -1865,7 +2140,7 @@ namespace Intersect.Server.Entities
                 return false;
             }
 
-            map.SpawnItem(X, Y, itemInSlot, itemDescriptor.IsStackable ? amount : 1, Id);
+            map.SpawnItem(X, Y, this.Items[slotIndex] , itemDescriptor.IsStackable ? amount : 1, Id);
 
             itemInSlot.Quantity = Math.Max(0, itemInSlot.Quantity - amount);
 
@@ -2241,7 +2516,7 @@ namespace Intersect.Server.Entities
             var itemDescriptor = ItemBase.Get(itemId);
 
             // Go through our inventory and take what we need!
-            foreach (var slot in FindInventoryItemSlots(itemId))
+            foreach (var slot in FindInventoryItemSlotsByDurability(itemId))
             {
                 // Do we still have items to take? If not leave the loop!
                 if (toTake == 0)
@@ -2360,6 +2635,40 @@ namespace Intersect.Server.Entities
                     slots.Add(Items[i]);
                 }
             }
+
+            return slots;
+        }
+
+        public List<InventorySlot> FindInventoryItemSlotsByDurability(Guid itemId, int quantity = 1)
+        {
+            int num = 0;
+            var slots = new List<InventorySlot>(); 
+            if (Items == null)
+            {
+                return slots;
+            }
+
+            for (var i = 0; i < Options.MaxInvItems; i++)
+            {
+                var item = Items[i];
+                if (item?.ItemId != itemId)
+                {
+                    continue;
+                }
+
+                if (item.Quantity >= quantity)
+                {
+                    slots.Add(Items[i]);
+                    num++;
+                }
+            }
+
+            if (slots != null)
+            {
+                List<InventorySlot> SortedList = slots.OrderBy(o => o.currentDurability).ToList();
+                return SortedList;
+
+             }
 
             return slots;
         }
@@ -2849,7 +3158,7 @@ namespace Intersect.Server.Entities
                 //Take the items
                 foreach (var c in CraftBase.Get(id).Ingredients)
                 {
-                    if (!TryTakeItem(c.ItemId, c.Quantity))
+                    if (!TryTakeItem(c.ItemId, c.Quantity)) 
                     {
                         for (var i = 0; i < invbackup.Count; i++)
                         {
@@ -2910,6 +3219,11 @@ namespace Intersect.Server.Entities
                 // Else send an craft failed message
                 else
                 {
+                    if (CraftBase.Get(id).CraftEventIdFailed != Guid.Empty)
+                    {
+                        StartCommonEvent(EventBase.Get(CraftBase.Get(id).CraftEventIdFailed), CommonEventTrigger.None);
+                    }
+
                     PacketSender.SendChatMsg(
                                 this, Strings.Crafting.failed.ToString(ItemBase.GetName(CraftBase.Get(id).ItemId)),
                                 CustomColors.Alerts.Error
@@ -4631,7 +4945,7 @@ namespace Intersect.Server.Entities
         }
 
         //Stats
-        public void UpgradeStat(int statIndex)
+            public void UpgradeStat(int statIndex)
         {
             if (Stat[statIndex].BaseStat + StatPointAllocations[statIndex] < Options.MaxStatValue && StatPoints > 0)
             {

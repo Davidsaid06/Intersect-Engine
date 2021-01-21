@@ -1222,6 +1222,16 @@ namespace Intersect.Server.Entities
                 value = 0; //Can't have less than 0 mana
             }
 
+            if (value < 0 && vital == (int)Vitals.Hunger)
+            {
+                value = 0; //Can't have less than 0 hunger
+            }
+
+            if (value < 0 && vital == (int)Vitals.Activity)
+            {
+                value = 0; //Can't have less than 0 activity
+            }
+
             _maxVital[vital] = value;
             if (value < GetVital(vital))
             {
@@ -1783,6 +1793,7 @@ namespace Intersect.Server.Entities
             bool isAutoAttack = false
         )
         {
+            int brokenWeapon = 0;
             var damagingAttack = baseDamage > 0;
             if (enemy == null)
             {
@@ -1798,6 +1809,28 @@ namespace Intersect.Server.Entities
                 {
 
                     weapon = player.Items[player.Equipment[Options.WeaponIndex]];
+
+                    if (weapon.currentDurability > 0)
+                    {
+                        weapon.currentDurability--;
+
+                        if (weapon.currentDurability == 0) {
+                            PacketSender.SendActionMsg(player, "Your weapon broke!", CustomColors.Combat.PhysicalDamage);
+                        }
+
+                    }
+                    else
+                    {
+                        brokenWeapon = 1;
+                        PacketSender.SendActionMsg(player, "Your weapon is broken!", CustomColors.Combat.PhysicalDamage);
+                    }
+
+                    if (weapon.currentWeaponSkillPoint < weapon.MaxWeaponSkillsPoint)
+                    {
+                        weapon.currentWeaponSkillPoint++;
+                    }
+
+                    PacketSender.SendInventoryItemUpdate(player, weapon.Slot);
 
                 }
             }
@@ -1837,6 +1870,11 @@ namespace Intersect.Server.Entities
                 baseDamage = Formulas.CalculateDamage(
                     baseDamage, damageType, scalingStat, scaling, critMultiplier, this, enemy
                 );
+
+                if (brokenWeapon == 1)
+                {
+                    baseDamage = (int)(baseDamage * 0.20);
+                }
 
                 if (baseDamage < 0 && damagingAttack)
                 {
@@ -2815,6 +2853,7 @@ namespace Intersect.Server.Entities
             packet.NameColor = NameColor;
             packet.HeaderLabel = new LabelPacket(HeaderLabel.Text, HeaderLabel.Color);
             packet.FooterLabel = new LabelPacket(FooterLabel.Text, FooterLabel.Color);
+            
 
             return packet;
         }

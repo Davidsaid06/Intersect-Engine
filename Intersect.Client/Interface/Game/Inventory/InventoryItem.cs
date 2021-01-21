@@ -154,7 +154,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                 if (Globals.Me.Inventory[mMySlot]?.Base != null)
                 {
                     mDescWindow = new ItemDescWindow(
-                        Globals.Me.Inventory[mMySlot].Base, Globals.Me.Inventory[mMySlot].Quantity, mInventoryWindow.X,
+                        Globals.Me.Inventory[mMySlot], Globals.Me.Inventory[mMySlot].Quantity, mInventoryWindow.X,
                         mInventoryWindow.Y, Globals.Me.Inventory[mMySlot].StatBuffs
                     );
                 }
@@ -181,7 +181,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                     if (hoveredItem != null && Globals.Me.Inventory[mMySlot]?.Base != null)
                     {
                         mDescWindow = new ItemDescWindow(
-                            Globals.Me.Inventory[mMySlot].Base, Globals.Me.Inventory[mMySlot].Quantity,
+                            Globals.Me.Inventory[mMySlot], Globals.Me.Inventory[mMySlot].Quantity,
                             mInventoryWindow.X, mInventoryWindow.Y, Globals.Me.Inventory[mMySlot].StatBuffs, "",
                             Strings.Shop.sellsfor.ToString(shopItem.CostItemQuantity, hoveredItem.Name)
                         );
@@ -194,7 +194,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                     if (hoveredItem != null && costItem != null && Globals.Me.Inventory[mMySlot]?.Base != null)
                     {
                         mDescWindow = new ItemDescWindow(
-                            Globals.Me.Inventory[mMySlot].Base, Globals.Me.Inventory[mMySlot].Quantity,
+                            Globals.Me.Inventory[mMySlot], Globals.Me.Inventory[mMySlot].Quantity,
                             mInventoryWindow.X, mInventoryWindow.Y, Globals.Me.Inventory[mMySlot].StatBuffs, "",
                             Strings.Shop.sellsfor.ToString(hoveredItem.Price, costItem.Name)
                         );
@@ -205,7 +205,7 @@ namespace Intersect.Client.Interface.Game.Inventory
                     if (invItem?.Base != null)
                     {
                         mDescWindow = new ItemDescWindow(
-                            invItem.Base, invItem.Quantity, mInventoryWindow.X, mInventoryWindow.Y, invItem.StatBuffs,
+                            invItem, invItem.Quantity, mInventoryWindow.X, mInventoryWindow.Y, invItem.StatBuffs,
                             "", Strings.Shop.wontbuy
                         );
                     }
@@ -257,6 +257,15 @@ namespace Intersect.Client.Interface.Game.Inventory
                 if (item != null)
                 {
                     var itemTex = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, item.Icon);
+                    if (item.EquipmentSlot==Options.WeaponIndex && Globals.Me.Inventory[mMySlot].CurrentDurability == 0)
+                    {
+                    var itemTexAux = Globals.ContentManager.GetTexture(GameContentManager.TextureType.Item, "Broken_"+item.Icon);
+                    if (itemTexAux != null)
+                        {
+                            itemTex = itemTexAux;
+                        }
+                    }
+
                     if (itemTex != null)
                     {
                         Pnl.Texture = itemTex;

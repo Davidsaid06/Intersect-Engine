@@ -38,13 +38,13 @@ namespace Intersect.Server.Database.PlayerData.Players
 
         public int Slot { get; private set; }
 
-        public int MaxDurability { get; private set; }
+        public int MaxDurability { get;  set; }
 
-        public int currentDurability { get; private set; }
+        public int currentDurability { get;  set; }
 
-        public int MaxWeaponSkillsPoint { get; private set; }
+        public int MaxWeaponSkillsPoint { get;  set; }
 
-        public int currentWeaponSkillPoint { get; private set; }
+        public int currentWeaponSkillPoint { get;  set; }
 
 
     }

@@ -270,6 +270,8 @@ namespace Intersect.Editor.Forms.Editors
                 nbrMoveRange.Value = mEditorItem.MoveRange;
                 cmbMovement.SelectedIndex = Math.Min(mEditorItem.Movement, cmbMovement.Items.Count - 1);
                 chkSwarm.Checked = mEditorItem.Swarm;
+                txtDesc.Text = mEditorItem.Description;
+                txtLoc.Text = mEditorItem.Localization;
                 nudFlee.Value = mEditorItem.FleeHealthPercentage;
                 chkFocusDamageDealer.Checked = mEditorItem.FocusHighestDamageDealer;
 
@@ -856,6 +858,16 @@ namespace Intersect.Editor.Forms.Editors
         private void nudLevel_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.Level = (int) nudLevel.Value;
+        }
+
+        private void txtDesc_TextChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Description = txtDesc.Text;
+        }
+
+        private void txtLoc_TextChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Localization = txtLoc.Text;
         }
 
         private void nudHpRegen_ValueChanged(object sender, EventArgs e)

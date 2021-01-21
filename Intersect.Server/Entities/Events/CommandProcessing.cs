@@ -330,6 +330,7 @@ namespace Intersect.Server.Entities.Events
             }
         }
 
+
         //Level Up Command
         private static void ProcessCommand(
             LevelUpCommand command,
@@ -1408,7 +1409,7 @@ namespace Intersect.Server.Entities.Events
                 input = input.Replace(Strings.Events.playernamecommand, player.Name);
                 input = input.Replace(Strings.Events.playerclasscommand, ClassBase.GetName(player.ClassId));
                 input = input.Replace(Strings.Events.playersexcommand, player.Gender==0?"he":"she");
-                input = input.Replace(Strings.Events.playersexcommand, player.Gender == 0 ? "his" : "her");
+                input = input.Replace(Strings.Events.playersexpossesioncommand, player.Gender == 0 ? "his" : "her");
                 if (instance != null)
                 {
                     if (instance.PageInstance != null)

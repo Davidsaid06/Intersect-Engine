@@ -492,6 +492,10 @@
     <Compile Include="Migrations\20200417054313_ItemDurabilityV2.designer.cs">
       <DependentUpon>20200417054313_ItemDurabilityV2.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\20200721023205_AddingDescriptionAndLocalizationNPC.cs" />
+    <Compile Include="Migrations\20200721023205_AddingDescriptionAndLocalizationNPC.designer.cs">
+      <DependentUpon>20200721023205_AddingDescriptionAndLocalizationNPC.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Game\20200404164233_ExtendedCraftingNew.cs" />
     <Compile Include="Migrations\Game\20200404164233_ExtendedCraftingNew.designer.cs">
       <DependentUpon>20200404164233_ExtendedCraftingNew.cs</DependentUpon>
@@ -527,7 +531,7 @@
     <Compile Include="Migrations\Game\20200414015804_AddingMoveRange.cs" />
     <Compile Include="Migrations\Game\20200414015804_AddingMoveRange.designer.cs">
       <DependentUpon>20200414015804_AddingMoveRange.cs</DependentUpon>
-      </Compile>
+    </Compile>
     <Compile Include="Migrations\Game\20200423004850_AddingTagSystem.cs" />
     <Compile Include="Migrations\Game\20200423004850_AddingTagSystem.designer.cs">
       <DependentUpon>20200423004850_AddingTagSystem.cs</DependentUpon>
@@ -535,6 +539,14 @@
     <Compile Include="Migrations\Game\20200424140012_MapTags.cs" />
     <Compile Include="Migrations\Game\20200424140012_MapTags.designer.cs">
       <DependentUpon>20200424140012_MapTags.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Game\20200721023310_AddingDescriptionAndLocalizationNPC.cs" />
+    <Compile Include="Migrations\Game\20200721023310_AddingDescriptionAndLocalizationNPC.designer.cs">
+      <DependentUpon>20200721023310_AddingDescriptionAndLocalizationNPC.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\Game\20200824005020_FailureCommonEventCraft.cs" />
+    <Compile Include="Migrations\Game\20200824005020_FailureCommonEventCraft.designer.cs">
+      <DependentUpon>20200824005020_FailureCommonEventCraft.cs</DependentUpon>
     </Compile>
     <Compile Include="Networking\Client.cs" />
     <Compile Include="Entities\Npc.cs" />

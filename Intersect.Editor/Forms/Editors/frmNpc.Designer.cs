@@ -181,6 +181,10 @@ namespace Intersect.Editor.Forms.Editors
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripItemUndo = new System.Windows.Forms.ToolStripButton();
             this.searchableDarkTreeView1 = new Intersect.Editor.Forms.Controls.SearchableDarkTreeView();
+            this.lblDesc = new System.Windows.Forms.Label();
+            this.txtDesc = new DarkUI.Controls.DarkTextBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.txtLoc = new DarkUI.Controls.DarkTextBox();
             this.grpNpcs.SuspendLayout();
             this.grpGeneral.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudLevel)).BeginInit();
@@ -285,7 +289,7 @@ namespace Intersect.Editor.Forms.Editors
             this.lstNpcs.ImageIndex = 0;
             this.lstNpcs.ImageList = this.imageList;
             this.lstNpcs.LineColor = System.Drawing.Color.FromArgb(((int)(((byte)(150)))), ((int)(((byte)(150)))), ((int)(((byte)(150)))));
-            this.lstNpcs.Location = new System.Drawing.Point(8, 54);
+            this.lstNpcs.Location = new System.Drawing.Point(8, 55);
             this.lstNpcs.Margin = new System.Windows.Forms.Padding(4);
             this.lstNpcs.Name = "lstNpcs";
             this.lstNpcs.SelectedImageIndex = 0;
@@ -305,6 +309,8 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpGeneral.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpGeneral.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpGeneral.Controls.Add(this.lblDesc);
+            this.grpGeneral.Controls.Add(this.txtDesc);
             this.grpGeneral.Controls.Add(this.lblTag);
             this.grpGeneral.Controls.Add(this.txtTag);
             this.grpGeneral.Controls.Add(this.btnAddFolder);
@@ -322,31 +328,31 @@ namespace Intersect.Editor.Forms.Editors
             this.grpGeneral.Margin = new System.Windows.Forms.Padding(4);
             this.grpGeneral.Name = "grpGeneral";
             this.grpGeneral.Padding = new System.Windows.Forms.Padding(4);
-            this.grpGeneral.Size = new System.Drawing.Size(276, 226);
+            this.grpGeneral.Size = new System.Drawing.Size(276, 359);
             this.grpGeneral.TabIndex = 14;
             this.grpGeneral.TabStop = false;
             this.grpGeneral.Text = "General";
             // 
             // lblTag
-            //
+            // 
             this.lblTag.AutoSize = true;
-            this.lblTag.Location = new System.Drawing.Point(72, 110);
+            this.lblTag.Location = new System.Drawing.Point(103, 128);
             this.lblTag.Name = "lblTag";
-            this.lblTag.Size = new System.Drawing.Size(29, 13);
+            this.lblTag.Size = new System.Drawing.Size(37, 17);
             this.lblTag.TabIndex = 69;
             this.lblTag.Text = "Tag:";
-            //
+            // 
             // txtTag
-            //
+            // 
             this.txtTag.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
             this.txtTag.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtTag.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
-            this.txtTag.Location = new System.Drawing.Point(106, 108);
+            this.txtTag.Location = new System.Drawing.Point(172, 128);
             this.txtTag.Name = "txtTag";
-            this.txtTag.Size = new System.Drawing.Size(89, 20);
+            this.txtTag.Size = new System.Drawing.Size(89, 22);
             this.txtTag.TabIndex = 68;
             this.txtTag.TextChanged += new System.EventHandler(this.txtTag_TextChanged);
-            //
+            // 
             // btnAddFolder
             // 
             this.btnAddFolder.Location = new System.Drawing.Point(236, 55);
@@ -438,7 +444,7 @@ namespace Intersect.Editor.Forms.Editors
             this.cmbSprite.FormattingEnabled = true;
             this.cmbSprite.Items.AddRange(new object[] {
             "None"});
-            this.cmbSprite.Location = new System.Drawing.Point(75, 150);
+            this.cmbSprite.Location = new System.Drawing.Point(106, 186);
             this.cmbSprite.Name = "cmbSprite";
             this.cmbSprite.Size = new System.Drawing.Size(159, 23);
             this.cmbSprite.TabIndex = 11;
@@ -449,7 +455,7 @@ namespace Intersect.Editor.Forms.Editors
             // lblPic
             // 
             this.lblPic.AutoSize = true;
-            this.lblPic.Location = new System.Drawing.Point(72, 134);
+            this.lblPic.Location = new System.Drawing.Point(103, 163);
             this.lblPic.Name = "lblPic";
             this.lblPic.Size = new System.Drawing.Size(49, 17);
             this.lblPic.TabIndex = 6;
@@ -572,7 +578,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpStats.Controls.Add(this.lblHP);
             this.grpStats.Controls.Add(this.lblExp);
             this.grpStats.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpStats.Location = new System.Drawing.Point(4, 248);
+            this.grpStats.Location = new System.Drawing.Point(11, 389);
             this.grpStats.Margin = new System.Windows.Forms.Padding(4);
             this.grpStats.Name = "grpStats";
             this.grpStats.Padding = new System.Windows.Forms.Padding(4);
@@ -896,7 +902,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpElements.Controls.Add(this.lblFire);
             this.grpElements.Controls.Add(this.lblDark);
             this.grpElements.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpElements.Location = new System.Drawing.Point(5, 480);
+            this.grpElements.Location = new System.Drawing.Point(5, 615);
             this.grpElements.Margin = new System.Windows.Forms.Padding(4);
             this.grpElements.Name = "grpElements";
             this.grpElements.Padding = new System.Windows.Forms.Padding(4);
@@ -1198,7 +1204,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpCombat.Controls.Add(this.lblAttackAnimation);
             this.grpCombat.Controls.Add(this.lblDamage);
             this.grpCombat.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpCombat.Location = new System.Drawing.Point(287, 403);
+            this.grpCombat.Location = new System.Drawing.Point(287, 544);
             this.grpCombat.Margin = new System.Windows.Forms.Padding(4);
             this.grpCombat.Name = "grpCombat";
             this.grpCombat.Padding = new System.Windows.Forms.Padding(4);
@@ -1209,7 +1215,6 @@ namespace Intersect.Editor.Forms.Editors
             // 
             // grpAttackSpeed
             // 
-            //
             this.grpAttackSpeed.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpAttackSpeed.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
             this.grpAttackSpeed.Controls.Add(this.nudAttackSpeedValue);
@@ -1541,7 +1546,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpCommonEvents.Controls.Add(this.cmbOnDeathEventKiller);
             this.grpCommonEvents.Controls.Add(this.lblOnDeathEventKiller);
             this.grpCommonEvents.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpCommonEvents.Location = new System.Drawing.Point(287, 1249);
+            this.grpCommonEvents.Location = new System.Drawing.Point(287, 1380);
             this.grpCommonEvents.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.grpCommonEvents.Name = "grpCommonEvents";
             this.grpCommonEvents.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -1620,6 +1625,8 @@ namespace Intersect.Editor.Forms.Editors
             // 
             this.grpBehavior.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(45)))), ((int)(((byte)(45)))), ((int)(((byte)(48)))));
             this.grpBehavior.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(90)))), ((int)(((byte)(90)))), ((int)(((byte)(90)))));
+            this.grpBehavior.Controls.Add(this.label2);
+            this.grpBehavior.Controls.Add(this.txtLoc);
             this.grpBehavior.Controls.Add(this.nbrMoveRange);
             this.grpBehavior.Controls.Add(this.label1);
             this.grpBehavior.Controls.Add(this.lblFocusDamageDealer);
@@ -1638,11 +1645,11 @@ namespace Intersect.Editor.Forms.Editors
             this.grpBehavior.Controls.Add(this.nudSightRange);
             this.grpBehavior.Controls.Add(this.lblSightRange);
             this.grpBehavior.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpBehavior.Location = new System.Drawing.Point(287, 31);
+            this.grpBehavior.Location = new System.Drawing.Point(293, 35);
             this.grpBehavior.Margin = new System.Windows.Forms.Padding(4);
             this.grpBehavior.Name = "grpBehavior";
             this.grpBehavior.Padding = new System.Windows.Forms.Padding(4);
-            this.grpBehavior.Size = new System.Drawing.Size(301, 372);
+            this.grpBehavior.Size = new System.Drawing.Size(301, 501);
             this.grpBehavior.TabIndex = 32;
             this.grpBehavior.TabStop = false;
             this.grpBehavior.Text = "Behavior:";
@@ -1857,7 +1864,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpRegen.Controls.Add(this.lblManaRegen);
             this.grpRegen.Controls.Add(this.lblRegenHint);
             this.grpRegen.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpRegen.Location = new System.Drawing.Point(4, 618);
+            this.grpRegen.Location = new System.Drawing.Point(4, 753);
             this.grpRegen.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this.grpRegen.Name = "grpRegen";
             this.grpRegen.Padding = new System.Windows.Forms.Padding(3, 2, 3, 2);
@@ -1939,7 +1946,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpDrops.Controls.Add(this.lblDropChance);
             this.grpDrops.Controls.Add(this.lblDropItem);
             this.grpDrops.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpDrops.Location = new System.Drawing.Point(291, 917);
+            this.grpDrops.Location = new System.Drawing.Point(291, 1048);
             this.grpDrops.Margin = new System.Windows.Forms.Padding(4);
             this.grpDrops.Name = "grpDrops";
             this.grpDrops.Padding = new System.Windows.Forms.Padding(4);
@@ -2092,7 +2099,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpNpcVsNpc.Controls.Add(this.chkAttackAllies);
             this.grpNpcVsNpc.Controls.Add(this.chkEnabled);
             this.grpNpcVsNpc.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpNpcVsNpc.Location = new System.Drawing.Point(0, 1039);
+            this.grpNpcVsNpc.Location = new System.Drawing.Point(0, 1170);
             this.grpNpcVsNpc.Margin = new System.Windows.Forms.Padding(4);
             this.grpNpcVsNpc.Name = "grpNpcVsNpc";
             this.grpNpcVsNpc.Padding = new System.Windows.Forms.Padding(4);
@@ -2204,7 +2211,7 @@ namespace Intersect.Editor.Forms.Editors
             this.grpSpells.Controls.Add(this.btnAdd);
             this.grpSpells.Controls.Add(this.lstSpells);
             this.grpSpells.ForeColor = System.Drawing.Color.Gainsboro;
-            this.grpSpells.Location = new System.Drawing.Point(4, 739);
+            this.grpSpells.Location = new System.Drawing.Point(4, 876);
             this.grpSpells.Margin = new System.Windows.Forms.Padding(4);
             this.grpSpells.Name = "grpSpells";
             this.grpSpells.Padding = new System.Windows.Forms.Padding(4);
@@ -2480,6 +2487,50 @@ namespace Intersect.Editor.Forms.Editors
             this.searchableDarkTreeView1.TabIndex = 46;
             this.searchableDarkTreeView1.Visible = false;
             // 
+            // lblDesc
+            // 
+            this.lblDesc.AutoSize = true;
+            this.lblDesc.Location = new System.Drawing.Point(8, 219);
+            this.lblDesc.Name = "lblDesc";
+            this.lblDesc.Size = new System.Drawing.Size(44, 17);
+            this.lblDesc.TabIndex = 71;
+            this.lblDesc.Text = "Desc:";
+            // 
+            // txtDesc
+            // 
+            this.txtDesc.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtDesc.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtDesc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.txtDesc.Location = new System.Drawing.Point(11, 235);
+            this.txtDesc.Multiline = true;
+            this.txtDesc.Name = "txtDesc";
+            this.txtDesc.Size = new System.Drawing.Size(240, 105);
+            this.txtDesc.TabIndex = 70;
+            this.txtDesc.TextChanged += new System.EventHandler(this.txtDesc_TextChanged);
+
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(14, 360);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(87, 17);
+            this.label2.TabIndex = 76;
+            this.label2.Text = "Localization:";
+            // 
+            // txtLoc
+            // 
+            this.txtLoc.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(69)))), ((int)(((byte)(73)))), ((int)(((byte)(74)))));
+            this.txtLoc.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtLoc.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(220)))), ((int)(((byte)(220)))));
+            this.txtLoc.Location = new System.Drawing.Point(17, 376);
+            this.txtLoc.Multiline = true;
+            this.txtLoc.Name = "txtLoc";
+            this.txtLoc.Size = new System.Drawing.Size(249, 113);
+            this.txtLoc.TabIndex = 75;
+            this.txtLoc.TextChanged += new System.EventHandler(this.txtLoc_TextChanged);
+
+            // 
             // FrmNpc
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -2720,5 +2771,9 @@ namespace Intersect.Editor.Forms.Editors
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label lblTag;
         private DarkTextBox txtTag;
+        private System.Windows.Forms.Label lblDesc;
+        private DarkTextBox txtDesc;
+        private System.Windows.Forms.Label label2;
+        private DarkTextBox txtLoc;
     }
 }

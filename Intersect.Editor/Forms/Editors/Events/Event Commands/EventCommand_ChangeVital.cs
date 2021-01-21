@@ -47,6 +47,8 @@ namespace Intersect.Editor.Forms.Editors.Events.Event_Commands
             {
                 lblVital.Text = Strings.EventChangeVital.labelmana;
             }
+
+
         }
 
         private void btnSave_Click(object sender, EventArgs e)

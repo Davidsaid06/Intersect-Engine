@@ -318,7 +318,9 @@ namespace Intersect.Client.Interface.Game.Crafting
                     {
                         luck += ItemBase.Get(equip).Effect.Percentage;
                     }
-                }            
+                }
+                string[] activeCrafting = Globals.ActiveCraftingTableReqs.Split('-');
+
                 var j = 0;
                 for (var i = 0; i < Globals.ActiveCraftingTable?.Crafts?.Count; ++i)
                 {                    
@@ -327,7 +329,16 @@ namespace Intersect.Client.Interface.Game.Crafting
                     {
                         continue;
                     }
-                    if (!Globals.ActiveCraftingTableReqs.Contains(i + "-"))
+                    bool agregar = true;
+                    for (int l = 0; l < activeCrafting.Length; l++)
+                    {
+                        if (activeCrafting[l].Equals(i + ""))
+                        {
+                            agregar = false;
+                        }
+                    }
+
+                    if (agregar)
                     {
                         j++;
                         var tmpRow = mRecipes?.AddRow(j + ") " + ItemBase.GetName(activeCraft.ItemId) + " (" + Math.Min(activeCraft.SuccessRate+(luck/10),100) + "%) ");

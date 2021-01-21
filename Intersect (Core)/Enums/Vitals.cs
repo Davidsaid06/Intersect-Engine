@@ -8,6 +8,10 @@ namespace Intersect.Enums
 
         Mana,
 
+        Hunger,
+
+        Activity,
+
         VitalCount
 
     }

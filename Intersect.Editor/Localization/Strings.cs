@@ -950,6 +950,8 @@ Tick timer saved in server config.json.";
             {
                 {0, @"Health"},
                 {1, @"Mana"},
+                {2, @"Hunger"},
+                {3, @"Activity"},
             };
 
         }
@@ -1355,6 +1357,10 @@ Tick timer saved in server config.json.";
             public static LocalizedString labelhealth = @"Set Health:";
 
             public static LocalizedString labelmana = @"Set Mana:";
+
+            public static LocalizedString labelhunger = @"Set Hunger:";
+
+            public static LocalizedString labelactivity = @"Set Activity:";
 
             public static LocalizedString okay = @"Ok";
 

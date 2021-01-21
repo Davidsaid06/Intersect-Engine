@@ -595,7 +595,8 @@ namespace Intersect.Client.Localization
                 {"opensettings", @"Open Settings:"},
                 {"opendebugger", @"Open Debugger:"},
                 {"openadminpanel", @"Open Admin Panel:"},
-                {"togglegui", @"Toggle Interface:"}
+                {"togglegui", @"Toggle Interface:"},
+                {"openstats", @"Open Stats"}
             };
 
             public static LocalizedString edit = @"Edit Controls";
@@ -817,6 +818,8 @@ namespace Intersect.Client.Localization
 
             public static LocalizedString spells = @"Spell Book";
 
+            public static LocalizedString stats = @"Stats";
+
         }
 
         public struct General
@@ -862,6 +865,8 @@ namespace Intersect.Client.Localization
             public static LocalizedString bonuses = @"Stat Bonuses:";
 
             public static LocalizedString durability = @"Durability: {00} / {01}";
+
+            public static LocalizedString weaponskill = @"Weapon Skill : {00} / {01}";
 
             public static LocalizedString damage = @"Base Damage: {00}";
 
@@ -926,7 +931,9 @@ namespace Intersect.Client.Localization
             public static Dictionary<int, LocalizedString> vitals = new Dictionary<int, LocalizedString>
             {
                 {0, @"HP: {00}"},
-                {1, @"MP: {00}"}
+                {1, @"MP: {00}"},
+                {2, @"Hunger: {00}"},
+                {3, @"Activity: {00}"},
             };
 
         }

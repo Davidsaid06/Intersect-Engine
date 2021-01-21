@@ -51,12 +51,23 @@ namespace Intersect.GameObjects.Crafting
         [Column("CraftEvent")]
         public Guid CraftEventId { get; set; }
 
+        [Column("CraftEventFailed ")]
+        public Guid CraftEventIdFailed { get; set; }
+
         [NotMapped]
         [JsonIgnore]
         public Events.EventBase CraftEvent
         {
             get => Events.EventBase.Get(CraftEventId);
             set => CraftEventId = value?.Id ?? Guid.Empty;
+        }
+
+        [NotMapped]
+        [JsonIgnore]
+        public Events.EventBase CraftEventFailed
+        {
+            get => Events.EventBase.Get(CraftEventIdFailed);
+            set => CraftEventIdFailed = value?.Id ?? Guid.Empty;
         }
 
         [Column("CraftRequirements")]

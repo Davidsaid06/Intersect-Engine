@@ -46,6 +46,10 @@ namespace Intersect.Editor.Forms.Editors
             cmbCraftEvent.Items.Clear();
             cmbCraftEvent.Items.Add(Strings.General.none);
             cmbCraftEvent.Items.AddRange(GameObjects.Events.EventBase.Names);
+
+            cmbCraftEventFail.Items.Clear();
+            cmbCraftEventFail.Items.Add(Strings.General.none);
+            cmbCraftEventFail.Items.AddRange(GameObjects.Events.EventBase.Names);
         }
 
         protected override void GameObjectUpdatedDelegate(GameObjectType type)
@@ -86,6 +90,10 @@ namespace Intersect.Editor.Forms.Editors
                 nudSuccessRate.Value = mEditorItem.SuccessRate;
                 //Craft Event
                 cmbCraftEvent.SelectedIndex = GameObjects.Events.EventBase.ListIndex(mEditorItem.CraftEventId) + 1;
+
+                cmbCraftEventFail.SelectedIndex = GameObjects.Events.EventBase.ListIndex(mEditorItem.CraftEventIdFailed) + 1;
+
+
                 for (var i = 0; i < mEditorItem.Ingredients.Count; i++)
                 {
                     if (mEditorItem.Ingredients[i].ItemId != Guid.Empty)
@@ -331,6 +339,11 @@ namespace Intersect.Editor.Forms.Editors
         private void cmbCraftEvent_SelectedIndexChanged(object sender, EventArgs e)
         {
             mEditorItem.CraftEvent = GameObjects.Events.EventBase.Get(GameObjects.Events.EventBase.IdFromList(cmbCraftEvent.SelectedIndex - 1));
+        }
+
+        private void cmbCraftEventFail_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.CraftEventFailed = GameObjects.Events.EventBase.Get(GameObjects.Events.EventBase.IdFromList(cmbCraftEventFail.SelectedIndex - 1));
         }
 
         private void lstIngredients_SelectedIndexChanged(object sender, EventArgs e)
@@ -707,6 +720,10 @@ namespace Intersect.Editor.Forms.Editors
 
         #endregion
 
+        private void LblCraftEvent_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 
 }

@@ -344,6 +344,7 @@ namespace Intersect.Server.Networking
                 SendQuestsProgress(player);
                 SendItemCooldowns(player);
                 SendSpellCooldowns(player);
+                player.loadCustomStats();
             }
 
             //If a player, send equipment to all (for paperdolls)
@@ -808,6 +809,13 @@ namespace Intersect.Server.Networking
         {
             player.SendPacket(new EventDialogPacket(eventId, prompt, face, 0, null));
         }
+
+        //CustomStatPacket
+        public static void SendCustomStat(Player player,Network.Packets.CustomStat[] Stats)
+        {
+            player.SendPacket(new StatsPacket(Stats));
+        }
+
 
         //EventDialogPacket
         public static void SendEventDialog(
@@ -1354,6 +1362,7 @@ namespace Intersect.Server.Networking
                         reqcheck += i + "-";
                     }
                 }
+
                 player.SendPacket(new CraftingTablePacket(table.JsonData, false, reqcheck));
             }
         }

@@ -775,6 +775,16 @@ namespace Intersect.Client.Networking
             en.ClearAnimations(null);
         }
 
+        //CustomStatPacket
+        private static void HandlePacket(StatsPacket packet)
+        {
+            if (Globals.Me != null)
+            {
+                Globals.Me.mCustomStat = packet.Stats;
+            }
+
+        }
+
         //EventDialogPacket
         private static void HandlePacket(EventDialogPacket packet)
         {

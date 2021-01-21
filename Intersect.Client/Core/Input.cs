@@ -7,6 +7,7 @@ using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Maps;
 using Intersect.Client.Networking;
+using Intersect.GameObjects;
 using Intersect.Logging;
 
 namespace Intersect.Client.Core
@@ -121,8 +122,14 @@ namespace Intersect.Client.Core
                                         break;
 
                                     case Control.Block:
-                                        Globals.Me?.TryBlock();
-
+                                            if (Options.ShieldIndex > -1 && Globals.Me.MyEquipment[Options.ShieldIndex] > -1)
+                                            {
+                                                var item = ItemBase.Get(Globals.Me.Inventory[Globals.Me.MyEquipment[Options.ShieldIndex]].ItemId);
+                                               if(item.Damage <= 0)
+                                                {
+                                                    Globals.Me?.TryBlock();
+                                                }                                          
+                                            }
                                         break;
 
                                     case Control.AutoTarget:
@@ -209,6 +216,10 @@ namespace Intersect.Client.Core
 
                                     case Control.OpenAdminPanel:
                                         PacketSender.SendOpenAdminWindow();
+
+                                        break;
+                                    case Control.OpenStats:
+                                        Interface.Interface.GameUi?.GameMenu?.ToggleStatsWindow();
 
                                         break;
                                 }
