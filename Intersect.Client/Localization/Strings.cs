@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-
+using Intersect.Enums;
 using Intersect.Localization;
 
 using Newtonsoft.Json;
@@ -149,9 +149,7 @@ namespace Intersect.Client.Localization
             }
 
             Program.OpenGLLink = Errors.opengllink.ToString();
-            Program.OpenGLError = Errors.openglerror.ToString();
             Program.OpenALLink = Errors.openallink.ToString();
-            Program.OpenALError = Errors.openalerror.ToString();
 
             Save();
         }
@@ -459,6 +457,16 @@ namespace Intersect.Client.Localization
 
             public static LocalizedString toofast = @"You are chatting too fast!";
 
+            public static Dictionary<ChatboxTab, LocalizedString> ChatTabButtons = new Dictionary<Enums.ChatboxTab, LocalizedString>() {
+                { ChatboxTab.All, @"All" },
+                { ChatboxTab.Local, @"Local" },
+                { ChatboxTab.Party, @"Party" },
+                { ChatboxTab.Global, @"Global" },
+                { ChatboxTab.System, @"System" },
+            };
+
+            public static LocalizedString UnableToCopy = @"It appears you are not able to copy/paste on this platform. Please make sure you have either the 'xclip' or 'wl-clipboard' packages installed if you are running Linux.";
+
         }
 
         public struct Colors
@@ -678,13 +686,7 @@ namespace Intersect.Client.Localization
 
             public static LocalizedString notsupported = @"Not Supported!";
 
-            public static LocalizedString openalerror =
-                @"OpenAL Initialization Error! Try updating your audio drivers! Make sure you have speakers available and enabled. Maybe try plugging in headphones. Visit {00} (may open automatically) for more information.";
-
             public static LocalizedString openallink = @"https://goo.gl/Nbx6hx";
-
-            public static LocalizedString openglerror =
-                @"OpenGL Initialization Error! Try updating your graphics drivers! Make sure you're not using remote desktop software. Visit {00} (may open automatically) for more information.";
 
             public static LocalizedString opengllink = @"https://goo.gl/RSP3ts";
 
@@ -693,8 +695,6 @@ namespace Intersect.Client.Localization
 
             public static LocalizedString resourcesnotfound =
                 @"The resources directory could not be found! Intersect will now close.";
-
-            public static LocalizedString resourcesnotfoundtitle = @"Resources not found!";
 
             public static LocalizedString title = @"Error!";
 
@@ -790,6 +790,9 @@ namespace Intersect.Client.Localization
 
             public static LocalizedString none = @"None";
 
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString MapItemStackable = @"{01} {00}";
+
         }
 
         public struct InputBox
@@ -802,6 +805,16 @@ namespace Intersect.Client.Localization
             public static LocalizedString okay = @"Okay";
 
             public static LocalizedString yes = @"Yes";
+
+        }
+
+        public struct MapItemWindow
+        {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString Title = @"Loot";
+
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString LootButton = @"Loot All";
 
         }
 
@@ -1156,6 +1169,8 @@ namespace Intersect.Client.Localization
             public static LocalizedString musicvolume = @"Music Volume: {00}%";
 
             public static LocalizedString resolution = @"Resolution:";
+
+            public static LocalizedString ResolutionCustom = @"Custom Resolution";
 
             public static LocalizedString restore = @"Restore Defaults";
 
@@ -1521,6 +1536,33 @@ namespace Intersect.Client.Localization
 
             public static LocalizedString comma = ",";
 
+        }
+
+        public struct Update
+        {
+
+            public static LocalizedString Checking = @"Checking for updates, please wait!";
+
+            public static LocalizedString Updating = @"Downloading updates, please wait!";
+
+            public static LocalizedString Restart = @"Update complete! Relaunch {00} to play!";
+
+            public static LocalizedString Done = @"Update complete! Launching game!";
+
+            public static LocalizedString Error = @"Update Error! Check logs for more info!";
+
+            public static LocalizedString Files = @"{00} Files Remaining";
+
+            public static LocalizedString Size = @"{00} Left";
+
+            public static LocalizedString Percent = @"{00}%";
+
+        }
+
+        public struct GameWindow
+        {
+            [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+            public static LocalizedString EntityNameAndLevel = @"{00} [Lv. {01}]";
         }
 
     }

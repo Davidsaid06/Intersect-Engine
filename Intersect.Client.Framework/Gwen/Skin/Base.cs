@@ -3,8 +3,7 @@ using Intersect.Client.Framework.Graphics;
 
 using System;
 
-#if DEBUG
-using Intersect.Logging;
+#if DEBUG || DIAGNOSTIC
 #endif
 
 namespace Intersect.Client.Framework.Gwen.Skin
@@ -57,7 +56,7 @@ namespace Intersect.Client.Framework.Gwen.Skin
             GC.SuppressFinalize(this);
         }
 
-#if DEBUG
+#if DIAGNOSTIC
         ~Base()
         {
             Log.Debug($"IDisposable object finalized: {GetType()}");

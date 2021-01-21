@@ -1,14 +1,26 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
+
 
 namespace Intersect.Client.Items
 {
 
     public class MapItemInstance : Item
     {
+        /// <summary>
+        /// Defines the owner of this MapItem.
+        /// </summary>
+        public Guid Owner;
 
-        public int X;
+        /// <summary>
+        /// Defines whether this MapItem is visible to everyone, or just its owner.
+        /// </summary>
+        public bool VisibleToAll;
 
-        public int Y;
+        /// <summary>
+        /// The Unique Id of this particular MapItemInstance so we can refer to it elsewhere.
+        /// </summary>
+        public Guid UniqueId;
 
         public MapItemInstance() : base()
         {

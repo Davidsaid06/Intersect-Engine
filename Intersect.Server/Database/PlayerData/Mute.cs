@@ -6,8 +6,6 @@ using System.Linq;
 using Intersect.Server.Localization;
 using Intersect.Server.Networking;
 
-using JetBrains.Annotations;
-
 using Microsoft.EntityFrameworkCore;
 
 using Newtonsoft.Json;
@@ -70,7 +68,12 @@ namespace Intersect.Server.Database.PlayerData
 
         public string Muter { get; private set; }
 
-        public static bool Add([NotNull] Mute mute, [CanBeNull] PlayerContext playerContext = null)
+        [NotMapped]
+        public bool IsExpired => Expired(this);
+
+        public static bool Expired(Mute mute) => mute.EndTime <= DateTime.UtcNow;
+
+        public static bool Add(Mute mute, PlayerContext playerContext = null)
         {
             lock (DbInterface.GetPlayerContextLock())
             {
@@ -95,22 +98,20 @@ namespace Intersect.Server.Database.PlayerData
         public static bool Add(
             Guid userId,
             int duration,
-            [NotNull] string reason,
-            [NotNull] string muter,
+            string reason,
+            string muter,
             string ip,
-            [CanBeNull] PlayerContext playerContext = null
-        )
-        {
-            return Add(new Mute(userId, ip, reason, duration, muter), playerContext);
-        }
+            PlayerContext playerContext = null
+        ) =>
+            Add(new Mute(userId, ip, reason, duration, muter), playerContext);
 
         public static bool Add(
-            [NotNull] User user,
+            User user,
             int duration,
-            [NotNull] string reason,
-            [NotNull] string muter,
+            string reason,
+            string muter,
             string ip,
-            [CanBeNull] PlayerContext playerContext = null
+            PlayerContext playerContext = null
         )
         {
             user.UserMute = new Mute(user, ip, reason, duration, muter);
@@ -119,18 +120,16 @@ namespace Intersect.Server.Database.PlayerData
         }
 
         public static bool Add(
-            [NotNull] Client client,
+            Client client,
             int duration,
-            [NotNull] string reason,
-            [NotNull] string muter,
+            string reason,
+            string muter,
             string ip,
-            [CanBeNull] PlayerContext playerContext = null
-        )
-        {
-            return client.User != null && Add(client.User, duration, reason, muter, ip, playerContext);
-        }
+            PlayerContext playerContext = null
+        ) =>
+            client.User != null && Add(client.User, duration, reason, muter, ip, playerContext);
 
-        public static bool Remove(Guid userId, [CanBeNull] PlayerContext playerContext = null)
+        public static bool Remove(Mute mute)
         {
             lock (DbInterface.GetPlayerContextLock())
             {
@@ -140,22 +139,67 @@ namespace Intersect.Server.Database.PlayerData
                     return false;
                 }
 
-                var mute = context.Mutes.FirstOrDefault(p => p.UserId == userId);
-                if (mute == null)
-                {
-                    return true;
-                }
-
                 context.Mutes.Remove(mute);
+
                 DbInterface.SavePlayerDatabaseAsync();
 
                 return true;
             }
         }
 
-        public static bool Remove([NotNull] User user, [CanBeNull] PlayerContext playerContext = null)
+        public static bool Remove(string ip, bool expired = true)
         {
-            if (!Remove(user.Id, playerContext))
+            lock (DbInterface.GetPlayerContextLock())
+            {
+                var context = DbInterface.GetPlayerContext();
+                if (context == null)
+                {
+                    return false;
+                }
+
+                var mutes = context.Mutes.Where(e => e.Ip == ip && (!expired || Expired(e))).ToList();
+
+                if ((mutes?.Count ?? 0) == 0)
+                {
+                    return true;
+                }
+
+                context.Mutes.RemoveRange(mutes);
+
+                DbInterface.SavePlayerDatabaseAsync();
+
+                return true;
+            }
+        }
+
+        public static bool Remove(Guid userId, bool expired = true)
+        {
+            lock (DbInterface.GetPlayerContextLock())
+            {
+                var context = DbInterface.GetPlayerContext();
+                if (context == null)
+                {
+                    return false;
+                }
+
+                var mutes = context.Mutes.Where(e => e.UserId == userId && (!expired || Expired(e))).ToList();
+
+                if ((mutes?.Count ?? 0) == 0)
+                {
+                    return true;
+                }
+
+                context.Mutes.RemoveRange(mutes);
+
+                DbInterface.SavePlayerDatabaseAsync();
+
+                return true;
+            }
+        }
+
+        public static bool Remove(User user)
+        {
+            if (!Remove(user.UserMute))
             {
                 return false;
             }
@@ -165,15 +209,12 @@ namespace Intersect.Server.Database.PlayerData
             return true;
         }
 
-        public static bool Remove([NotNull] Client client, [CanBeNull] PlayerContext playerContext = null)
-        {
-            return client.User != null && Remove(client.User, playerContext);
-        }
+        public static bool Remove(Client client, PlayerContext playerContext = null) => client.User != null && Remove(client.User);
 
         public static string FindMuteReason(
             Guid userId,
-            [CanBeNull] string ip,
-            [CanBeNull] PlayerContext playerContext = null
+            string ip,
+            PlayerContext playerContext = null
         )
         {
             lock (DbInterface.GetPlayerContextLock())
@@ -186,34 +227,56 @@ namespace Intersect.Server.Database.PlayerData
 
                 var mute = Find(userId) ?? Find(ip);
 
-                return mute == null
+                var expired = mute?.IsExpired ?? true;
+
+                if (expired && mute != null)
+                {
+                    Remove(mute);
+                }
+
+                return expired
                     ? null
                     : Strings.Account.mutestatus.ToString(mute.StartTime, mute.Muter, mute.EndTime, mute.Reason);
             }
         }
 
         public static string FindMuteReason(
-            [NotNull] User user,
+            User user,
             string ip,
-            [CanBeNull] PlayerContext playerContext = null
+            PlayerContext playerContext = null
         )
         {
-            if (user.Mute == null)
+            lock (DbInterface.GetPlayerContextLock())
             {
-                user.IpMute = Find(ip);
+                var context = DbInterface.GetPlayerContext();
+                if (context == null)
+                {
+                    return null;
+                }
+
+                if (user.Mute == null)
+                {
+                    user.IpMute = Find(ip);
+                }
+
+                var mute = user.Mute;
+
+                var expired = mute?.IsExpired ?? true;
+
+                if (expired && mute != null)
+                {
+                    Remove(mute);
+                    user.IpMute = null;
+                    user.UserMute = null;
+                }
+
+                return expired
+                    ? null
+                    : Strings.Account.mutestatus.ToString(mute.StartTime, mute.Muter, mute.EndTime, mute.Reason);
             }
-
-            var mute = user.Mute;
-
-            return mute == null
-                ? null
-                : Strings.Account.mutestatus.ToString(mute.StartTime, mute.Muter, mute.EndTime, mute.Reason);
         }
 
-        public static Mute Find([NotNull] User user)
-        {
-            return Find(user.Id);
-        }
+        public static Mute Find(User user) => Find(user.Id);
 
         public static Mute Find(Guid userId)
         {
@@ -236,31 +299,22 @@ namespace Intersect.Server.Database.PlayerData
             }
         }
 
-        public static IEnumerable<Mute> FindAll([NotNull] User user)
-        {
-            return ByUser(DbInterface.GetPlayerContext(), user.Id);
-        }
+        public static IEnumerable<Mute> FindAll(User user) => ByUser(DbInterface.GetPlayerContext(), user.Id);
 
-        public static IEnumerable<Mute> FindAll(Guid userId)
-        {
-            return ByUser(DbInterface.GetPlayerContext(), userId);
-        }
+        public static IEnumerable<Mute> FindAll(Guid userId) => ByUser(DbInterface.GetPlayerContext(), userId);
 
-        public static IEnumerable<Mute> FindAll(string ip)
-        {
-            return ByIp(DbInterface.GetPlayerContext(), ip);
-        }
+        public static IEnumerable<Mute> FindAll(string ip) => ByIp(DbInterface.GetPlayerContext(), ip);
 
         #region Compiled Queries
 
-        [NotNull] private static readonly Func<PlayerContext, Guid, IEnumerable<Mute>> ByUser =
+        private static readonly Func<PlayerContext, Guid, IEnumerable<Mute>> ByUser =
             EF.CompileQuery<PlayerContext, Guid, Mute>(
                 (context, userId) =>
                     context.Mutes.Where(mute => mute.UserId == userId && mute.EndTime > DateTime.UtcNow)
             ) ??
             throw new InvalidOperationException();
 
-        [NotNull] private static readonly Func<PlayerContext, string, IEnumerable<Mute>> ByIp =
+        private static readonly Func<PlayerContext, string, IEnumerable<Mute>> ByIp =
             EF.CompileQuery<PlayerContext, string, Mute>(
                 (context, ip) => context.Mutes.Where(
                     mute => string.Equals(mute.Ip, ip, StringComparison.OrdinalIgnoreCase) &&

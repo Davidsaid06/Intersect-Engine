@@ -1,11 +1,10 @@
-﻿using System;
+﻿
+using System;
 
 namespace Intersect.Network
 {
-
     public interface IConnection : IDisposable
     {
-
         Guid Guid { get; }
 
         Ceras Ceras { get; }
@@ -16,6 +15,8 @@ namespace Intersect.Network
 
         int Port { get; }
 
+        ConnectionStatistics Statistics { get; }
+
         bool Send(IPacket packet);
 
         void HandleConnected();
@@ -23,7 +24,5 @@ namespace Intersect.Network
         void HandleApproved();
 
         void HandleDisconnected();
-
     }
-
 }

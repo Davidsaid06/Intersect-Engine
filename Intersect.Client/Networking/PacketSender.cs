@@ -15,7 +15,7 @@ namespace Intersect.Client.Networking
 
         public static void SendPing()
         {
-            Network.SendPacket(new PingPacket());
+            Network.SendPacket(new PingPacket { Responding = true });
         }
 
         public static void SendLogin(string username, string password)
@@ -111,9 +111,9 @@ namespace Intersect.Client.Networking
             Network.SendPacket(new CreateCharacterPacket(name, classId, sprite));
         }
 
-        public static void SendPickupItem(int index)
+        public static void SendPickupItem(Point location, Guid uniqueId)
         {
-            Network.SendPacket(new PickupItemPacket(index));
+            Network.SendPacket(new PickupItemPacket(location, uniqueId));
         }
 
         public static void SendSwapInvItems(int item1, int item2)

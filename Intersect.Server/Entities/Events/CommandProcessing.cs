@@ -115,15 +115,15 @@ namespace Intersect.Server.Entities.Events
             switch (command.Channel)
             {
                 case ChatboxChannel.Player:
-                    PacketSender.SendChatMsg(player, txt, color);
+                    PacketSender.SendChatMsg(player, txt, command.MessageType, color);
 
                     break;
                 case ChatboxChannel.Local:
-                    PacketSender.SendProximityMsg(txt, player.MapId, color);
+                    PacketSender.SendProximityMsg(txt, command.MessageType, player.MapId, color);
 
                     break;
                 case ChatboxChannel.Global:
-                    PacketSender.SendGlobalMsg(txt, color);
+                    PacketSender.SendGlobalMsg(txt, color, string.Empty, command.MessageType);
 
                     break;
             }
@@ -188,18 +188,20 @@ namespace Intersect.Server.Entities.Events
                 newCommandList = stackInfo.Page.CommandLists[command.BranchIds[0]];
             }
 
-            if (!success && stackInfo.Page.CommandLists.ContainsKey(command.BranchIds[1]))
+            if (!success && command.Condition.ElseEnabled && stackInfo.Page.CommandLists.ContainsKey(command.BranchIds[1]))
             {
                 newCommandList = stackInfo.Page.CommandLists[command.BranchIds[1]];
             }
 
-            var tmpStack = new CommandInstance(stackInfo.Page)
+            if (newCommandList != null)
             {
-                CommandList = newCommandList,
-                CommandIndex = 0,
-            };
+                var tmpStack = new CommandInstance(stackInfo.Page) {
+                    CommandList = newCommandList,
+                    CommandIndex = 0,
+                };
 
-            callStack.Push(tmpStack);
+                callStack.Push(tmpStack);
+            }
         }
 
         //Exit Event Process Command
@@ -293,7 +295,7 @@ namespace Intersect.Server.Entities.Events
             else if (command.Amount < 0)
             {
                 player.SubVital(Vitals.Health, -command.Amount);
-                player.CombatTimer = Globals.Timing.TimeMs + Options.CombatTime;
+                player.CombatTimer = Globals.Timing.Milliseconds + Options.CombatTime;
                 if (player.GetVital(Vitals.Health) <= 0)
                 {
                     player.Die(Options.ItemDropChance);
@@ -321,7 +323,7 @@ namespace Intersect.Server.Entities.Events
             else if (command.Amount < 0)
             {
                 player.SubVital(Vitals.Mana, -command.Amount);
-                player.CombatTimer = Globals.Timing.TimeMs + Options.CombatTime;
+                player.CombatTimer = Globals.Timing.Milliseconds + Options.CombatTime;
             }
             else
             {
@@ -350,7 +352,22 @@ namespace Intersect.Server.Entities.Events
             Stack<CommandInstance> callStack
         )
         {
-            player.GiveExperience(command.Exp);
+            var quantity = command.Exp;
+            if (command.UseVariable)
+            {
+                switch (command.VariableType)
+                {
+                    case VariableTypes.PlayerVariable:
+                        quantity = (int)player.GetVariableValue(command.VariableId).Integer;
+
+                        break;
+                    case VariableTypes.ServerVariable:
+                        quantity = (int)ServerVariableBase.Get(command.VariableId)?.Value.Integer;
+                        break;
+                }
+            }
+
+            player.GiveExperience(quantity);
         }
 
         //Change Level Command
@@ -419,13 +436,46 @@ namespace Intersect.Server.Entities.Events
         )
         {
             var success = false;
-            if (command.Add) //Try to give item
+            var skip = false;
+
+            // Use the command quantity, unless we're using a variable for input!
+            var quantity = command.Quantity;
+            if (command.UseVariable)
             {
-                success = player.TryGiveItem(new Item(command.ItemId, command.Quantity));
+                switch (command.VariableType)
+                {
+                    case VariableTypes.PlayerVariable:
+                        quantity = (int)player.GetVariableValue(command.VariableId).Integer;
+
+                        break;
+                    case VariableTypes.ServerVariable:
+                        quantity = (int)ServerVariableBase.Get(command.VariableId)?.Value.Integer;
+                        break;
+                }
+
+                // The code further ahead converts 0 to quantity 1, due to some legacy junk where some editors would (maybe still do?) set quantity to 0 for non-stackable items.
+                // but if we want to give a player no items through an event we should listen to that.
+                if (quantity <= 0)
+                {
+                    skip = true;
+                }
+            }
+
+            if (!skip)
+            {
+                if (command.Add)
+                {
+                    success = player.TryGiveItem(command.ItemId, quantity, command.ItemHandling);
+                }
+                else
+                {
+                    success = player.TryTakeItem(command.ItemId, quantity, command.ItemHandling);
+                }
             }
             else
             {
-                success = player.TakeItemsById(command.ItemId, command.Quantity);
+                // If we're skipping, this always succeeds.
+                success = true;
             }
 
             List<EventCommand> newCommandList = null;
@@ -593,7 +643,7 @@ namespace Intersect.Server.Entities.Events
             }
 
             PacketSender.SendEntityDataToProximity(player);
-            PacketSender.SendChatMsg(player, Strings.Player.powerchanged, Color.Red);
+            PacketSender.SendChatMsg(player, Strings.Player.powerchanged, ChatMessageType.Notice ,Color.Red);
         }
 
         //Warp Player Command
@@ -629,17 +679,17 @@ namespace Intersect.Server.Entities.Events
             }
             else
             {
-                foreach (var evt in player.EventLookup.Values)
+                foreach (var evt in player.EventLookup)
                 {
-                    if (evt.BaseEvent.Id == command.Route.Target)
+                    if (evt.Value.BaseEvent.Id == command.Route.Target)
                     {
-                        if (evt.PageInstance != null)
+                        if (evt.Value.PageInstance != null)
                         {
-                            evt.PageInstance.MoveRoute.CopyFrom(command.Route);
-                            evt.PageInstance.MovementType = EventMovementType.MoveRoute;
-                            if (evt.PageInstance.GlobalClone != null)
+                            evt.Value.PageInstance.MoveRoute.CopyFrom(command.Route);
+                            evt.Value.PageInstance.MovementType = EventMovementType.MoveRoute;
+                            if (evt.Value.PageInstance.GlobalClone != null)
                             {
-                                evt.PageInstance.GlobalClone.MovementType = EventMovementType.MoveRoute;
+                                evt.Value.PageInstance.GlobalClone.MovementType = EventMovementType.MoveRoute;
                             }
                         }
                     }
@@ -663,12 +713,12 @@ namespace Intersect.Server.Entities.Events
             }
             else
             {
-                foreach (var evt in player.EventLookup.Values)
+                foreach (var evt in player.EventLookup)
                 {
-                    if (evt.BaseEvent.Id == command.TargetId)
+                    if (evt.Value.BaseEvent.Id == command.TargetId)
                     {
-                        stackInfo.WaitingForRoute = evt.BaseEvent.Id;
-                        stackInfo.WaitingForRouteMap = evt.MapId;
+                        stackInfo.WaitingForRoute = evt.Value.BaseEvent.Id;
+                        stackInfo.WaitingForRouteMap = evt.Value.MapId;
 
                         break;
                     }
@@ -701,16 +751,16 @@ namespace Intersect.Server.Entities.Events
             {
                 if (command.EntityId != Guid.Empty)
                 {
-                    foreach (var evt in player.EventLookup.Values)
+                    foreach (var evt in player.EventLookup)
                     {
-                        if (evt.MapId != instance.MapId)
+                        if (evt.Value.MapId != instance.MapId)
                         {
                             continue;
                         }
 
-                        if (evt.BaseEvent.Id == command.EntityId)
+                        if (evt.Value.BaseEvent.Id == command.EntityId)
                         {
-                            targetEntity = evt.PageInstance;
+                            targetEntity = evt.Value.PageInstance;
 
                             break;
                         }
@@ -817,16 +867,16 @@ namespace Intersect.Server.Entities.Events
             {
                 if (command.EntityId != Guid.Empty)
                 {
-                    foreach (var evt in player.EventLookup.Values)
+                    foreach (var evt in player.EventLookup)
                     {
-                        if (evt.MapId != instance.MapId)
+                        if (evt.Value.MapId != instance.MapId)
                         {
                             continue;
                         }
 
-                        if (evt.BaseEvent.Id == command.EntityId)
+                        if (evt.Value.BaseEvent.Id == command.EntityId)
                         {
-                            targetEntity = evt.PageInstance;
+                            targetEntity = evt.Value.PageInstance;
 
                             break;
                         }
@@ -1029,7 +1079,7 @@ namespace Intersect.Server.Entities.Events
             Stack<CommandInstance> callStack
         )
         {
-            instance.WaitTimer = Globals.Timing.TimeMs + command.Time;
+            instance.WaitTimer = Globals.Timing.Milliseconds + command.Time;
             callStack.Peek().WaitingForResponse = CommandInstance.EventResponse.Timer;
         }
 
@@ -1164,6 +1214,19 @@ namespace Intersect.Server.Entities.Events
         )
         {
             player.CompleteQuest(command.QuestId, command.SkipCompletionEvent);
+        }
+
+        // Change Player Color Command
+        private static void ProcessCommand(
+            ChangePlayerColorCommand command,
+            Player player,
+            Event instance,
+            CommandInstance stackInfo,
+            Stack<CommandInstance> callStack
+        )
+        {
+            player.Color = command.Color;
+            PacketSender.SendEntityDataToProximity(player);
         }
 
         private static Stack<CommandInstance> LoadLabelCallstack(string label, EventPage currentPage)

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
+using Intersect.Core;
 using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Server.Database;
@@ -13,7 +14,7 @@ using Intersect.Server.General;
 namespace Intersect.Server.Networking
 {
 
-    public class Client
+    public class Client : IPacketSender
     {
 
         public Guid EditorMap = Guid.Empty;
@@ -39,12 +40,13 @@ namespace Intersect.Server.Networking
         //Sent Maps
         public Dictionary<Guid, Tuple<long, int>> SentMaps = new Dictionary<Guid, Tuple<long, int>>();
 
-        public Client(IConnection connection = null)
+        public Client(IApplicationContext applicationContext, IConnection connection = null)
         {
             this.mConnection = connection;
-            mConnectTime = Globals.Timing.TimeMs;
-            mConnectionTimeout = Globals.Timing.TimeMs + mTimeout;
+            mConnectTime = Globals.Timing.Milliseconds;
+            mConnectionTimeout = Globals.Timing.Milliseconds + mTimeout;
             PacketSender.SendServerConfig(this);
+            PacketSender.SendPing(this);
         }
 
         //Game Incorperation Variables
@@ -63,6 +65,13 @@ namespace Intersect.Server.Networking
         //Security/Flooding Variables
         public long AccountAttempts { get; set; }
 
+        public long Ping => mConnection.Statistics.Ping;
+
+        /// <summary>
+        /// Number of "grace" packets that the client has remaining if speedhacking is accidentally detected.
+        /// </summary>
+        public int TimedBufferPacketsRemaining { get; set; }
+
         public long TimeoutMs { get; set; }
 
         public long PacketTimer { get; set; }
@@ -76,6 +85,8 @@ namespace Intersect.Server.Networking
         public bool FloodKicked { get; set; }
 
         public long TotalFloodDetects { get; set; }
+
+        public long LastPacketDesyncForgiven { get; set; }
 
         public UserRights Power
         {
@@ -97,6 +108,8 @@ namespace Intersect.Server.Networking
 
         public Player Entity { get; set; }
 
+        public IApplicationContext ApplicationContext { get; }
+
         public void SetUser(User user)
         {
             User = user;
@@ -116,19 +129,11 @@ namespace Intersect.Server.Networking
             Entity.Client = this;
         }
 
-        public void SendPacket(CerasPacket packet)
-        {
-            if (mConnection != null)
-            {
-                mConnection.Send(packet);
-            }
-        }
-
         public void Pinged()
         {
             if (mConnection != null)
             {
-                mConnectionTimeout = Globals.Timing.TimeMs + mTimeout;
+                mConnectionTimeout = Globals.Timing.Milliseconds + mTimeout;
             }
         }
 
@@ -158,9 +163,9 @@ namespace Intersect.Server.Networking
             return mConnection.Ip;
         }
 
-        public static Client CreateBeta4Client(IConnection connection)
+        public static Client CreateBeta4Client(IApplicationContext context, IConnection connection)
         {
-            var client = new Client(connection);
+            var client = new Client(context, connection);
             lock (Globals.ClientLock)
             {
                 Globals.Clients.Add(client);
@@ -234,13 +239,19 @@ namespace Intersect.Server.Networking
 
         public void ResetTimeout()
         {
-            TimeoutMs = Globals.Timing.TimeMs + 5000;
+            TimeoutMs = Globals.Timing.Milliseconds + 5000;
             if (AccountAttempts > 3)
             {
                 TimeoutMs += 1000 * AccountAttempts;
             }
         }
 
+        #region Implementation of IPacketSender
+
+        /// <inheritdoc />
+        public bool Send(IPacket packet) => mConnection?.Send(packet) ?? false;
+
+        #endregion
     }
 
 }

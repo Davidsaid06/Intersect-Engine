@@ -19,8 +19,6 @@ using Intersect.Server.Web.RestApi.Extensions;
 using Intersect.Server.Web.RestApi.Payloads;
 using Intersect.Server.Web.RestApi.Types;
 
-using JetBrains.Annotations;
-
 namespace Intersect.Server.Web.RestApi.Routes.V1
 {
 
@@ -454,7 +452,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 );
             }
 
-            if (!player.TryGiveItem(itemInfo.ItemId, itemInfo.Quantity, itemInfo.BankOverflow, true))
+            if (!player.TryGiveItem(itemInfo.ItemId, itemInfo.Quantity, ItemHandling.Normal, itemInfo.BankOverflow, true))
             {
                 return Request.CreateErrorResponse(
                     HttpStatusCode.InternalServerError,
@@ -506,7 +504,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
                 );
             }
 
-            if (player.TakeItemsById(itemInfo.ItemId, itemInfo.Quantity))
+            if (player.TryTakeItem(itemInfo.ItemId, itemInfo.Quantity))
             {
                 return new
                 {
@@ -629,8 +627,7 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
             [FromBody] AdminActionParameters actionParameters
         )
         {
-            AdminActions adminAction;
-            if (!Enum.TryParse<AdminActions>(act, true, out adminAction))
+            if (!Enum.TryParse<AdminActions>(act, true, out var adminAction))
             {
                 return Request.CreateErrorResponse(HttpStatusCode.BadRequest, @"Invalid action.");
             }
@@ -657,8 +654,8 @@ namespace Intersect.Server.Web.RestApi.Routes.V1
         }
 
         private object DoAdminActionOnPlayer(
-            [NotNull] Func<Tuple<Client, Player>> fetch,
-            [NotNull] Func<HttpResponseMessage> onError,
+            Func<Tuple<Client, Player>> fetch,
+            Func<HttpResponseMessage> onError,
             AdminActions adminAction,
             AdminActionParameters actionParameters
         )

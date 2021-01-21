@@ -33,6 +33,8 @@ namespace Intersect.Editor.Forms.Editors
 
         private List<string> mKnownFolders = new List<string>();
 
+        private List<string> mKnownCooldownGroups = new List<string>();
+
         public FrmSpell()
         {
             ApplyHooks();
@@ -164,6 +166,8 @@ namespace Intersect.Editor.Forms.Editors
             lblMPCost.Text = Strings.SpellEditor.manacost;
             lblCastDuration.Text = Strings.SpellEditor.casttime;
             lblCooldownDuration.Text = Strings.SpellEditor.cooldown;
+            lblCooldownGroup.Text = Strings.SpellEditor.CooldownGroup;
+            chkIgnoreGlobalCooldown.Text = Strings.ItemEditor.IgnoreGlobalCooldown;
 
             grpTargetInfo.Text = Strings.SpellEditor.targetting;
             lblTargetType.Text = Strings.SpellEditor.targettype;
@@ -263,6 +267,8 @@ namespace Intersect.Editor.Forms.Editors
 
                 nudCastDuration.Value = mEditorItem.CastDuration;
                 nudCooldownDuration.Value = mEditorItem.CooldownDuration;
+                cmbCooldownGroup.Text = mEditorItem.CooldownGroup;
+                chkIgnoreGlobalCooldown.Checked = mEditorItem.IgnoreGlobalCooldown;
 
                 cmbCastAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.CastAnimationId) + 1;
                 cmbHitAnimation.SelectedIndex = AnimationBase.ListIndex(mEditorItem.HitAnimationId) + 1;
@@ -517,9 +523,9 @@ namespace Intersect.Editor.Forms.Editors
                     g.DrawImage(
                         src,
                         new Rectangle(
-                            picSprite.Width / 2 - src.Width / 8, picSprite.Height / 2 - src.Height / 8, src.Width / 4,
-                            src.Height / 4
-                        ), new Rectangle(0, 0, src.Width / 4, src.Height / 4), GraphicsUnit.Pixel
+                            picSprite.Width / 2 - src.Width / (Options.Instance.Sprites.NormalFrames * 2), picSprite.Height / 2 - src.Height / (Options.Instance.Sprites.Directions * 2), src.Width / Options.Instance.Sprites.NormalFrames,
+                            src.Height / Options.Instance.Sprites.Directions
+                        ), new Rectangle(0, 0, src.Width / Options.Instance.Sprites.NormalFrames, src.Height / Options.Instance.Sprites.Directions), GraphicsUnit.Pixel
                     );
 
                     g.Dispose();
@@ -575,9 +581,9 @@ namespace Intersect.Editor.Forms.Editors
                 g.DrawImage(
                     src,
                     new Rectangle(
-                        picSprite.Width / 2 - src.Width / 8, picSprite.Height / 2 - src.Height / 8, src.Width / 4,
-                        src.Height / 4
-                    ), new Rectangle(0, 0, src.Width / 4, src.Height / 4), GraphicsUnit.Pixel
+                        picSprite.Width / 2 - src.Width / (Options.Instance.Sprites.NormalFrames * 2), picSprite.Height / 2 - src.Height / (Options.Instance.Sprites.Directions * 2), src.Width / Options.Instance.Sprites.NormalFrames,
+                        src.Height / Options.Instance.Sprites.Directions
+                    ), new Rectangle(0, 0, src.Width / Options.Instance.Sprites.NormalFrames, src.Height / Options.Instance.Sprites.Directions), GraphicsUnit.Pixel
                 );
 
                 g.Dispose();
@@ -919,6 +925,36 @@ namespace Intersect.Editor.Forms.Editors
             mEditorItem.Bound = chkBound.Checked;
         }
 
+        private void btnAddCooldownGroup_Click(object sender, EventArgs e)
+        {
+            var cdGroupName = "";
+            var result = DarkInputBox.ShowInformation(
+                Strings.SpellEditor.CooldownGroupPrompt, Strings.SpellEditor.CooldownGroupTitle, ref cdGroupName,
+                DarkDialogButton.OkCancel
+            );
+
+            if (result == DialogResult.OK && !string.IsNullOrEmpty(cdGroupName))
+            {
+                if (!cmbCooldownGroup.Items.Contains(cdGroupName))
+                {
+                    mEditorItem.CooldownGroup = cdGroupName;
+                    mKnownCooldownGroups.Add(cdGroupName);
+                    InitEditor();
+                    cmbCooldownGroup.Text = cdGroupName;
+                }
+            }
+        }
+
+        private void cmbCooldownGroup_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            mEditorItem.CooldownGroup = cmbCooldownGroup.Text;
+        }
+
+        private void chkIgnoreGlobalCooldown_CheckedChanged(object sender, EventArgs e)
+        {
+            mEditorItem.IgnoreGlobalCooldown = chkIgnoreGlobalCooldown.Checked;
+        }
+
         #region "Item List - Folders, Searching, Sorting, Etc"
 
         public void InitEditor()
@@ -951,6 +987,25 @@ namespace Intersect.Editor.Forms.Editors
                         mKnownFolders.Add(((SpellBase) itm.Value).Folder);
                     }
                 }
+
+                if (!string.IsNullOrWhiteSpace(((SpellBase)itm.Value).CooldownGroup) &&
+                    !mKnownCooldownGroups.Contains(((SpellBase)itm.Value).CooldownGroup))
+                {
+                    mKnownCooldownGroups.Add(((SpellBase)itm.Value).CooldownGroup);
+                }
+            }
+
+            // Do we add item cooldown groups as well?
+            if (Options.Combat.LinkSpellAndItemCooldowns)
+            {
+                foreach (var itm in ItemBase.Lookup)
+                {
+                    if (!string.IsNullOrWhiteSpace(((ItemBase)itm.Value).CooldownGroup) &&
+                    !mKnownCooldownGroups.Contains(((ItemBase)itm.Value).CooldownGroup))
+                    {
+                        mKnownCooldownGroups.Add(((ItemBase)itm.Value).CooldownGroup);
+                    }
+                }
             }
 
             mFolders.Sort();
@@ -958,6 +1013,11 @@ namespace Intersect.Editor.Forms.Editors
             cmbFolder.Items.Clear();
             cmbFolder.Items.Add("");
             cmbFolder.Items.AddRange(mKnownFolders.ToArray());
+
+            mKnownCooldownGroups.Sort();
+            cmbCooldownGroup.Items.Clear();
+            cmbCooldownGroup.Items.Add(string.Empty);
+            cmbCooldownGroup.Items.AddRange(mKnownCooldownGroups.ToArray());
 
             lstSpells.Sorted = !btnChronological.Checked;
 

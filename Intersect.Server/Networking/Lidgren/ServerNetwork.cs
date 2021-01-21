@@ -7,22 +7,23 @@ using Intersect.Logging;
 using Intersect.Network;
 using Intersect.Network.Events;
 using Intersect.Network.Lidgren;
+using Intersect.Plugins.Interfaces;
+using Intersect.Server.Core;
 using Intersect.Server.Entities;
-
-using JetBrains.Annotations;
 
 using Lidgren.Network;
 
 namespace Intersect.Server.Networking.Lidgren
 {
-
-    public class ServerNetwork : AbstractNetwork, IServer
+    // TODO: Migrate to a proper service
+    internal class ServerNetwork : AbstractNetwork, IServer
     {
-
-        public ServerNetwork([NotNull] NetworkConfiguration configuration, RSAParameters rsaParameters) : base(
-            configuration
+        internal ServerNetwork(IServerContext context, INetworkHelper networkHelper, NetworkConfiguration configuration, RSAParameters rsaParameters) : base(
+            networkHelper, configuration
         )
         {
+            Context = context ?? throw new ArgumentNullException(nameof(context));
+
             Guid = Guid.NewGuid();
 
             var lidgrenInterface = new LidgrenInterface(this, typeof(NetServer), rsaParameters);
@@ -33,6 +34,8 @@ namespace Intersect.Server.Networking.Lidgren
             lidgrenInterface.OnConnectionRequested += HandleConnectionRequested;
             AddNetworkLayerInterface(lidgrenInterface);
         }
+
+        private IServerContext Context { get; }
 
         public HandleConnectionEvent OnConnected { get; set; }
 
@@ -47,20 +50,29 @@ namespace Intersect.Server.Networking.Lidgren
             return true;
         }
 
-        protected virtual void HandleInterfaceOnConnected([NotNull] INetworkLayerInterface sender, [NotNull] ConnectionEventArgs connectionEventArgs)
+        protected virtual void HandleInterfaceOnConnected(
+            INetworkLayerInterface sender,
+            ConnectionEventArgs connectionEventArgs
+        )
         {
             Log.Info($"Connected [{connectionEventArgs.Connection?.Guid}].");
-            Client.CreateBeta4Client(connectionEventArgs.Connection);
+            Client.CreateBeta4Client(Context, connectionEventArgs.Connection);
             OnConnected?.Invoke(sender, connectionEventArgs);
         }
 
-        protected virtual void HandleInterfaceOnConnectonApproved([NotNull] INetworkLayerInterface sender, [NotNull] ConnectionEventArgs connectionEventArgs)
+        protected virtual void HandleInterfaceOnConnectonApproved(
+            INetworkLayerInterface sender,
+            ConnectionEventArgs connectionEventArgs
+        )
         {
             Log.Info($"Connection approved [{connectionEventArgs.Connection?.Guid}].");
             OnConnectionApproved?.Invoke(sender, connectionEventArgs);
         }
 
-        protected virtual void HandleInterfaceOnDisconnected([NotNull] INetworkLayerInterface sender, [NotNull] ConnectionEventArgs connectionEventArgs)
+        protected virtual void HandleInterfaceOnDisconnected(
+            INetworkLayerInterface sender,
+            ConnectionEventArgs connectionEventArgs
+        )
         {
             Log.Info($"Disconnected [{connectionEventArgs.Connection?.Guid}].");
             Client.RemoveBeta4Client(connectionEventArgs.Connection);
@@ -69,15 +81,22 @@ namespace Intersect.Server.Networking.Lidgren
 
         protected virtual void HandleOnUnconnectedMessage(NetPeer peer, NetIncomingMessage message)
         {
-            var packetType = message.ReadString();
-            switch (packetType)
+            try
             {
-                case "status":
-                    var response = peer.CreateMessage();
-                    response.WriteVariableInt32(Player.OnlineCount);
-                    peer.SendUnconnectedMessage(response, message.SenderEndPoint);
+                var packetType = message.ReadString();
+                switch (packetType)
+                {
+                    case "status":
+                        var response = peer.CreateMessage();
+                        response.WriteVariableInt32(Player.OnlineCount);
+                        peer.SendUnconnectedMessage(response, message.SenderEndPoint);
 
-                    break;
+                        break;
+                }
+            }
+            catch (Exception exception)
+            {
+                Log.Error(exception);
             }
         }
 
@@ -113,7 +132,5 @@ namespace Intersect.Server.Networking.Lidgren
         {
             return new ConcurrentDictionary<TKey, TValue>();
         }
-
     }
-
 }

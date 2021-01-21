@@ -6,7 +6,6 @@ using Intersect.GameObjects;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
 using Intersect.Server.Database.PlayerData.Players;
-using Intersect.Server.General;
 using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
@@ -161,7 +160,7 @@ namespace Intersect.Server.Entities
                     if (ItemBase.Get(item.ItemId) != null)
                     {
                         MapInstance.Get(selectedTile.GetMapId())
-                            .SpawnItem(selectedTile.GetX(), selectedTile.GetY(), item, item.Quantity);
+                            .SpawnItem(selectedTile.GetX(), selectedTile.GetY(), item, item.Quantity, killer.Id);
                     }
                 }
             }

@@ -51,7 +51,7 @@ namespace Intersect.Editor.Content
         }
 
         //Game Content
-        public static List<Texture> AllTextures = new List<Texture>();
+        public static List<Texture> AllTextures { get; } = new List<Texture>();
 
         public static List<Texture> FogTextures = new List<Texture>();
 

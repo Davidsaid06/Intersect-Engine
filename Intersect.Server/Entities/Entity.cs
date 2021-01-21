@@ -19,8 +19,6 @@ using Intersect.Server.Maps;
 using Intersect.Server.Networking;
 using Intersect.Utilities;
 
-using JetBrains.Annotations;
-
 using Newtonsoft.Json;
 
 namespace Intersect.Server.Entities
@@ -72,6 +70,22 @@ namespace Intersect.Server.Entities
 
         public string Sprite { get; set; }
 
+        /// <summary>
+        /// The database compatible version of <see cref="Color"/>
+        /// </summary>
+        [JsonIgnore, Column(nameof(Color))]
+        public string JsonColor
+        {
+            get => JsonConvert.SerializeObject(Color);
+            set => Color = JsonConvert.DeserializeObject<Color>(value);
+        }
+
+        /// <summary>
+        /// Defines the ARGB color settings for this Entity.
+        /// </summary>
+        [NotMapped]
+        public Color Color { get; set; } = new Color(255, 255, 255, 255);
+
         public string Face { get; set; }
 
         public int Level { get; set; }
@@ -87,7 +101,7 @@ namespace Intersect.Server.Entities
         public int[] _vital { get; set; } = new int[(int) Enums.Vitals.VitalCount];
 
         //Stats based on npc settings, class settings, etc for quick calculations
-        [JsonIgnore, Column("BaseStats")]
+        [JsonIgnore, Column(nameof(BaseStats))]
         public string StatsJson
         {
             get => DatabaseUtils.SaveIntArray(BaseStats, (int) Enums.Stats.StatCount);
@@ -99,7 +113,7 @@ namespace Intersect.Server.Entities
             new int[(int) Enums.Stats
                 .StatCount]; // TODO: Why can this be BaseStats while Vitals is _vital and MaxVitals is _maxVital?
 
-        [JsonIgnore, Column("StatPointAllocations")]
+        [JsonIgnore, Column(nameof(StatPointAllocations))]
         public string StatPointsJson
         {
             get => DatabaseUtils.SaveIntArray(StatPointAllocations, (int) Enums.Stats.StatCount);
@@ -110,14 +124,14 @@ namespace Intersect.Server.Entities
         public int[] StatPointAllocations { get; set; } = new int[(int) Enums.Stats.StatCount];
 
         //Inventory
-        [NotNull, JsonIgnore]
+        [JsonIgnore]
         public virtual List<InventorySlot> Items { get; set; } = new List<InventorySlot>();
 
         //Spells
-        [NotNull, JsonIgnore]
+        [JsonIgnore]
         public virtual List<SpellSlot> Spells { get; set; } = new List<SpellSlot>();
 
-        [JsonIgnore, Column("NameColor")]
+        [JsonIgnore, Column(nameof(NameColor))]
         public string NameColorJson
         {
             get => DatabaseUtils.SaveColor(NameColor);
@@ -134,7 +148,7 @@ namespace Intersect.Server.Entities
         [NotMapped]
         public Label HeaderLabel { get; set; }
 
-        [JsonIgnore, Column("HeaderLabel")]
+        [JsonIgnore, Column(nameof(HeaderLabel))]
         public string HeaderLabelJson
         {
             get => JsonConvert.SerializeObject(HeaderLabel);
@@ -144,7 +158,7 @@ namespace Intersect.Server.Entities
         [NotMapped]
         public Label FooterLabel { get; set; }
 
-        [JsonIgnore, Column("FooterLabel")]
+        [JsonIgnore, Column(nameof(FooterLabel))]
         public string FooterLabelJson
         {
             get => JsonConvert.SerializeObject(FooterLabel);
@@ -200,13 +214,13 @@ namespace Intersect.Server.Entities
         public bool Passable { get; set; } = false;
 
         [NotMapped, JsonIgnore]
-        public long RegenTimer { get; set; } = Globals.Timing.TimeMs;
+        public long RegenTimer { get; set; } = Globals.Timing.Milliseconds;
 
         [NotMapped, JsonIgnore]
         public int SpellCastSlot { get; set; } = 0;
 
         //Status effects
-        [NotMapped, JsonIgnore, NotNull]
+        [NotMapped, JsonIgnore]
         public Dictionary<SpellBase, Status> Statuses { get; } = new Dictionary<SpellBase, Status>();
 
         [NotMapped, JsonIgnore]
@@ -245,10 +259,10 @@ namespace Intersect.Server.Entities
             }
 
             //Regen Timers
-            if (Globals.Timing.TimeMs > CombatTimer && Globals.Timing.TimeMs > RegenTimer)
+            if (timeMs > CombatTimer && timeMs > RegenTimer)
             {
                 ProcessRegen();
-                RegenTimer = Globals.Timing.TimeMs + Options.RegenTime;
+                RegenTimer = timeMs + Options.RegenTime;
             }
 
             //Status timers
@@ -424,8 +438,7 @@ namespace Intersect.Server.Entities
                         else if (en is Resource resource)
                         {
                             //If determine if we should walk
-                            if (!resource.IsDead() && !resource.Base.WalkableBefore ||
-                                resource.IsDead() && !resource.Base.WalkableAfter)
+                            if (!resource.IsPassable())
                             {
                                 return (int) EntityTypes.Resource;
                             }
@@ -650,17 +663,17 @@ namespace Intersect.Server.Entities
 
                         break;
                     case MoveRouteEnum.Wait100:
-                        MoveTimer = Globals.Timing.TimeMs + 100;
+                        MoveTimer = Globals.Timing.Milliseconds + 100;
                         moved = true;
 
                         break;
                     case MoveRouteEnum.Wait500:
-                        MoveTimer = Globals.Timing.TimeMs + 500;
+                        MoveTimer = Globals.Timing.Milliseconds + 500;
                         moved = true;
 
                         break;
                     case MoveRouteEnum.Wait1000:
-                        MoveTimer = Globals.Timing.TimeMs + 1000;
+                        MoveTimer = Globals.Timing.Milliseconds + 1000;
                         moved = true;
 
                         break;
@@ -683,9 +696,9 @@ namespace Intersect.Server.Entities
                     }
                 }
 
-                if (moved && MoveTimer < Globals.Timing.TimeMs)
+                if (moved && MoveTimer < Globals.Timing.Milliseconds)
                 {
-                    MoveTimer = Globals.Timing.TimeMs + (long) GetMovementTime();
+                    MoveTimer = Globals.Timing.Milliseconds + (long) GetMovementTime();
                 }
             }
 
@@ -716,7 +729,7 @@ namespace Intersect.Server.Entities
 
         public virtual void Move(int moveDir, Player forPlayer, bool doNotUpdate = false, bool correction = false)
         {
-            if (Globals.Timing.TimeMs <= MoveTimer || CastTime > 0)
+            if (Globals.Timing.Milliseconds <= MoveTimer || CastTime > 0)
             {
                 return;
             }
@@ -786,6 +799,22 @@ namespace Intersect.Server.Entities
                     var oldMap = MapInstance.Get(MapId);
                     oldMap?.RemoveEntity(this);
                     currentMap?.AddEntity(this);
+
+                    //Send Left Map Packet To the Maps that we are no longer with
+                    var oldMaps = oldMap?.GetSurroundingMaps(true);
+                    var newMaps = currentMap?.GetSurroundingMaps(true);
+
+                    if (oldMaps != null)
+                    {
+                        foreach (var map in oldMaps)
+                        {
+                            if (newMaps == null || !newMaps.Contains(map))
+                            {
+                                PacketSender.SendEntityLeaveMap(this, map.Id);
+                            }
+                        }
+                    }
+
                 }
 
                 MapId = tile.GetMapId();
@@ -817,7 +846,7 @@ namespace Intersect.Server.Entities
                             var projectiles = map.MapProjectiles.ToArray();
                             foreach (var projectile in projectiles)
                             {
-                                var spawns = projectile.Spawns?.ToArray() ?? new ProjectileSpawn[0];
+                                var spawns = projectile.Spawns?.ToArray() ?? Array.Empty<ProjectileSpawn>();
                                 foreach (var spawn in spawns)
                                 {
                                     // TODO: Filter in Spawns variable, there should be no nulls. See #78 for evidence it is null.
@@ -835,7 +864,7 @@ namespace Intersect.Server.Entities
                         }
                     }
 
-                    MoveTimer = Globals.Timing.TimeMs + (long) GetMovementTime();
+                    MoveTimer = Globals.Timing.Milliseconds + (long) GetMovementTime();
                 }
 
                 if (TryToChangeDimension() && doNotUpdate == true)
@@ -933,28 +962,31 @@ namespace Intersect.Server.Entities
         public int GetDirectionTo(Entity target)
         {
             int xDiff = 0, yDiff = 0;
-            var myGrid = MapInstance.Get(MapId).MapGrid;
+
+            var map = MapInstance.Get(MapId);
+            var gridId = map.MapGrid;
+            var grid = DbInterface.GetGrid(gridId);
 
             //Loop through surrouding maps to generate a array of open and blocked points.
-            for (var x = MapInstance.Get(MapId).MapGridX - 1; x <= MapInstance.Get(MapId).MapGridX + 1; x++)
+            for (var x = map.MapGridX - 1; x <= map.MapGridX + 1; x++)
             {
-                if (x == -1 || x >= DbInterface.MapGrids[myGrid].Width)
+                if (x == -1 || x >= grid.Width)
                 {
                     continue;
                 }
 
-                for (var y = MapInstance.Get(MapId).MapGridY - 1; y <= MapInstance.Get(MapId).MapGridY + 1; y++)
+                for (var y = map.MapGridY - 1; y <= map.MapGridY + 1; y++)
                 {
-                    if (y == -1 || y >= DbInterface.MapGrids[myGrid].Height)
+                    if (y == -1 || y >= grid.Height)
                     {
                         continue;
                     }
 
-                    if (DbInterface.MapGrids[myGrid].MyGrid[x, y] != Guid.Empty &&
-                        DbInterface.MapGrids[myGrid].MyGrid[x, y] == target.MapId)
+                    if (grid.MyGrid[x, y] != Guid.Empty &&
+                        grid.MyGrid[x, y] == target.MapId)
                     {
-                        xDiff = (x - MapInstance.Get(MapId).MapGridX) * Options.MapWidth + target.X - X;
-                        yDiff = (y - MapInstance.Get(MapId).MapGridY) * Options.MapHeight + target.Y - Y;
+                        xDiff = (x - map.MapGridX) * Options.MapWidth + target.X - X;
+                        yDiff = (y - map.MapGridY) * Options.MapHeight + target.Y - Y;
                         if (Math.Abs(xDiff) > Math.Abs(yDiff))
                         {
                             if (xDiff < 0)
@@ -1002,9 +1034,9 @@ namespace Intersect.Server.Entities
 
         public void TryBlock(bool blocking)
         {
-            if (AttackTimer < Globals.Timing.TimeMs)
+            if (AttackTimer < Globals.Timing.Milliseconds)
             {
-                if (blocking && !Blocking && AttackTimer < Globals.Timing.TimeMs)
+                if (blocking && !Blocking && AttackTimer < Globals.Timing.Milliseconds)
                 {
                     Blocking = true;
                     PacketSender.SendEntityAttack(this, -1);
@@ -1012,7 +1044,7 @@ namespace Intersect.Server.Entities
                 else if (!blocking && Blocking)
                 {
                     Blocking = false;
-                    AttackTimer = Globals.Timing.TimeMs + CalculateAttackTime();
+                    AttackTimer = Globals.Timing.Milliseconds + CalculateAttackTime();
                     PacketSender.SendEntityAttack(this, 0);
                 }
             }
@@ -1037,7 +1069,6 @@ namespace Intersect.Server.Entities
             return _vital[vital];
         }
 
-        [NotNull]
         public int[] GetVitals()
         {
             var vitals = new int[(int) Vitals.VitalCount];
@@ -1082,7 +1113,6 @@ namespace Intersect.Server.Entities
             return GetMaxVital((int) vital);
         }
 
-        [NotNull]
         public int[] GetMaxVitals()
         {
             var vitals = new int[(int) Vitals.VitalCount];
@@ -1189,7 +1219,7 @@ namespace Intersect.Server.Entities
             return stats;
         }
 
-        public virtual bool IsAllyOf([NotNull] Entity otherEntity)
+        public virtual bool IsAllyOf(Entity otherEntity)
         {
             return this == otherEntity;
         }
@@ -1541,7 +1571,7 @@ namespace Intersect.Server.Entities
             }
         }
 
-        private void Animate([NotNull] Entity target, [NotNull] List<KeyValuePair<Guid, sbyte>> animations)
+        private void Animate(Entity target, List<KeyValuePair<Guid, sbyte>> animations)
         {
             foreach (var anim in animations)
             {
@@ -1569,7 +1599,7 @@ namespace Intersect.Server.Entities
             ItemBase weapon = null
         )
         {
-            if (AttackTimer > Globals.Timing.TimeMs || Blocking)
+            if (AttackTimer > Globals.Timing.Milliseconds || Blocking)
             {
                 return;
             }
@@ -1618,7 +1648,7 @@ namespace Intersect.Server.Entities
                 }
             }
 
-            AttackTimer = Globals.Timing.TimeMs + CalculateAttackTime();
+            AttackTimer = Globals.Timing.Milliseconds + CalculateAttackTime();
 
             //Check if the attacker is blinded.
             if (IsOneBlockAway(target))
@@ -1644,7 +1674,7 @@ namespace Intersect.Server.Entities
             );
 
             //If we took damage lets reset our combat timer
-            target.CombatTimer = Globals.Timing.TimeMs + Options.CombatTime;
+            target.CombatTimer = Globals.Timing.Milliseconds + Options.CombatTime;
         }
 
         public void Attack(
@@ -1679,7 +1709,7 @@ namespace Intersect.Server.Entities
                     // Add a timer before able to make the next move.
                     if (this is Npc npc)
                     {
-                        npc.MoveTimer = Globals.Timing.TimeMs + (long) GetMovementTime();
+                        npc.MoveTimer = Globals.Timing.Milliseconds + (long) GetMovementTime();
                     }
 
                     return;
@@ -1710,7 +1740,7 @@ namespace Intersect.Server.Entities
 
                 if (baseDamage > 0 && enemy.HasVital(Vitals.Health))
                 {
-                    enemy.CombatTimer = Globals.Timing.TimeMs + Options.CombatTime;
+                    enemy.CombatTimer = Globals.Timing.Milliseconds + Options.CombatTime;
                     enemy.SubVital(Vitals.Health, (int) baseDamage);
                     switch (damageType)
                     {
@@ -1757,21 +1787,14 @@ namespace Intersect.Server.Entities
                         dmgMap.TryGetValue(this, out var damage);
                         dmgMap[this] = damage + baseDamage;
 
-                        long dmg = baseDamage;
-                        var newTarget = this;
                         if (enemyNpc.Base.FocusHighestDamageDealer)
                         {
-                            foreach (var pair in dmgMap)
-                            {
-                                if (pair.Value > dmg)
-                                {
-                                    newTarget = pair.Key;
-                                    dmg = pair.Value;
-                                }
-                            }
+                            enemyNpc.AssignTarget(enemyNpc.DamageMapHighest);
                         }
-
-                        enemyNpc.AssignTarget(newTarget);
+                        else
+                        {
+                            enemyNpc.AssignTarget(this);
+                        }
                     }
 
                     enemy.NotifySwarm(this);
@@ -1799,7 +1822,7 @@ namespace Intersect.Server.Entities
                 if (secondaryDamage > 0 && enemy.HasVital(Vitals.Mana))
                 {
                     //If we took damage lets reset our combat timer
-                    enemy.CombatTimer = Globals.Timing.TimeMs + Options.CombatTime;
+                    enemy.CombatTimer = Globals.Timing.Milliseconds + Options.CombatTime;
                     enemy.SubVital(Vitals.Mana, (int) secondaryDamage);
                     PacketSender.SendActionMsg(
                         enemy, Strings.Combat.removesymbol + (int) secondaryDamage, CustomColors.Combat.RemoveMana
@@ -1808,21 +1831,9 @@ namespace Intersect.Server.Entities
                     //No Matter what, if we attack the entitiy, make them chase us
                     if (enemy is Npc enemyNpc)
                     {
-                        var dmgMap = enemyNpc.DamageMap;
-                        var target = this;
-                        long dmg = 0;
-                        foreach (var pair in dmgMap)
-                        {
-                            if (pair.Value > dmg)
-                            {
-                                target = pair.Key;
-                                dmg = pair.Value;
-                            }
-                        }
-
                         if (enemyNpc.Base.FocusHighestDamageDealer)
                         {
-                            enemyNpc.AssignTarget(target);
+                            enemyNpc.AssignTarget(enemyNpc.DamageMapHighest);
                         }
                         else
                         {
@@ -1913,7 +1924,7 @@ namespace Intersect.Server.Entities
             // Add a timer before able to make the next move.
             if (GetType() == typeof(Npc))
             {
-                ((Npc) this).MoveTimer = Globals.Timing.TimeMs + (long) GetMovementTime();
+                ((Npc) this).MoveTimer = Globals.Timing.Milliseconds + (long) GetMovementTime();
             }
         }
 
@@ -2076,15 +2087,10 @@ namespace Intersect.Server.Entities
 
                     break;
                 case SpellTypes.WarpTo:
-                    if (CastTarget == null)
+                    if (CastTarget != null)
                     {
-                        PacketSender.SendSpellCooldown((Player) this, Spells[spellSlot].SpellId);
-
-                        return;
+                        HandleAoESpell(spellId, spellBase.Combat.CastRange, MapId, X, Y, CastTarget);
                     }
-
-                    HandleAoESpell(spellId, spellBase.Combat.CastRange, MapId, X, Y, CastTarget);
-
                     break;
                 case SpellTypes.Dash:
                     PacketSender.SendActionMsg(this, Strings.Combat.dash, CustomColors.Combat.Dash);
@@ -2102,29 +2108,21 @@ namespace Intersect.Server.Entities
 
             if (spellSlot >= 0 && spellSlot < Options.MaxPlayerSkills)
             {
-                decimal cooldownReduction = 1;
-
-                if (GetType() == typeof(Player)) //Only apply cdr for players with equipment
+                // Player cooldown handling is done elsewhere!
+                if (this is Player player)
                 {
-                    cooldownReduction = 1 - (decimal) ((Player) this).GetCooldownReduction() / 100;
-                }
+                    player.UpdateCooldown(spellBase);
 
-                if (SpellCooldowns.ContainsKey(Spells[spellSlot].SpellId))
-                {
-                    SpellCooldowns[Spells[spellSlot].SpellId] =
-                        Globals.Timing.RealTimeMs + (int) (spellBase.CooldownDuration * cooldownReduction);
+                    // Trigger the global cooldown, if we're allowed to.
+                    if (!spellBase.IgnoreGlobalCooldown)
+                    {
+                        player.UpdateGlobalCooldown();
+                    }
                 }
                 else
                 {
-                    SpellCooldowns.Add(
-                        Spells[spellSlot].SpellId,
-                        Globals.Timing.RealTimeMs + (int) (spellBase.CooldownDuration * cooldownReduction)
-                    );
-                }
-
-                if (GetType() == typeof(Player))
-                {
-                    PacketSender.SendSpellCooldown((Player) this, Spells[spellSlot].SpellId);
+                    SpellCooldowns[Spells[spellSlot].SpellId] =
+                    Globals.Timing.MillisecondsUTC + (int)(spellBase.CooldownDuration);
                 }
             }
         }
@@ -2139,80 +2137,36 @@ namespace Intersect.Server.Entities
         )
         {
             var spellBase = SpellBase.Get(spellId);
-            var targetsHit = new List<Entity>();
             if (spellBase != null)
             {
-                for (var x = startX - range; x <= startX + range; x++)
+                var startMap = MapInstance.Get(startMapId);
+                if (startMap != null)
                 {
-                    for (var y = startY - range; y <= startY + range; y++)
+                    var surroundingMaps = startMap.GetSurroundingMaps(true);
+                    foreach (var map in surroundingMaps)
                     {
-                        var tempMap = MapInstance.Get(startMapId);
-
-                        if (tempMap == null)
+                        foreach (var pair in map.GetEntitiesDictionary())
                         {
-                            continue;
-                        }
-
-                        var x2 = x;
-                        var y2 = y;
-
-                        if (y < 0 && tempMap.Up != Guid.Empty)
-                        {
-                            tempMap = MapInstance.Get(tempMap.Up);
-                            y2 = Options.MapHeight + y;
-                        }
-                        else if (y > Options.MapHeight - 1 && tempMap.Down != Guid.Empty)
-                        {
-                            tempMap = MapInstance.Get(tempMap.Down);
-                            y2 = y - Options.MapHeight;
-                        }
-
-                        if (x < 0 && tempMap.Left != Guid.Empty)
-                        {
-                            tempMap = MapInstance.Get(tempMap.Left);
-                            x2 = Options.MapWidth + x;
-                        }
-                        else if (x > Options.MapWidth - 1 && tempMap.Right != Guid.Empty)
-                        {
-                            tempMap = MapInstance.Get(tempMap.Right);
-                            x2 = x - Options.MapWidth;
-                        }
-
-                        if (tempMap == null)
-                        {
-                            continue;
-                        }
-
-                        var mapEntities = tempMap.GetEntities();
-                        for (var i = 0; i < mapEntities.Count; i++)
-                        {
-                            var t = mapEntities[i];
-                            if (t == null || targetsHit.Contains(t))
+                            var entity = pair.Value;
+                            if (entity != null && (entity is Player || entity is Npc))
                             {
-                                continue;
-                            }
-
-                            if (t.GetType() == typeof(Player) || t.GetType() == typeof(Npc))
-                            {
-                                if (t.MapId == tempMap.Id && t.X == x2 && t.Y == y2)
+                                if (spellTarget == null || spellTarget == entity)
                                 {
-                                    if (spellTarget == null || spellTarget == t)
+                                    if (entity.GetDistanceTo(startMap,startX,startY) <= range)
                                     {
-                                        targetsHit.Add(t);
-
                                         //Check to handle a warp to spell
                                         if (spellBase.SpellType == SpellTypes.WarpTo)
                                         {
                                             if (spellTarget != null)
                                             {
                                                 Warp(
-                                                    spellTarget.MapId, (byte) spellTarget.X, (byte) spellTarget.Y,
-                                                    (byte) Dir
+                                                    spellTarget.MapId, (byte)spellTarget.X, (byte)spellTarget.Y,
+                                                    (byte)Dir
                                                 ); //Spelltarget used to be Target. I don't know if this is correct or not.
                                             }
                                         }
 
-                                        TryAttack(t, spellBase); //Handle damage
+                                        TryAttack(entity, spellBase); //Handle damage
                                     }
                                 }
                             }
@@ -2296,21 +2250,27 @@ namespace Intersect.Server.Entities
         {
             if (target != null)
             {
-                var myMap = MapInstance.Get(MapId);
-                var targetMap = MapInstance.Get(target.MapId);
-                if (myMap != null && targetMap != null && myMap.MapGrid == targetMap.MapGrid
-                ) //Make sure both maps exist and that they are in the same dimension
-                {
-                    //Calculate World Tile of Me
-                    var x1 = X + myMap.MapGridX * Options.MapWidth;
-                    var y1 = Y + myMap.MapGridY * Options.MapHeight;
+                return GetDistanceTo(target.Map, target.X, target.Y);
+            }
+            //Something is null.. return a value that is out of range :) 
+            return 9999;
+        }
 
-                    //Calculate world tile of target
-                    var x2 = target.X + targetMap.MapGridX * Options.MapWidth;
-                    var y2 = target.Y + targetMap.MapGridY * Options.MapHeight;
+        protected int GetDistanceTo(MapInstance targetMap, int targetX, int targetY)
+        {
+            var myMap = MapInstance.Get(MapId);
+            if (myMap != null && targetMap != null && myMap.MapGrid == targetMap.MapGrid
+            ) //Make sure both maps exist and that they are in the same dimension
+            {
+                //Calculate World Tile of Me
+                var x1 = X + myMap.MapGridX * Options.MapWidth;
+                var y1 = Y + myMap.MapGridY * Options.MapHeight;
 
-                    return (int) Math.Sqrt(Math.Pow(x1 - x2, 2) + Math.Pow(y1 - y2, 2));
-                }
+                //Calculate world tile of target
+                var x2 = targetX + targetMap.MapGridX * Options.MapWidth;
+                var y2 = targetY + targetMap.MapGridY * Options.MapHeight;
+
+                return (int) Math.Sqrt(Math.Pow(x1 - x2, 2) + Math.Pow(y1 - y2, 2));
             }
 
             //Something is null.. return a value that is out of range :) 
@@ -2457,11 +2417,31 @@ namespace Intersect.Server.Entities
                         continue;
                     }
 
-                    var map = MapInstance.Get(MapId);
-                    map?.SpawnItem(X, Y, item, item.Quantity);
+                    // Decide if we want to have a loot ownership timer or not.
+                    Guid lootOwner = Guid.Empty;
+                    if (this is Npc thisNpc)
+                    {
+                        // Check if we have someone that tagged this NPC.
+                        var taggedBy = thisNpc.DamageMapHighest;
+                        if (taggedBy != null && taggedBy is Player)
+                        {
+                            // Spawn with ownership!
+                            lootOwner = taggedBy.Id;
+                        }
+                    } 
+                    else
+                    {
+                        // There's no tracking of who damaged what player as of now, so going by last hit.. Or set ownership to the player themselves.
+                        lootOwner = playerKiller?.Id ?? Id;
+                    }
 
+                    // Spawn the actual item!
+                    var map = MapInstance.Get(MapId);
+                    map?.SpawnItem(X, Y, item, item.Quantity, lootOwner);
+
+                    // Remove the item from inventory if a player.
                     var player = this as Player;
-                    player?.TakeItemsBySlot(n, item.Quantity);
+                    player?.TryTakeItem(Items[n], item.Quantity);
                 }
             }
 
@@ -2524,6 +2504,7 @@ namespace Intersect.Server.Entities
             packet.MapId = MapId;
             packet.Name = Name;
             packet.Sprite = Sprite;
+            packet.Color = Color;
             packet.Face = Face;
             packet.Level = Level;
             packet.X = (byte) X;
@@ -2563,7 +2544,7 @@ namespace Intersect.Server.Entities
                 }
 
                 statusPackets[i] = new StatusPacket(
-                    status.Spell.Id, status.Type, status.Data, (int) (status.Duration - Globals.Timing.TimeMs),
+                    status.Spell.Id, status.Type, status.Data, (int) (status.Duration - Globals.Timing.Milliseconds),
                     (int) (status.Duration - status.StartTime), vitalShields
                 );
             }

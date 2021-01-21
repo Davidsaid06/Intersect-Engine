@@ -151,6 +151,10 @@ namespace Intersect.GameObjects.Events.Commands
                 if (branch != Guid.Empty && commandLists.ContainsKey(branch))
                 {
                     copyLists.Add(branch, commandLists[branch]);
+                    foreach (var cmd in commandLists[branch])
+                    {
+                        cmd.GetCopyData(commandLists, copyLists);
+                    }
                 }
             }
 
@@ -176,6 +180,9 @@ namespace Intersect.GameObjects.Events.Commands
         public override EventCommandType Type { get; } = EventCommandType.AddChatboxText;
 
         public string Text { get; set; } = "";
+
+        // TODO: Expose this option to the user?
+        public ChatMessageType MessageType { get; set; } = ChatMessageType.Notice;
 
         public string Color { get; set; } = "";
 
@@ -332,6 +339,21 @@ namespace Intersect.GameObjects.Events.Commands
 
         public long Exp { get; set; }
 
+        /// <summary>
+        /// Defines whether this event command will use a variable for processing or not.
+        /// </summary>
+        public bool UseVariable { get; set; } = false;
+
+        /// <summary>
+        /// Defines whether the variable used is a Player or Global variable.
+        /// </summary>
+        public VariableTypes VariableType { get; set; } = VariableTypes.PlayerVariable;
+
+        /// <summary>
+        /// The Variable Id to use.
+        /// </summary>
+        public Guid VariableId { get; set; }
+
     }
 
     public class ChangeLevelCommand : EventCommand
@@ -424,6 +446,26 @@ namespace Intersect.GameObjects.Events.Commands
         public Guid ItemId { get; set; }
 
         public bool Add { get; set; } //If !Add then Remove
+
+        /// <summary>
+        /// Defines how the server is supposed to handle changing the items of this request.
+        /// </summary>
+        public ItemHandling ItemHandling { get; set; } = ItemHandling.Normal;
+
+        /// <summary>
+        /// Defines whether this event command will use a variable for processing or not.
+        /// </summary>
+        public bool UseVariable { get; set; } = false;
+
+        /// <summary>
+        /// Defines whether the variable used is a Player or Global variable.
+        /// </summary>
+        public VariableTypes VariableType { get; set; } = VariableTypes.PlayerVariable;
+
+        /// <summary>
+        /// The Variable Id to use.
+        /// </summary>
+        public Guid VariableId { get; set; }
 
         public int Quantity { get; set; }
 
@@ -823,6 +865,24 @@ namespace Intersect.GameObjects.Events.Commands
         public Guid QuestId { get; set; }
 
         public bool SkipCompletionEvent { get; set; }
+
+    }
+
+    /// <summary>
+    /// Defines the Event command class for the Change Player Color command.
+    /// </summary>
+    public class ChangePlayerColorCommand : EventCommand
+    {
+
+        /// <summary>
+        /// The <see cref="EventCommandType"/> of this command.
+        /// </summary>
+        public override EventCommandType Type { get; } = EventCommandType.ChangePlayerColor;
+
+        /// <summary>
+        /// The <see cref="Color"/> to apply to the player.
+        /// </summary>
+        public Color Color { get; set; } = new Color(255, 255, 255, 255);
 
     }
 
