@@ -12,10 +12,24 @@ namespace Intersect.Client.Items
         /// </summary>
         public Guid Owner;
 
+        public int X;
+
+        public int Y;
+
+        public int MaxDurability;
+
+        public int CurrentDurability;
+
+        public int MaxWeaponSkillsPoint;
+
+        public int CurrentWeaponSkillPoint;
+
+
         /// <summary>
         /// Defines whether this MapItem is visible to everyone, or just its owner.
         /// </summary>
         public bool VisibleToAll;
+
 
         /// <summary>
         /// The Unique Id of this particular MapItemInstance so we can refer to it elsewhere.
@@ -29,6 +43,7 @@ namespace Intersect.Client.Items
         public MapItemInstance(string data) : base()
         {
             JsonConvert.PopulateObject(data, this);
+
         }
 
     }

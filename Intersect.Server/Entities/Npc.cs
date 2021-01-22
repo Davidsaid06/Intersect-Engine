@@ -3,9 +3,11 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Numerics;
 
 using Intersect.Enums;
 using Intersect.GameObjects;
+using Intersect.GameObjects.Maps;
 using Intersect.Logging;
 using Intersect.Network.Packets.Server;
 using Intersect.Server.Database;
@@ -62,12 +64,14 @@ namespace Intersect.Server.Entities
         private Task mPathfindingTask;
 
         public byte Range;
+        public byte MRange;
 
         //Respawn/Despawn
         public long RespawnTime;
 
         public long FindTargetWaitTime;
         public int FindTargetDelay = 500;
+
 
         /// <summary>
         /// The map on which this NPC was "aggro'd" and started chasing a target.
@@ -88,6 +92,10 @@ namespace Intersect.Server.Entities
         /// The Z value on which this NPC was "aggro'd" and started chasing a target.
         /// </summary>
         public int AggroCenterZ;
+
+        public byte[] moveTarget = new byte[2];
+        public Guid moveTargetMap;
+        long NextPathWaitTime;
 
         public Npc(NpcBase myBase, bool despawnable = false) : base()
         {
@@ -135,6 +143,7 @@ namespace Intersect.Server.Entities
             }
 
             Range = (byte) myBase.SightRange;
+            MRange = (byte)myBase.MoveRange;
             mPathFinder = new Pathfinder(this);
         }
 
@@ -465,6 +474,11 @@ namespace Intersect.Server.Entities
 
         private void TryCastSpells()
         {
+            // There's not even a fucking target check here lol. Good god
+            if (Target == null)
+            {
+                return;
+            }
             // Check if NPC is stunned/sleeping
             if (IsStunnedOrSleeping)
             {
@@ -732,6 +746,23 @@ namespace Intersect.Server.Entities
                     }
                 }
 
+                // 19 11 25 //
+                // 
+                if (MRange > 1 && Target == null)
+                {
+                    if (moveTargetMap == Guid.Empty)
+                    {
+                        FindMoveTarget();
+                    }
+                    else
+                    {
+                        targetMap = moveTargetMap;
+                        targetX = (int)moveTarget[0];
+                        targetY = (int)moveTarget[1];
+                        targetZ = Z;
+                    }
+                }
+
                 if (targetMap != Guid.Empty)
                 {
                     //Check if target map is on one of the surrounding maps, if not then we are not even going to look.
@@ -749,12 +780,14 @@ namespace Intersect.Server.Entities
                                 if (x == MapInstance.Get(MapId).SurroundingMaps.Count - 1)
                                 {
                                     targetMap = Guid.Empty;
+                                    moveTargetMap = Guid.Empty;
                                 }
                             }
                         }
                         else
                         {
                             targetMap = Guid.Empty;
+                            moveTargetMap = Guid.Empty;
                         }
                     }
                 }
@@ -811,7 +844,24 @@ namespace Intersect.Server.Entities
                                             case 3:
                                                 dir = 2;
 
-                                                break;
+                                                    break;
+                                                case 4:
+                                                    dir = 5;
+
+                                                    break;
+                                                case 5:
+                                                    dir = 4;
+
+                                                    break;
+                                                case 6:
+                                                    dir = 7;
+
+                                                    break;
+                                                case 7:
+                                                    dir = 6;
+
+                                                    break;
+                                            }
                                         }
                                     }
 
@@ -828,13 +878,13 @@ namespace Intersect.Server.Entities
                                                 return;
                                             }
                                         }
-
                                         Move((byte)dir, null);
                                     }
                                     else
                                     {
                                         mPathFinder.PathFailed(timeMs);
                                     }
+                                    // Npc move when here
 
                                     // Have we reached our destination? If so, clear it.
                                     var tloc = mPathFinder.GetTarget();
@@ -896,9 +946,24 @@ namespace Intersect.Server.Entities
                                     break;
                                 case 3:
                                     dir = 2;
+                                        break;
+                                    case 4:
+                                        dir = 5;
 
-                                    break;
-                            }
+                                        break;
+                                    case 5:
+                                        dir = 4;
+
+                                        break;
+                                    case 6:
+                                        dir = 7;
+
+                                        break;
+                                    case 7:
+                                        dir = 6;
+
+                                        break;
+                                }
 
                             if (CanMove(dir) == -1 || CanMove(dir) == -4)
                             {
@@ -935,12 +1000,19 @@ namespace Intersect.Server.Entities
                                     }
                                     else
                                     {
+                                        // Code come here when player is near.
                                         if (CanAttack(Target, null))
                                         {
                                             TryAttack(Target);
                                         }
                                     }
                                 }
+                            }
+
+                            if (!fleed && Target == null)
+                            {
+                                moveTargetMap = Guid.Empty;
+                                NextPathWaitTime = Globals.Timing.TimeMs + Randomization.Next(500, 2000);
                             }
                         }
                     }
@@ -953,6 +1025,7 @@ namespace Intersect.Server.Entities
                 {
                     return;
                 }
+
 
                 if (LastRandomMove >= Globals.Timing.Milliseconds || CastTime > 0)
                 {
@@ -976,7 +1049,7 @@ namespace Intersect.Server.Entities
                 var i = Randomization.Next(0, 1);
                 if (i == 0)
                 {
-                    i = Randomization.Next(0, 4);
+                    i = Randomization.Next(0, 8);
                     if (CanMove(i) == -1)
                     {
                         //check if NPC is snared or stunned
@@ -992,6 +1065,7 @@ namespace Intersect.Server.Entities
                         }
 
                         Move((byte) i, null);
+                        
                     }
                 }
 
@@ -1016,7 +1090,6 @@ namespace Intersect.Server.Entities
                     MapInstance.Get(MapId).AddEntity(this);
                 }
             }
-
             // Check if we've moved out of our range we're allowed to move from after being "aggro'd" by something.
             // If so, remove target and move back to the origin point.
             if (Options.Npc.AllowResetRadius && AggroCenterMap != null && GetDistanceTo(AggroCenterMap, AggroCenterX, AggroCenterY) > Options.Npc.ResetRadius)
@@ -1125,6 +1198,35 @@ namespace Intersect.Server.Entities
             return false;
         }
 
+        
+        public void FindMoveTarget()
+        {
+            if (NextPathWaitTime > Globals.Timing.TimeMs)
+            {
+                moveTargetMap = Guid.Empty;
+                moveTarget[0] = 0;
+                moveTarget[0] = 0;
+                return;
+            }
+      
+			 Random r = new Random();
+			 Random r2 = new Random();
+            int x = r.Next(-MRange, MRange);
+            int y = r2.Next(-MRange, MRange);  
+     
+            var tile = new TileHelper(MapId, X, Y);
+            if (tile.Translate(x, y)) {
+                moveTargetMap = tile.GetMapId();
+                moveTarget[0] = tile.GetX();
+                moveTarget[1] = tile.GetY();
+            }
+            else
+            {
+                moveTargetMap = Guid.Empty;
+                moveTarget[0] = 0;
+                moveTarget[0] = 0;
+            }
+        }
         private void TryFindNewTarget(long timeMs, Guid avoidId = new Guid())
         {
             if (FindTargetWaitTime > timeMs)

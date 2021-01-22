@@ -5,6 +5,8 @@ using Intersect.Enums;
 using Intersect.GameObjects;
 using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Utilities;
+using Intersect.Logging;
+
 
 using Newtonsoft.Json;
 
@@ -24,6 +26,13 @@ namespace Intersect.Server.Database
             itemId, quantity, null, null, incStatBuffs
         )
         {
+            var descriptor = ItemBase.Get(ItemId);
+            Durability = descriptor.Durability;
+            WeaponSkill = descriptor.WeaponSkill;
+            if (Durability > 0)
+            {
+                Log.Debug($"Durabilidad de: {descriptor.Name} es {Durability}.");
+            }
         }
 
         public Item(Guid itemId, int quantity, Guid? bagId, Bag bag, bool includeStatBuffs = true)
@@ -34,7 +43,19 @@ namespace Intersect.Server.Database
             Bag = bag;
 
             var descriptor = ItemBase.Get(ItemId);
-            if (descriptor == null || !includeStatBuffs)
+            if (descriptor == null)
+            {
+                return;
+            }
+            Durability = descriptor.Durability;
+            WeaponSkill = descriptor.WeaponSkill;
+
+            if (Durability > 0)
+            {
+                Log.Debug($"Durabilidad de: {descriptor.Name} es {Durability}.");
+            }
+
+            if (!includeStatBuffs)
             {
                 return;
             }
@@ -53,6 +74,18 @@ namespace Intersect.Server.Database
 
         public Item(Item item) : this(item.ItemId, item.Quantity, item.BagId, item.Bag)
         {
+            var descriptor = ItemBase.Get(ItemId);
+
+            if (descriptor != null)
+            {
+                Durability = descriptor.Durability;
+                WeaponSkill = descriptor.WeaponSkill;
+            }
+
+            if (Durability > 0)
+            {
+                Log.Debug($"Durabilidad de: {descriptor.Name} es {Durability}.");
+            }
             for (var i = 0; i < (int) Stats.StatCount; i++)
             {
                 StatBuffs[i] = item.StatBuffs[i];
@@ -66,6 +99,10 @@ namespace Intersect.Server.Database
         public virtual Bag Bag { get; set; }
 
         public Guid ItemId { get; set; } = Guid.Empty;
+
+        public int Durability { get; set; }
+
+        public int WeaponSkill { get; set; } = 1;
 
         public int Quantity { get; set; }
 
@@ -92,6 +129,17 @@ namespace Intersect.Server.Database
             Quantity = item.Quantity;
             BagId = item.BagId;
             Bag = item.Bag;
+            var descriptor = ItemBase.Get(ItemId);
+            if (descriptor != null)
+            {
+                Durability = descriptor.Durability;
+                WeaponSkill = descriptor.WeaponSkill;
+                if (Durability > 0)
+                {
+                    Log.Debug($"Durabilidad de set: {descriptor.Name} es {Durability}.");
+                }
+            }
+
             for (var i = 0; i < (int) Stats.StatCount; i++)
             {
                 StatBuffs[i] = item.StatBuffs[i];

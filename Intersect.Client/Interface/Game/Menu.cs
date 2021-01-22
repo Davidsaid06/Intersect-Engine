@@ -21,6 +21,10 @@ namespace Intersect.Client.Interface.Game
 
         private readonly CharacterWindow mCharacterWindow;
 
+        [NotNull] private readonly ImagePanel mStatsBackground;
+
+        [NotNull] private readonly Button mStatsButton;
+
         private readonly ImagePanel mFriendsBackground;
 
         private readonly Button mFriendsButton;
@@ -47,6 +51,8 @@ namespace Intersect.Client.Interface.Game
         private readonly PartyWindow mPartyWindow;
 
         private readonly ImagePanel mQuestsBackground;
+		
+        [NotNull] private readonly StatsWindow mStatsWindow;
 
         private readonly Button mQuestsButton;
 
@@ -94,6 +100,11 @@ namespace Intersect.Client.Interface.Game
             mCharacterButton.SetToolTipText(Strings.GameMenu.character);
             mCharacterButton.Clicked += CharacterButton_Clicked;
 
+            mStatsBackground = new ImagePanel(mMenuContainer, "StatsContainer");
+            mStatsButton = new Button(mStatsBackground, "StatsButton");
+            mStatsButton.SetToolTipText(Strings.GameMenu.stats);
+            mStatsButton.Clicked += StatsButton_Clicked;
+
             mQuestsBackground = new ImagePanel(mMenuContainer, "QuestsContainer");
             mQuestsButton = new Button(mQuestsBackground, "QuestsButton");
             mQuestsButton.SetToolTipText(Strings.GameMenu.quest);
@@ -118,6 +129,7 @@ namespace Intersect.Client.Interface.Game
 
             //Assign Window References
             mPartyWindow = new PartyWindow(gameCanvas);
+            mStatsWindow = new StatsWindow(gameCanvas);
             mFriendsWindow = new FriendsWindow(gameCanvas);
             mInventoryWindow = new InventoryWindow(gameCanvas);
             mSpellsWindow = new SpellsWindow(gameCanvas);
@@ -132,6 +144,7 @@ namespace Intersect.Client.Interface.Game
             mSpellsWindow.Update();
             mCharacterWindow.Update();
             mPartyWindow.Update();
+            mStatsWindow.Update();
             mFriendsWindow.Update();
             mQuestsWindow.Update(updateQuestLog);
         }
@@ -152,6 +165,7 @@ namespace Intersect.Client.Interface.Game
             mFriendsWindow.Hide();
             mInventoryWindow.Hide();
             mPartyWindow.Hide();
+            mStatsWindow.Hide();
             mQuestsWindow.Hide();
             mSpellsWindow.Hide();
         }
@@ -168,6 +182,8 @@ namespace Intersect.Client.Interface.Game
                 mCharacterWindow.Show();
             }
         }
+
+
 
         public bool ToggleFriendsWindow()
         {
@@ -214,6 +230,19 @@ namespace Intersect.Client.Interface.Game
             {
                 HideWindows();
                 mPartyWindow.Show();
+            }
+        }
+
+        public void ToggleStatsWindow()
+        {
+            if (mStatsWindow.IsVisible())
+            {
+                mStatsWindow.Hide();
+            }
+            else
+            {
+                HideWindows();
+                mStatsWindow.Show();
             }
         }
 
@@ -277,6 +306,11 @@ namespace Intersect.Client.Interface.Game
         private void CharacterButton_Clicked(Base sender, ClickedEventArgs arguments)
         {
             ToggleCharacterWindow();
+        }
+
+        private void StatsButton_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            ToggleStatsWindow();
         }
 
     }

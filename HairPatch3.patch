@@ -1,0 +1,35 @@
+From e4c6b1ddfd77158e41a811aaa6b3b4dc3fdaccab Mon Sep 17 00:00:00 2001
+From: Joyce <azurebeats@hotmail.nl>
+Date: Sat, 18 Apr 2020 13:03:12 +0200
+Subject: [PATCH] Fixes two editor crashes.
+
+---
+ .../Editors/Events/Event Commands/EventCommand_ChangeHair.cs    | 1 +
+ Intersect.Editor/Forms/Editors/frmClass.cs                      | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/Intersect.Editor/Forms/Editors/Events/Event Commands/EventCommand_ChangeHair.cs b/Intersect.Editor/Forms/Editors/Events/Event Commands/EventCommand_ChangeHair.cs
+index 51f9180f..6bccee95 100644
+--- a/Intersect.Editor/Forms/Editors/Events/Event Commands/EventCommand_ChangeHair.cs	
++++ b/Intersect.Editor/Forms/Editors/Events/Event Commands/EventCommand_ChangeHair.cs	
+@@ -23,6 +23,7 @@ public EventCommandChangeHair(ChangeHairCommand refCommand, FrmEvent editor)
+             mMyCommand = refCommand;
+             mEventEditor = editor;
+             cmbHair.Items.Clear();
++            cmbHair.Items.Add(Strings.General.none);
+             cmbHair.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Hairs));
+             if (cmbHair.Items.IndexOf(mMyCommand.Hair) > -1)
+             {
+diff --git a/Intersect.Editor/Forms/Editors/frmClass.cs b/Intersect.Editor/Forms/Editors/frmClass.cs
+index e14423e1..ba258e57 100644
+--- a/Intersect.Editor/Forms/Editors/frmClass.cs
++++ b/Intersect.Editor/Forms/Editors/frmClass.cs
+@@ -1403,7 +1403,7 @@ private void nudAttackSpeedValue_ValueChanged(object sender, EventArgs e)
+             mEditorItem.CustomSpriteLayers[CustomSpriteLayers.Hair].RemoveAt(lstHair.SelectedIndex);
+             lstHair.Items.RemoveAt(lstHair.SelectedIndex);
+ 
+-            RefreshSpriteList(false);
++            RefreshHairList(false);
+ 
+             if (lstHair.Items.Count > 0) {
+                 lstHair.SelectedIndex = 0;

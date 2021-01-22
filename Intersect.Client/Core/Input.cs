@@ -7,6 +7,7 @@ using Intersect.Client.Framework.Input;
 using Intersect.Client.General;
 using Intersect.Client.Maps;
 using Intersect.Client.Networking;
+using Intersect.GameObjects;
 using Intersect.Logging;
 using Intersect.Utilities;
 
@@ -57,7 +58,12 @@ namespace Intersect.Client.Core
                     return;
                 }
 
-                Interface.Interface.GameUi?.EscapeMenu?.ToggleHidden();
+                if (Globals.Me?.TargetBox != null){
+
+                    Globals.Me?.TryTarget(true);
+                }else{
+                    Interface.Interface.GameUi?.EscapeMenu?.ToggleHidden();
+                }
             }
 
             if (Interface.Interface.HasInputFocus())
@@ -117,8 +123,14 @@ namespace Intersect.Client.Core
                                         break;
 
                                     case Control.Block:
-                                        Globals.Me?.TryBlock();
-
+                                            if (Options.ShieldIndex > -1 && Globals.Me.MyEquipment[Options.ShieldIndex] > -1)
+                                            {
+                                                var item = ItemBase.Get(Globals.Me.Inventory[Globals.Me.MyEquipment[Options.ShieldIndex]].ItemId);
+                                               if(item.Damage <= 0)
+                                                {
+                                                    Globals.Me?.TryBlock();
+                                                }                                          
+                                            }
                                         break;
 
                                     case Control.AutoTarget:
@@ -207,6 +219,10 @@ namespace Intersect.Client.Core
                                         PacketSender.SendOpenAdminWindow();
 
                                         break;
+                                    case Control.OpenStats:
+                                        Interface.Interface.GameUi?.GameMenu?.ToggleStatsWindow();
+
+                                        break;
                                 }
 
                                 break;
@@ -287,7 +303,7 @@ namespace Intersect.Client.Core
                 return;
             }
 
-            if (Globals.Me.TryTarget())
+            if (Globals.Me.TryTarget(false))
             {
                 return;
             }

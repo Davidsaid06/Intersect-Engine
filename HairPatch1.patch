@@ -1,0 +1,56 @@
+From e825e58740fc24adc11bdead113fc6750ca1b240 Mon Sep 17 00:00:00 2001
+From: Joyce <azurebeats@hotmail.nl>
+Date: Tue, 14 Apr 2020 21:41:50 +0200
+Subject: [PATCH] Fixes an issue with hairstyles disappearing when warping
+ between maps
+
+---
+ .../Network/Packets/Server/PlayerEntityPacket.cs            | 2 ++
+ Intersect.Client/Entities/Player.cs                         | 6 ++++++
+ Intersect.Server/Entities/Player.cs                         | 3 +++
+ 3 files changed, 11 insertions(+)
+
+diff --git a/Intersect (Core)/Network/Packets/Server/PlayerEntityPacket.cs b/Intersect (Core)/Network/Packets/Server/PlayerEntityPacket.cs
+index 036f2097..7d5f5db7 100644
+--- a/Intersect (Core)/Network/Packets/Server/PlayerEntityPacket.cs	
++++ b/Intersect (Core)/Network/Packets/Server/PlayerEntityPacket.cs	
+@@ -16,6 +16,8 @@ public class PlayerEntityPacket : EntityPacket
+ 
+         public EquipmentPacket Equipment { get; set; }
+ 
++        public CustomSpriteLayersPacket CustomSpriteLayers { get; set; }
++
+         public long CombatTimeRemaining { get; set; }
+ 
+     }
+diff --git a/Intersect.Client/Entities/Player.cs b/Intersect.Client/Entities/Player.cs
+index 7d407c80..3bfb482a 100644
+--- a/Intersect.Client/Entities/Player.cs
++++ b/Intersect.Client/Entities/Player.cs
+@@ -228,6 +228,12 @@ public override void Load(EntityPacket packet)
+                     this.Equipment = ((PlayerEntityPacket) packet).Equipment.ItemIds;
+                 }
+             }
++
++            if (pkt.CustomSpriteLayers != null)
++            {
++                this.CustomSpriteLayers = pkt.CustomSpriteLayers.CustomSpriteLayers;
++            }
++
+         }
+ 
+         public override EntityTypes GetEntityType()
+diff --git a/Intersect.Server/Entities/Player.cs b/Intersect.Server/Entities/Player.cs
+index 5677521e..a3f08d40 100644
+--- a/Intersect.Server/Entities/Player.cs
++++ b/Intersect.Server/Entities/Player.cs
+@@ -586,6 +586,9 @@ public override EntityPacket EntityPacket(EntityPacket packet = null, Player for
+             {
+                 ((PlayerEntityPacket) packet).Equipment =
+                     PacketSender.GenerateEquipmentPacket(forPlayer, (Player) this);
++
++                pkt.CustomSpriteLayers =
++                    PacketSender.GenerateCustomSpriteLayersPacket((Player)this);
+             }
+ 
+             return pkt;

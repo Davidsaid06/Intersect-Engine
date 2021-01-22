@@ -33,6 +33,8 @@ namespace Intersect.Client.Interface.Game.Character
 
         Button mAddSpeedBtn;
 
+        Button mAddFaithBtn;
+
         //Stats
         Label mAttackLabel;
 
@@ -57,9 +59,39 @@ namespace Intersect.Client.Interface.Game.Character
 
         Label mMagicRstLabel;
 
+        Label mFaithLabel;
+
+        Label mFireLabel;
+
+        Label mIceLabel;
+
+        Label mThunderLabel;
+
+        Label mEarthLabel;
+
+        Label mWindLabel;
+
+        Label mWaterLabel;
+
+        Label mNatureLabel;
+
+        Label mLightLabel;
+
+        Label mDarkLabel;
+
         Label mPointsLabel;
 
         Label mSpeedLabel;
+
+        Label mCapacityLabel;
+
+        Label mRoyalAlignementLabel;
+
+        Label mNaturalAlignementLabel;
+
+        Label mRoyalAlignementValue;
+
+        Label mNaturalAlignementValue;
 
         public ImagePanel[] PaperdollPanels;
 
@@ -73,6 +105,8 @@ namespace Intersect.Client.Interface.Game.Character
         //Init
         public CharacterWindow(Canvas gameCanvas)
         {
+
+
             mCharacterWindow = new WindowControl(gameCanvas, Strings.Character.title, false, "CharacterWindow");
             mCharacterWindow.DisableResizing();
 
@@ -122,6 +156,39 @@ namespace Intersect.Client.Interface.Game.Character
             mAddMagicResistBtn = new Button(mCharacterWindow, "IncreaseMagicResistButton");
             mAddMagicResistBtn.Clicked += _addMagicResistBtn_Clicked;
 
+            mFaithLabel = new Label(mCharacterWindow, "FaithLabel");
+            mAddFaithBtn = new Button(mCharacterWindow, "IncreaseFaithButton");
+            mAddFaithBtn.Clicked += _addFaithBtn_Clicked;
+
+            mFireLabel = new Label(mCharacterWindow, "FireLabel");
+
+            mIceLabel = new Label(mCharacterWindow, "IceLabel");
+
+            mThunderLabel = new Label(mCharacterWindow, "ThunderLabel");
+
+            mEarthLabel = new Label(mCharacterWindow, "EarthLabel");
+
+            mWindLabel = new Label(mCharacterWindow, "WindLabel");
+
+            mWaterLabel = new Label(mCharacterWindow, "WaterLabel");
+
+            mNatureLabel = new Label(mCharacterWindow, "NatureLabel");
+
+            mLightLabel = new Label(mCharacterWindow, "LightLabel");
+
+            mDarkLabel = new Label(mCharacterWindow, "DarkLabel");
+
+            mCapacityLabel = new Label(mCharacterWindow, "CapacityLabel");
+
+            mRoyalAlignementValue = new Label(mCharacterWindow, "RoyalAlignmentValue");
+
+            mRoyalAlignementLabel = new Label(mCharacterWindow, "RoyalAlignmentLabel");
+
+            mNaturalAlignementLabel = new Label(mCharacterWindow, "NaturalAlignmentLabel");
+
+            mNaturalAlignementValue = new Label(mCharacterWindow, "NaturalAlignmentValue");
+
+
             mPointsLabel = new Label(mCharacterWindow, "PointsLabel");
 
             for (var i = 0; i < Options.EquipmentSlots.Count; i++)
@@ -138,6 +205,11 @@ namespace Intersect.Client.Interface.Game.Character
         void _addMagicResistBtn_Clicked(Base sender, ClickedEventArgs arguments)
         {
             PacketSender.SendUpgradeStat((int) Stats.MagicResist);
+        }
+
+        void _addFaithBtn_Clicked(Base sender, ClickedEventArgs arguments)
+        {
+            PacketSender.SendUpgradeStat((int)Stats.Faith);
         }
 
         void _addAbilityPwrBtn_Clicked(Base sender, ClickedEventArgs arguments)
@@ -197,6 +269,7 @@ namespace Intersect.Client.Interface.Game.Character
                 for (var z = 0; z < Options.PaperdollOrder[1].Count; z++)
                 {
                     var paperdoll = "";
+                    var type = GameContentManager.TextureType.Paperdoll;
                     if (Options.EquipmentSlots.IndexOf(Options.PaperdollOrder[1][z]) > -1)
                     {
                         var equipment = Globals.Me.MyEquipment;
@@ -232,6 +305,12 @@ namespace Intersect.Client.Interface.Game.Character
                         Align.Center(PaperdollPanels[z]);
                     }
 
+                    if (paperdoll == "" && Options.PaperdollOrder[1][z] == Options.Equipment.HairSlot)
+                    {
+                        paperdoll = Globals.Me.CustomSpriteLayers[(int)Enums.CustomSpriteLayers.Hair];
+                        type = GameContentManager.TextureType.Hair;
+                    }
+
                     if (string.IsNullOrWhiteSpace(paperdoll) && !string.IsNullOrWhiteSpace(PaperdollTextures[z]) && Options.PaperdollOrder[1][z] != "Player")
                     {
                         PaperdollPanels[z].Texture = null;
@@ -241,7 +320,7 @@ namespace Intersect.Client.Interface.Game.Character
                     else if (paperdoll != "" && paperdoll != PaperdollTextures[z])
                     {
                         var paperdollTex = Globals.ContentManager.GetTexture(
-                            GameContentManager.TextureType.Paperdoll, paperdoll
+                            type, paperdoll
                         );
 
                         PaperdollPanels[z].Texture = paperdollTex;
@@ -268,7 +347,7 @@ namespace Intersect.Client.Interface.Game.Character
 
                         PaperdollPanels[z].Show();
                         PaperdollTextures[z] = paperdoll;
-                    }
+                    } 
                 }
             }
             else if (Globals.Me.MySprite != mCurrentSprite && Globals.Me.Face != mCurrentSprite)
@@ -300,6 +379,83 @@ namespace Intersect.Client.Interface.Game.Character
                 Strings.Character.stat3.ToString(Strings.Combat.stat3, Globals.Me.Stat[(int) Stats.MagicResist])
             );
 
+            mFaithLabel.SetText(
+                Strings.Character.stat5.ToString(Strings.Combat.stat5, Globals.Me.Stat[(int)Stats.Faith])
+            );
+
+            mFireLabel.SetText(
+                Strings.Character.stat6.ToString(Strings.Combat.stat6, Globals.Me.Stat[(int)Stats.Fire])
+            );
+
+            mIceLabel.SetText(
+                Strings.Character.stat7.ToString(Strings.Combat.stat7, Globals.Me.Stat[(int)Stats.Ice])
+            );
+
+            mThunderLabel.SetText(
+                Strings.Character.stat8.ToString(Strings.Combat.stat8, Globals.Me.Stat[(int)Stats.Thunder])
+            );
+
+            mEarthLabel.SetText(
+                Strings.Character.stat9.ToString(Strings.Combat.stat9, Globals.Me.Stat[(int)Stats.Earth])
+            );
+
+            mWindLabel.SetText(
+                Strings.Character.stat10.ToString(Strings.Combat.stat10, Globals.Me.Stat[(int)Stats.Wind])
+            );
+
+            mWaterLabel.SetText(
+                Strings.Character.stat11.ToString(Strings.Combat.stat11, Globals.Me.Stat[(int)Stats.Water])
+            );
+
+            mNatureLabel.SetText(
+                Strings.Character.stat12.ToString(Strings.Combat.stat12, Globals.Me.Stat[(int)Stats.Nature])
+            );
+
+            mLightLabel.SetText(
+                Strings.Character.stat13.ToString(Strings.Combat.stat13, Globals.Me.Stat[(int)Stats.Light])
+            );
+
+            mDarkLabel.SetText(
+                Strings.Character.stat14.ToString(Strings.Combat.stat14, Globals.Me.Stat[(int)Stats.Dark])
+            );
+
+            mCapacityLabel.SetText(
+                Strings.Character.stat15.ToString(Strings.Combat.stat15, Globals.Me.Stat[(int)Stats.Capacity])
+            );
+                
+            mRoyalAlignementLabel.SetText("Royal Alignment");
+            int royalVal = Int32.Parse(Globals.Me.mCustomStat[19].StatValue);
+            mRoyalAlignementValue.SetText(Globals.Me.mCustomStat[19].StatValue);
+            if (royalVal > 0)
+            {
+                mRoyalAlignementValue.SetTextColor(new Color(255, 0, 255, 0), Label.ControlState.Normal);
+
+            }else if (royalVal < 0)
+            {
+                mRoyalAlignementValue.SetTextColor(new Color(255, 255, 0, 0), Label.ControlState.Normal);
+            }
+            else
+            {
+                mRoyalAlignementValue.SetTextColor(new Color(255, 255, 255, 255), Label.ControlState.Normal);
+            }
+            mNaturalAlignementLabel.SetText("Natural Alignment");
+            int naturalVal = Int32.Parse(Globals.Me.mCustomStat[20].StatValue);
+            mNaturalAlignementValue.SetText(Globals.Me.mCustomStat[20].StatValue);
+            if (naturalVal > 0)
+            {
+                mNaturalAlignementValue.SetTextColor(new Color(255, 0, 255, 0), Label.ControlState.Normal);
+
+            }
+            else if (naturalVal < 0)
+            {
+                mNaturalAlignementValue.SetTextColor(new Color(255, 255, 0, 0), Label.ControlState.Normal);
+            }
+            else
+            {
+                mNaturalAlignementValue.SetTextColor(new Color(255, 255, 255, 255), Label.ControlState.Normal);
+            }
+
+
             mPointsLabel.SetText(Strings.Character.points.ToString(Globals.Me.StatPoints));
             mAddAbilityPwrBtn.IsHidden = Globals.Me.StatPoints == 0 ||
                                          Globals.Me.Stat[(int) Stats.AbilityPower] == Options.MaxStatValue;
@@ -315,6 +471,9 @@ namespace Intersect.Client.Interface.Game.Character
 
             mAddSpeedBtn.IsHidden =
                 Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int) Stats.Speed] == Options.MaxStatValue;
+
+            mAddFaithBtn.IsHidden =
+                Globals.Me.StatPoints == 0 || Globals.Me.Stat[(int)Stats.Faith] == Options.MaxStatValue;
 
             for (var i = 0; i < Options.EquipmentSlots.Count; i++)
             {

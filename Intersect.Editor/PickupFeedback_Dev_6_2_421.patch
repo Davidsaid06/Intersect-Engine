@@ -1,0 +1,24 @@
+From 1ae018662c9f5a81292fa882d9ffb06a7e919038 Mon Sep 17 00:00:00 2001
+From: lunarsourcellc <lunarsourcellc@gmail.com>
+Date: Wed, 10 Jun 2020 23:11:04 -0400
+Subject: [PATCH] Pickup Feedback
+
+---
+ Intersect.Server/Networking/PacketHandler.cs | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Intersect.Server/Networking/PacketHandler.cs b/Intersect.Server/Networking/PacketHandler.cs
+index d28dbad3..88100245 100644
+--- a/Intersect.Server/Networking/PacketHandler.cs
++++ b/Intersect.Server/Networking/PacketHandler.cs
+@@ -1179,6 +1179,7 @@ public void HandlePacket(Client client, Player player, PickupItemPacket packet)
+                         if (player.TryGiveItem(mapItem))
+                         {
+                             // Remove Item From Map
++                            PacketSender.SendActionMsg(player, mapItem.Descriptor.Name, CustomColors.Combat.TrueDamage);
+                             MapInstance.Get(player.MapId).RemoveItem(packet.MapItemIndex);
+                         } 
+                         else 
+-- 
+2.17.1.windows.2
+

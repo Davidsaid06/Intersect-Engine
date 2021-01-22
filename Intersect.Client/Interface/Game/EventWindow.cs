@@ -76,6 +76,8 @@ namespace Intersect.Client.Interface.Game
             {
                 if (mEventDialogWindow.IsHidden)
                 {
+
+
                     mEventDialogWindow.Show();
                     mEventDialogWindow.MakeModal();
                     mEventDialogArea.ScrollToTop();

@@ -371,6 +371,28 @@ namespace Intersect.Client.Localization
 
             public static LocalizedString stat4 = @"{00}: {01}";
 
+            public static LocalizedString stat5 = @"{00}: {01}";
+
+            public static LocalizedString stat6 = @"{00}: {01}";
+
+            public static LocalizedString stat7 = @"{00}: {01}";
+
+            public static LocalizedString stat8 = @"{00}: {01}";
+
+            public static LocalizedString stat9 = @"{00}: {01}";
+
+            public static LocalizedString stat10 = @"{00}: {01}";
+
+            public static LocalizedString stat11 = @"{00}: {01}";
+
+            public static LocalizedString stat12 = @"{00}: {01}";
+
+            public static LocalizedString stat13 = @"{00}: {01}";
+
+            public static LocalizedString stat14 = @"{00}: {01}";
+
+            public static LocalizedString stat15 = @"{00}: {01}";
+
             public static LocalizedString stats = @"Stats:";
 
             public static LocalizedString title = @"Character";
@@ -504,6 +526,28 @@ namespace Intersect.Client.Localization
 
             public static LocalizedString stat4 = @"Speed";
 
+            public static LocalizedString stat5 = @"Faith";
+
+            public static LocalizedString stat6 = @"Fire";
+
+            public static LocalizedString stat7 = @"Ice";
+
+            public static LocalizedString stat8 = @"Thunder";
+
+            public static LocalizedString stat9 = @"Earth";
+
+            public static LocalizedString stat10 = @"Wind";
+
+            public static LocalizedString stat11 = @"Water";
+
+            public static LocalizedString stat12 = @"Nature";
+
+            public static LocalizedString stat13 = @"Light";
+
+            public static LocalizedString stat14 = @"Dark";
+
+            public static LocalizedString stat15 = @"Capacity";
+
             public static LocalizedString targetoutsiderange = @"Target too far away!";
 
             public static LocalizedString vital0 = @"Health";
@@ -561,7 +605,8 @@ namespace Intersect.Client.Localization
                 {"opensettings", @"Open Settings:"},
                 {"opendebugger", @"Open Debugger:"},
                 {"openadminpanel", @"Open Admin Panel:"},
-                {"togglegui", @"Toggle Interface:"}
+                {"togglegui", @"Toggle Interface:"},
+                {"openstats", @"Open Stats"}
             };
 
             public static LocalizedString edit = @"Edit Controls";
@@ -783,6 +828,8 @@ namespace Intersect.Client.Localization
 
             public static LocalizedString spells = @"Spell Book";
 
+            public static LocalizedString stats = @"Stats";
+
         }
 
         public struct General
@@ -840,6 +887,10 @@ namespace Intersect.Client.Localization
 
             public static LocalizedString bonuses = @"Stat Bonuses:";
 
+            public static LocalizedString durability = @"Durability: {00} / {01}";
+
+            public static LocalizedString weaponskill = @"Weapon Skill : {00} / {01}";
+
             public static LocalizedString damage = @"Base Damage: {00}";
 
             public static LocalizedString desc = @"{00}";
@@ -874,7 +925,18 @@ namespace Intersect.Client.Localization
                 {1, @"Ability Power: {00}"},
                 {2, @"Defense: {00}"},
                 {3, @"Magic Resist: {00}"},
-                {4, @"Speed: {00}"}
+                {4, @"Speed: {00}"},
+                {5, @"Faith: {00}"},
+                {6, @"Fire: {00}"},
+                {7, @"Ice: {00}"},
+                {8, @"Thunder: {00}"},
+                {9, @"Earth: {00}"},
+                {10, @"Wind: {00}"},
+                {11, @"Water: {00}"},
+                {12, @"Nature: {00}"},
+                {13, @"Light: {00}"},
+                {14, @"Dark: {00}"},
+                {15, @"Capacity: {00}"}
             };
 
             public static LocalizedString twohand = @"2H";
@@ -892,7 +954,9 @@ namespace Intersect.Client.Localization
             public static Dictionary<int, LocalizedString> vitals = new Dictionary<int, LocalizedString>
             {
                 {0, @"HP: {00}"},
-                {1, @"MP: {00}"}
+                {1, @"MP: {00}"},
+                {2, @"Hunger: {00}"},
+                {3, @"Activity: {00}"},
             };
 
         }
@@ -1436,7 +1500,18 @@ namespace Intersect.Client.Localization
                 {1, @"Ability Power: {00}"},
                 {2, @"Defense: {00}"},
                 {3, @"Magic Resist: {00}"},
-                {4, @"Speed: {00}"}
+                {4, @"Speed: {00}"},
+                {5, @"Faith: {00}"},
+                {6, @"Fire: {00}"},
+                {7, @"Ice: {00}"},
+                {8, @"Thunder: {00}"},
+                {9, @"Earth: {00}"},
+                {10, @"Wind: {00}"},
+                {11, @"Water: {00}"},
+                {12, @"Nature: {00}"},
+                {13, @"Light: {00}"},
+                {14, @"Dark: {00}"},
+                {15, @"Capacity: {00}"}
             };
 
             public static Dictionary<int, LocalizedString> targettypes = new Dictionary<int, LocalizedString>

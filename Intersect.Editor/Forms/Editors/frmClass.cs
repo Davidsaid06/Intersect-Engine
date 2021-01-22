@@ -152,11 +152,25 @@ namespace Intersect.Editor.Forms.Editors
                 nudDef.Value = mEditorItem.BaseStat[(int) Stats.Defense];
                 nudMR.Value = mEditorItem.BaseStat[(int) Stats.MagicResist];
                 nudSpd.Value = mEditorItem.BaseStat[(int) Stats.Speed];
+                nudFaith.Value = mEditorItem.BaseStat[(int)Stats.Faith];
+                nudFire.Value = mEditorItem.BaseStat[(int)Stats.Fire];
+                nudIce.Value = mEditorItem.BaseStat[(int)Stats.Ice];
+                nudThunder.Value = mEditorItem.BaseStat[(int)Stats.Thunder];
+                nudEarth.Value = mEditorItem.BaseStat[(int)Stats.Earth];
+                nudWind.Value = mEditorItem.BaseStat[(int)Stats.Wind];
+                nudWater.Value = mEditorItem.BaseStat[(int)Stats.Water];
+                nudNature.Value = mEditorItem.BaseStat[(int)Stats.Nature];
+                nudLight.Value = mEditorItem.BaseStat[(int)Stats.Light];
+                nudDark.Value = mEditorItem.BaseStat[(int)Stats.Dark];
+                nudCapacity.Value = mEditorItem.BaseStat[(int)Stats.Capacity];
+
                 nudBaseHP.Value = Math.Max(
                     Math.Min(mEditorItem.BaseVital[(int) Vitals.Health], nudBaseHP.Maximum), nudBaseHP.Minimum
                 );
 
                 nudBaseMana.Value = mEditorItem.BaseVital[(int) Vitals.Mana];
+                nudBaseHunger.Value = mEditorItem.BaseVital[(int)Vitals.Hunger];
+                nudBaseActivity.Value = mEditorItem.BaseVital[(int)Vitals.Activity];
                 nudPoints.Value = mEditorItem.BasePoints;
                 chkLocked.Checked = Convert.ToBoolean(mEditorItem.Locked);
 
@@ -176,6 +190,8 @@ namespace Intersect.Editor.Forms.Editors
                 //Regen
                 nudHPRegen.Value = mEditorItem.VitalRegen[(int) Vitals.Health];
                 nudMpRegen.Value = mEditorItem.VitalRegen[(int) Vitals.Mana];
+                nudHungerRegen.Value = mEditorItem.VitalRegen[(int)Vitals.Hunger];
+                nudActivityRegen.Value = mEditorItem.VitalRegen[(int)Vitals.Activity];
 
                 //Exp
                 nudBaseExp.Value = mEditorItem.BaseExp;
@@ -211,6 +227,7 @@ namespace Intersect.Editor.Forms.Editors
                 }
 
                 RefreshSpriteList(false);
+                RefreshHairList(false);
 
                 // Don't select if there are no Spells, to avoid crashes.
                 if (lstSprites.Items.Count > 0)
@@ -252,6 +269,16 @@ namespace Intersect.Editor.Forms.Editors
                     cmbWarpMap.SelectedIndex = mapIndex;
                 }
 
+                if (mEditorItem.CustomSpriteLayers[CustomSpriteLayers.Hair].Count > 0)
+                {
+                    lstHair.SelectedIndex = 0;
+                } else
+                {
+                    lstHair.SelectedIndex = -1;
+                    cmbHair.SelectedIndex = 0;
+                    rbMale2.Checked = true;
+                }
+
                 nudX.Value = mEditorItem.SpawnX;
                 nudY.Value = mEditorItem.SpawnY;
                 cmbDirection.SelectedIndex = mEditorItem.SpawnDir;
@@ -284,7 +311,16 @@ namespace Intersect.Editor.Forms.Editors
 
             cmbFace.Items.Clear();
             cmbFace.Items.Add(Strings.General.none);
-            cmbFace.Items.AddRange(GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Face));
+            cmbFace.Items.AddRange(
+                GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Face)
+            );
+
+            cmbHair.Items.Clear();
+            cmbHair.Items.Add(Strings.General.none);
+            cmbHair.Items.AddRange(
+                GameContentManager.GetSmartSortedTextureNames(GameContentManager.TextureType.Hairs)
+            );
+
             cmbSpawnItem.Items.Clear();
             cmbSpawnItem.Items.Add(Strings.General.none);
             cmbSpawnItem.Items.AddRange(ItemBase.Names);
@@ -305,6 +341,16 @@ namespace Intersect.Editor.Forms.Editors
             nudDef.Maximum = Options.MaxStatValue;
             nudMR.Maximum = Options.MaxStatValue;
             nudSpd.Maximum = Options.MaxStatValue;
+            nudFaith.Maximum = Options.MaxStatValue;
+            nudFire.Maximum = Options.MaxStatValue;
+            nudIce.Maximum = Options.MaxStatValue;
+            nudThunder.Maximum = Options.MaxStatValue;
+            nudEarth.Maximum = Options.MaxStatValue;
+            nudWind.Maximum = Options.MaxStatValue;
+            nudWater.Maximum = Options.MaxStatValue;
+            nudNature.Maximum = Options.MaxStatValue;
+            nudLight.Maximum = Options.MaxStatValue;
+            nudDark.Maximum = Options.MaxStatValue;
 
             InitLocalization();
             UpdateEditor();
@@ -462,6 +508,12 @@ namespace Intersect.Editor.Forms.Editors
             expGrid.Columns.Add(tnlCol);
             expGrid.Columns.Add(totalCol);
 
+            grpHair.Text = Strings.ClassEditor.hairstyles;
+            grpGender2.Text = Strings.ClassEditor.gender;
+            rbMale2.Text = Strings.ClassEditor.male;
+            rbFemale2.Text = Strings.ClassEditor.female;
+            lblHair.Text = Strings.ClassEditor.hair;
+
             //Searching/Sorting
             btnChronological.ToolTipText = Strings.ClassEditor.sortchronologically;
             txtSearch.Text = Strings.ClassEditor.searchplaceholder;
@@ -606,7 +658,6 @@ namespace Intersect.Editor.Forms.Editors
             if (lstSprites.Items.Count > 0)
             {
                 mEditorItem.Sprites[lstSprites.SelectedIndex].Gender = Gender.Male;
-
                 RefreshSpriteList();
             }
         }
@@ -662,6 +713,36 @@ namespace Intersect.Editor.Forms.Editors
             {
                 lstSprites.SelectedIndex = n;
             }
+        }
+
+        private void RefreshHairList(bool saveSpot = true) {
+            // Refresh List
+            var n = lstHair.SelectedIndex;
+            lstHair.Items.Clear();
+            for (var i = 0; i < mEditorItem.CustomSpriteLayers[CustomSpriteLayers.Hair].Count; i++) {
+                if (mEditorItem.CustomSpriteLayers[CustomSpriteLayers.Hair][i].Gender == 0) {
+                    lstHair.Items.Add(
+                        Strings.ClassEditor.spriteitemmale.ToString(
+                            i + 1, TextUtils.NullToNone(mEditorItem.CustomSpriteLayers[CustomSpriteLayers.Hair][i].Texture)
+                        )
+                    );
+                } else {
+                    lstHair.Items.Add(
+                        Strings.ClassEditor.spriteitemfemale.ToString(
+                            i + 1, TextUtils.NullToNone(mEditorItem.CustomSpriteLayers[CustomSpriteLayers.Hair][i].Texture)
+                        )
+                    );
+                }
+            }
+
+            if (saveSpot) {
+                lstHair.SelectedIndex = n;
+            } else if (lstHair.Items.Count > 0)
+            {
+                lstHair.SelectedIndex = 0;
+            }
+
+            lstHair_Click(null, null);
         }
 
         private void btnAdd_Click(object sender, EventArgs e)
@@ -757,6 +838,26 @@ namespace Intersect.Editor.Forms.Editors
             picFace.BackgroundImage = picFaceBmp;
         }
 
+        private void DrawHair() {
+            var picSpriteBmp = new Bitmap(picHair.Width, picHair.Height);
+            var gfx = Graphics.FromImage(picSpriteBmp);
+            gfx.FillRectangle(Brushes.Black, new Rectangle(0, 0, picSprite.Width, picSprite.Height));
+            if (cmbHair.SelectedIndex > 0) {
+                if (File.Exists("resources/hairs/" + cmbHair.Text)) {
+                    var img = Image.FromFile("resources/hairs/" + cmbHair.Text);
+                    gfx.DrawImage(
+                        img, new Rectangle(0, 0, img.Width / 4, img.Height / 4),
+                        new Rectangle(0, 0, img.Width / 4, img.Height / 4), GraphicsUnit.Pixel
+                    );
+
+                    img.Dispose();
+                }
+            }
+
+            gfx.Dispose();
+            picHair.BackgroundImage = picSpriteBmp; 
+        }
+
         private void btnVisualMapSelector_Click(object sender, EventArgs e)
         {
             var frmWarpSelection = new FrmWarpSelection();
@@ -828,25 +929,36 @@ namespace Intersect.Editor.Forms.Editors
             {
                 nudHpIncrease.Maximum = 10000;
                 nudMpIncrease.Maximum = 10000;
+                nudHungerIncrease.Maximum = 10000;
+                nudActivityIncrease.Maximum = 10000;
                 nudStrengthIncrease.Maximum = Options.MaxStatValue;
                 nudArmorIncrease.Maximum = Options.MaxStatValue;
                 nudMagicIncrease.Maximum = Options.MaxStatValue;
                 nudMagicResistIncrease.Maximum = Options.MaxStatValue;
                 nudSpeedIncrease.Maximum = Options.MaxStatValue;
+                nudFaithIncrease.Maximum = Options.MaxStatValue;
+                nudCapacityIncrease.Maximum = Options.MaxStatValue;
+
             }
             else
             {
                 nudHpIncrease.Maximum = 100;
                 nudMpIncrease.Maximum = 100;
+                nudHungerIncrease.Maximum = 100;
+                nudActivityIncrease.Maximum = 100;
                 nudStrengthIncrease.Maximum = 100;
                 nudArmorIncrease.Maximum = 100;
                 nudMagicIncrease.Maximum = 100;
                 nudMagicResistIncrease.Maximum = 100;
                 nudSpeedIncrease.Maximum = 100;
+                nudFaithIncrease.Maximum = 100;
+                nudCapacityIncrease.Maximum = 100;
             }
 
             nudHpIncrease.Value = Math.Min(nudHpIncrease.Maximum, mEditorItem.VitalIncrease[(int) Vitals.Health]);
             nudMpIncrease.Value = Math.Min(nudMpIncrease.Maximum, mEditorItem.VitalIncrease[(int) Vitals.Mana]);
+            nudHungerIncrease.Value = Math.Min(nudHungerIncrease.Maximum, mEditorItem.VitalIncrease[(int)Vitals.Hunger]);
+            nudActivityIncrease.Value = Math.Min(nudActivityIncrease.Maximum, mEditorItem.VitalIncrease[(int)Vitals.Activity]);
 
             nudStrengthIncrease.Value = Math.Min(
                 nudStrengthIncrease.Maximum, mEditorItem.StatIncrease[(int) Stats.Attack]
@@ -859,6 +971,14 @@ namespace Intersect.Editor.Forms.Editors
 
             nudMagicResistIncrease.Value = Math.Min(
                 nudMagicResistIncrease.Maximum, mEditorItem.StatIncrease[(int) Stats.MagicResist]
+            );
+
+            nudFaithIncrease.Value = Math.Min(
+                nudFaithIncrease.Maximum, mEditorItem.StatIncrease[(int)Stats.Faith]
+            );
+
+            nudCapacityIncrease.Value = Math.Min(
+                nudCapacityIncrease.Maximum, mEditorItem.StatIncrease[(int)Stats.Capacity]
             );
 
             nudSpeedIncrease.Value = Math.Min(nudSpeedIncrease.Maximum, mEditorItem.StatIncrease[(int) Stats.Speed]);
@@ -1074,9 +1194,64 @@ namespace Intersect.Editor.Forms.Editors
             mEditorItem.BaseStat[(int) Stats.Defense] = (int) nudDef.Value;
         }
 
+        private void nudCapacity_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.BaseStat[(int)Stats.Capacity] = (int)nudCapacity.Value;
+        }
+
         private void nudMR_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.BaseStat[(int) Stats.MagicResist] = (int) nudMR.Value;
+        }
+
+        private void nudFaith_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.BaseStat[(int)Stats.Faith] = (int)nudFaith.Value;
+        }
+
+        private void nudFire_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.BaseStat[(int)Stats.Fire] = (int)nudFire.Value;
+        }
+
+        private void nudIce_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.BaseStat[(int)Stats.Ice] = (int)nudIce.Value;
+        }
+
+        private void nudThunder_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.BaseStat[(int)Stats.Thunder] = (int)nudThunder.Value;
+        }
+
+        private void nudEarth_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.BaseStat[(int)Stats.Earth] = (int)nudEarth.Value;
+        }
+
+        private void nudWind_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.BaseStat[(int)Stats.Wind] = (int)nudWind.Value;
+        }
+
+        private void nudWater_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.BaseStat[(int)Stats.Water] = (int)nudWater.Value;
+        }
+
+        private void nudNature_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.BaseStat[(int)Stats.Nature] = (int)nudNature.Value;
+        }
+
+        private void nudLight_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.BaseStat[(int)Stats.Light] = (int)nudLight.Value;
+        }
+
+        private void nudDark_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.BaseStat[(int)Stats.Dark] = (int)nudDark.Value;
         }
 
         private void nudPoints_ValueChanged(object sender, EventArgs e)
@@ -1111,6 +1286,19 @@ namespace Intersect.Editor.Forms.Editors
             UpdateIncreases();
         }
 
+        private void nudHungerRegen_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.VitalRegen[(int)Vitals.Hunger] = (int)nudHungerRegen.Value;
+            UpdateIncreases();
+        }
+
+        private void nudActivityRegen_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.VitalRegen[(int)Vitals.Activity] = (int)nudActivityRegen.Value;
+            UpdateIncreases();
+        }
+
+
         private void nudDamage_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.Damage = (int) nudDamage.Value;
@@ -1129,6 +1317,16 @@ namespace Intersect.Editor.Forms.Editors
         private void nudHpIncrease_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.VitalIncrease[(int) Vitals.Health] = (int) nudHpIncrease.Value;
+        }
+
+        private void nudHungerIncrease_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.VitalIncrease[(int)Vitals.Hunger] = (int)nudHungerIncrease.Value;
+        }
+
+        private void nudActivityIncrease_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.VitalIncrease[(int)Vitals.Activity] = (int)nudActivityIncrease.Value;
         }
 
         private void nudMpIncrease_ValueChanged(object sender, EventArgs e)
@@ -1166,6 +1364,18 @@ namespace Intersect.Editor.Forms.Editors
             UpdateIncreases();
         }
 
+        private void nudFaithIncrease_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.StatIncrease[(int)Stats.Faith] = (int)nudFaithIncrease.Value;
+            UpdateIncreases();
+        }
+
+        private void nudCapacityIncrease_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.StatIncrease[(int)Stats.Capacity] = (int)nudCapacityIncrease.Value;
+            UpdateIncreases();
+        }
+
         private void nudPointsIncrease_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.PointIncrease = (int) nudPointsIncrease.Value;
@@ -1180,6 +1390,16 @@ namespace Intersect.Editor.Forms.Editors
         private void nudBaseHP_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.BaseVital[(int) Vitals.Health] = (int) nudBaseHP.Value;
+        }
+
+        private void nudBaseHunger_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.BaseVital[(int)Vitals.Hunger] = (int)nudBaseHunger.Value;
+        }
+
+        private void nudBaseActivity_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.BaseVital[(int)Vitals.Activity] = (int)nudBaseActivity.Value;
         }
 
         private void nudBaseMana_ValueChanged(object sender, EventArgs e)
@@ -1291,6 +1511,89 @@ namespace Intersect.Editor.Forms.Editors
         private void nudAttackSpeedValue_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.AttackSpeedValue = (int) nudAttackSpeedValue.Value;
+        }
+
+        private void cmbHair_SelectedIndexChanged(object sender, EventArgs e) {
+            if (lstHair.SelectedIndex >= 0) {
+                mEditorItem.CustomSpriteLayers[CustomSpriteLayers.Hair][lstHair.SelectedIndex].Texture = TextUtils.SanitizeNone(cmbHair?.Text);
+
+                RefreshHairList();
+            }
+
+            DrawHair();
+        }
+
+        private void BtnAddHair_Click(object sender, EventArgs e) {
+            var n = new CustomSpriteLayer {
+                Texture = null,
+                Gender = 0
+            };
+
+            mEditorItem.CustomSpriteLayers[CustomSpriteLayers.Hair].Add(n);
+
+            if (n.Gender == 0) {
+                lstHair.Items.Add(
+                    Strings.ClassEditor.spriteitemmale.ToString(
+                        mEditorItem.CustomSpriteLayers[CustomSpriteLayers.Hair].Count, TextUtils.NullToNone(n.Texture)
+                    )
+                );
+            } else {
+                lstHair.Items.Add(
+                    Strings.ClassEditor.spriteitemfemale.ToString(
+                        mEditorItem.CustomSpriteLayers[CustomSpriteLayers.Hair].Count, TextUtils.NullToNone(n.Texture)
+                    )
+                );
+            }
+
+            lstHair.SelectedIndex = lstHair.Items.Count - 1;
+            lstHair_Click(null, null);
+        }
+
+        private void btnRemoveHair_Click(object sender, EventArgs e) {
+            if (lstHair.SelectedIndex == -1) {
+                return;
+            }
+
+            mEditorItem.CustomSpriteLayers[CustomSpriteLayers.Hair].RemoveAt(lstHair.SelectedIndex);
+            lstHair.Items.RemoveAt(lstHair.SelectedIndex);
+
+            RefreshHairList(false);
+
+            if (lstHair.Items.Count > 0) {
+                lstHair.SelectedIndex = 0;
+            }
+        }
+
+        private void lstHair_Click(object sender, EventArgs e) {
+            if (lstHair.Items.Count > 0) {
+                cmbHair.SelectedIndex = cmbHair.FindString(
+                    TextUtils.NullToNone(mEditorItem.CustomSpriteLayers[CustomSpriteLayers.Hair][lstHair.SelectedIndex].Texture)
+                );
+
+                if (mEditorItem.CustomSpriteLayers[CustomSpriteLayers.Hair][lstHair.SelectedIndex].Gender == 0) {
+                    rbMale2.Checked = true;
+                } else {
+                    rbFemale2.Checked = true;
+                }
+            }
+        }
+
+        private void rbMale2_Click(object sender, EventArgs e) {
+            if (lstHair.SelectedIndex == -1) return;
+
+            if (lstHair.Items.Count > 0) {
+                mEditorItem.CustomSpriteLayers[CustomSpriteLayers.Hair][lstHair.SelectedIndex].Gender = Gender.Male;
+                RefreshHairList();
+            }
+        }
+
+        private void rbFemale2_Click(object sender, EventArgs e) {
+            if (lstHair.SelectedIndex == -1) return;
+
+            if (lstHair.Items.Count > 0) {
+                mEditorItem.CustomSpriteLayers[CustomSpriteLayers.Hair][lstHair.SelectedIndex].Gender = Gender.Female;
+                RefreshHairList();
+            }
         }
 
         #region "Exp Grid"
@@ -1691,8 +1994,14 @@ namespace Intersect.Editor.Forms.Editors
             }
         }
 
+
+
         #endregion
 
+        private void Label8_Click(object sender, EventArgs e)
+        {
+
+        }
     }
 
 }

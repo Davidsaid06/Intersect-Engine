@@ -193,6 +193,28 @@ namespace Intersect.Editor.General
                     return "Magic Resist";
                 case (int) Stats.Speed:
                     return "Speed";
+                case (int)Stats.Faith:
+                    return "Faith";
+                case (int)Stats.Fire:
+                    return "Fire";
+                case (int)Stats.Ice:
+                    return "Ice";
+                case (int)Stats.Thunder:
+                    return "Thunder";
+                case (int)Stats.Earth:
+                    return "Earth";
+                case (int)Stats.Wind:
+                    return "Wind";
+                case (int)Stats.Water:
+                    return "Water";
+                case (int)Stats.Nature:
+                    return "Nature";
+                case (int)Stats.Light:
+                    return "Light";
+                case (int)Stats.Dark:
+                    return "Dark";
+                case (int)Stats.Capacity:
+                    return "Capacity";
                 default:
                     return "Invalid Stat";
             }

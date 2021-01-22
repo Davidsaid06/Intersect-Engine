@@ -16,6 +16,7 @@ using Intersect.Server.Core;
 using Intersect.Server.Database;
 using Intersect.Server.Database.Logging.Entities;
 using Intersect.Server.Database.PlayerData;
+using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Database.PlayerData.Security;
 using Intersect.Server.Entities;
 using Intersect.Server.General;
@@ -602,6 +603,7 @@ namespace Intersect.Server.Networking
             }
         }
 
+
         //LogoutPacket
         public void HandlePacket(Client client, LogoutPacket packet)
         {
@@ -631,6 +633,8 @@ namespace Intersect.Server.Networking
                 PacketSender.SendPlayerCharacters(client);
             }
         }
+
+        
 
         //NeedMapPacket
         public void HandlePacket(Client client, NeedMapPacket packet)
@@ -1104,6 +1108,22 @@ namespace Intersect.Server.Networking
                     attackingTile.Translate(1, 0);
 
                     break;
+                case 4:
+                    attackingTile.Translate(-1, -1); // UpLeft
+
+                    break;
+                case 5:
+                    attackingTile.Translate(1, -1); // UpRight
+
+                    break;
+                case 6:
+                    attackingTile.Translate(-1, 1); // DownLeft
+
+                    break;
+                case 7:
+                    attackingTile.Translate(1, 1); // DownRight
+
+                    break;
             }
 
             PacketSender.SendEntityAttack(player, player.CalculateAttackTime());
@@ -1453,6 +1473,18 @@ namespace Intersect.Server.Networking
 
             newChar.SetVital(Vitals.Health, classBase.BaseVital[(int) Vitals.Health]);
             newChar.SetVital(Vitals.Mana, classBase.BaseVital[(int) Vitals.Mana]);
+                // Get our custom layers from the packet.
+                for (var i = 0; i < (int)Enums.CustomSpriteLayers.CustomCount; i++)
+                {
+                    newChar.CustomSpriteLayers[i] = packet.CustomSpriteLayers[i] != -1 ? classBase.CustomSpriteLayers[(Enums.CustomSpriteLayers)i][packet.CustomSpriteLayers[i]].Texture : String.Empty;
+                }
+                
+                client.LoadCharacter(newChar);
+
+                newChar.SetVital(Vitals.Health, classBase.BaseVital[(int) Vitals.Health]);
+                newChar.SetVital(Vitals.Mana, classBase.BaseVital[(int) Vitals.Mana]);
+                newChar.SetVital(Vitals.Hunger, classBase.BaseVital[(int)Vitals.Hunger]);
+                newChar.SetVital(Vitals.Activity, classBase.BaseVital[(int)Vitals.Activity]);
 
             for (var i = 0; i < (int) Stats.StatCount; i++)
             {
@@ -1503,6 +1535,7 @@ namespace Intersect.Server.Networking
         //PickupItemPacket
         public void HandlePacket(Client client, PickupItemPacket packet)
         {
+
             var player = client?.Entity;
             if (player == null)
             {
@@ -1834,6 +1867,17 @@ namespace Intersect.Server.Networking
 
             player.CraftId = packet.CraftId;
             player.CraftTimer = Globals.Timing.Milliseconds;
+        }
+
+        //CraftRequestPacket
+        public void HandlePacket(Client client, Player player, CraftRequestPacket packet)
+        {
+            if (player == null)
+            {
+                return;
+            }
+
+            player.CraftRequestId = packet.CraftId;
         }
 
         //CloseBankPacket

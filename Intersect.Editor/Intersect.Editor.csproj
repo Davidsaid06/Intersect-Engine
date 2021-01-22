@@ -98,6 +98,23 @@
     </Compile>
     <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangePlayerColor.Designer.cs">
       <DependentUpon>EventCommand_ChangePlayerColor.cs</DependentUpon>
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeHair.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeHair.Designer.cs">
+      <DependentUpon>EventCommand_ChangeHair.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeStat.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeStat.Designer.cs">
+      <DependentUpon>EventCommand_ChangeStat.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeItemsByTag.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeItemsByTag.Designer.cs">
+      <DependentUpon>EventCommand_ChangeItemsByTag.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\frmUpdate.cs">
       <SubType>Form</SubType>
@@ -661,6 +678,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\EditorForm.resx">
       <DependentUpon>EditorForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeHair.resx">
+      <DependentUpon>EventCommand_ChangeHair.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeFace.resx">
       <DependentUpon>EventCommand_ChangeFace.cs</DependentUpon>
@@ -670,6 +691,11 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangePlayerColor.resx">
       <DependentUpon>EventCommand_ChangePlayerColor.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeStat.resx">
+      <DependentUpon>EventCommand_ChangeStat.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeItemsByTag.resx">
+      <DependentUpon>EventCommand_ChangeItemsByTag.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeVital.resx">
       <DependentUpon>EventCommand_ChangeVital.cs</DependentUpon>
@@ -851,6 +877,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\frmProgress.resx">
       <DependentUpon>frmProgress.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\frmWarpSelection.resx">
       <DependentUpon>frmWarpSelection.cs</DependentUpon>

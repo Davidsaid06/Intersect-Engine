@@ -47,6 +47,10 @@
         /// </summary>
         public int GlobalCooldownDuration = 1500;
 
+        // Item Drop Range
+        public int ItemDropRange = 2; //2 Tiles
+
+
     }
 
 }

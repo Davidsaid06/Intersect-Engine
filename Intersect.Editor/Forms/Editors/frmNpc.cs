@@ -114,6 +114,16 @@ namespace Intersect.Editor.Forms.Editors
             nudDef.Maximum = Options.MaxStatValue;
             nudMR.Maximum = Options.MaxStatValue;
             nudSpd.Maximum = Options.MaxStatValue;
+            nudFaith.Maximum = Options.MaxStatValue;
+            nudFire.Maximum = Options.MaxStatValue;
+            nudIce.Maximum = Options.MaxStatValue;
+            nudThunder.Maximum = Options.MaxStatValue;
+            nudEarth.Maximum = Options.MaxStatValue;
+            nudWind.Maximum = Options.MaxStatValue;
+            nudWater.Maximum = Options.MaxStatValue;
+            nudNature.Maximum = Options.MaxStatValue;
+            nudLight.Maximum = Options.MaxStatValue;
+            nudDark.Maximum = Options.MaxStatValue;
             InitLocalization();
             UpdateEditor();
         }
@@ -132,6 +142,8 @@ namespace Intersect.Editor.Forms.Editors
             grpGeneral.Text = Strings.NpcEditor.general;
             lblName.Text = Strings.NpcEditor.name;
             grpBehavior.Text = Strings.NpcEditor.behavior;
+
+            lblTag.Text = Strings.EventConditional.tag;
 
             lblPic.Text = Strings.NpcEditor.sprite;
             lblRed.Text = Strings.NpcEditor.Red;
@@ -243,6 +255,7 @@ namespace Intersect.Editor.Forms.Editors
                 pnlContainer.Show();
 
                 txtName.Text = mEditorItem.Name;
+                txtTag.Text = String.Join(";", mEditorItem.Tags);
                 cmbFolder.Text = mEditorItem.Folder;
                 cmbSprite.SelectedIndex = cmbSprite.FindString(TextUtils.NullToNone(mEditorItem.Sprite));
                 nudRgbaR.Value = mEditorItem.Color.R;
@@ -265,8 +278,11 @@ namespace Intersect.Editor.Forms.Editors
                 }
 
                 nudSightRange.Value = mEditorItem.SightRange;
+                nbrMoveRange.Value = mEditorItem.MoveRange;
                 cmbMovement.SelectedIndex = Math.Min(mEditorItem.Movement, cmbMovement.Items.Count - 1);
                 chkSwarm.Checked = mEditorItem.Swarm;
+                txtDesc.Text = mEditorItem.Description;
+                txtLoc.Text = mEditorItem.Localization;
                 nudFlee.Value = mEditorItem.FleeHealthPercentage;
                 chkFocusDamageDealer.Checked = mEditorItem.FocusHighestDamageDealer;
 
@@ -279,6 +295,16 @@ namespace Intersect.Editor.Forms.Editors
                 nudDef.Value = mEditorItem.Stats[(int) Stats.Defense];
                 nudMR.Value = mEditorItem.Stats[(int) Stats.MagicResist];
                 nudSpd.Value = mEditorItem.Stats[(int) Stats.Speed];
+                nudFaith.Value = mEditorItem.Stats[(int)Stats.Faith];
+                nudFire.Value = mEditorItem.Stats[(int)Stats.Fire];
+                nudIce.Value = mEditorItem.Stats[(int)Stats.Ice];
+                nudThunder.Value = mEditorItem.Stats[(int)Stats.Thunder];
+                nudEarth.Value = mEditorItem.Stats[(int)Stats.Earth];
+                nudWind.Value = mEditorItem.Stats[(int)Stats.Wind];
+                nudWater.Value = mEditorItem.Stats[(int)Stats.Water];
+                nudNature.Value = mEditorItem.Stats[(int)Stats.Nature];
+                nudLight.Value = mEditorItem.Stats[(int)Stats.Light];
+                nudDark.Value = mEditorItem.Stats[(int)Stats.Dark];
                 nudHp.Value = mEditorItem.MaxVital[(int) Vitals.Health];
                 nudMana.Value = mEditorItem.MaxVital[(int) Vitals.Mana];
                 nudExp.Value = mEditorItem.Experience;
@@ -363,6 +389,21 @@ namespace Intersect.Editor.Forms.Editors
             }
 
             mChangingName = false;
+        }
+
+        private void txtTag_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                mEditorItem.Tags.Clear();
+                mEditorItem.Tags.AddRange(txtTag.Text.Split(';'));
+            }
+            catch
+            {
+                MessageBox.Show(Strings.NpcEditor.tagparseerror, Strings.NpcEditor.tagparseerrortitle, MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
         }
 
         private void cmbSprite_SelectedIndexChanged(object sender, EventArgs e)
@@ -701,6 +742,56 @@ namespace Intersect.Editor.Forms.Editors
             mEditorItem.Stats[(int) Stats.Speed] = (int) nudSpd.Value;
         }
 
+        private void nudFaith_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Stats[(int)Stats.Faith] = (int)nudFaith.Value;
+        }
+
+        private void nudFire_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Stats[(int)Stats.Fire] = (int)nudFire.Value;
+        }
+
+        private void nudIce_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Stats[(int)Stats.Ice] = (int)nudIce.Value;
+        }
+
+        private void nudThunder_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Stats[(int)Stats.Thunder] = (int)nudThunder.Value;
+        }
+
+        private void nudEarth_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Stats[(int)Stats.Earth] = (int)nudEarth.Value;
+        }
+
+        private void nudWind_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Stats[(int)Stats.Wind] = (int)nudWind.Value;
+        }
+
+        private void nudWater_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Stats[(int)Stats.Water] = (int)nudWater.Value;
+        }
+
+        private void nudNature_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Stats[(int)Stats.Nature] = (int)nudNature.Value;
+        }
+
+        private void nudLight_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Stats[(int)Stats.Light] = (int)nudLight.Value;
+        }
+
+        private void nudDark_ValueChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Stats[(int)Stats.Dark] = (int)nudDark.Value;
+        }
+
         private void nudDamage_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.Damage = (int) nudDamage.Value;
@@ -796,6 +887,16 @@ namespace Intersect.Editor.Forms.Editors
         private void nudLevel_ValueChanged(object sender, EventArgs e)
         {
             mEditorItem.Level = (int) nudLevel.Value;
+        }
+
+        private void txtDesc_TextChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Description = txtDesc.Text;
+        }
+
+        private void txtLoc_TextChanged(object sender, EventArgs e)
+        {
+            mEditorItem.Localization = txtLoc.Text;
         }
 
         private void nudHpRegen_ValueChanged(object sender, EventArgs e)
@@ -1165,6 +1266,16 @@ namespace Intersect.Editor.Forms.Editors
 
         #endregion
 
-    }
+
+        private void ToolStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
+        }
+        private void nbrMoveRange_ValueChanged_1(object sender, EventArgs e){
+            mEditorItem.MoveRange = (int)nbrMoveRange.Value;
+        }
+
+            
+        }
 
 }

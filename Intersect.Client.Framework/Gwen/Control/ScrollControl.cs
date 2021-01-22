@@ -259,6 +259,7 @@ namespace Intersect.Client.Framework.Gwen.Control
             {
                 var scrollValue = mHorizontalScrollBar.ScrollAmount - mHorizontalScrollBar.NudgeAmount * (delta / 60.0f);
                 if (mHorizontalScrollBar.SetScrollAmount(scrollValue, true))
+
                 {
                     return true;
                 }

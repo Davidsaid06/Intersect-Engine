@@ -194,6 +194,17 @@ namespace Intersect
 
             public Color TrueDamage = new Color(255, 255, 255, 255);
 
+            public Color FaithDamage = new Color(255, 255, 0, 255);
+            public Color FireDamage = new Color(255, 255, 170, 0);
+            public Color IceDamage = new Color(255, 0, 255, 225);
+            public Color ThunderDamage = new Color(255, 255, 247, 0);
+            public Color EarthDamage = new Color(255, 199, 147, 84);
+            public Color WindDamage = new Color(255, 0, 255, 64);
+            public Color WaterDamage = new Color(255, 17, 0, 255);
+            public Color NatureDamage = new Color(255, 242, 0, 255);
+            public Color LightDamage = new Color(255, 234, 240, 230);
+            public Color DarkDamage = new Color(255, 18, 18, 17);
+
         }
 
         public sealed class ItemsNamespace

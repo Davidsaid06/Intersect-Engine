@@ -517,8 +517,40 @@ namespace Intersect.Server.Entities
                         }
 
                         break;
+                    case MoveRouteEnum.MoveUpLeft:
+                        if (CanMove((int)Directions.UpLeft) == -1)
+                        {
+                            Move((int)Directions.UpLeft, forPlayer, false, true);
+                            moved = true;
+                        }
+
+                        break;
+                    case MoveRouteEnum.MoveUpRight:
+                        if (CanMove((int)Directions.UpRight) == -1)
+                        {
+                            Move((int)Directions.UpRight, forPlayer, false, true);
+                            moved = true;
+                        }
+
+                        break;
+                    case MoveRouteEnum.MoveDownLeft:
+                        if (CanMove((int)Directions.DownLeft) == -1)
+                        {
+                            Move((int)Directions.DownLeft, forPlayer, false, true);
+                            moved = true;
+                        }
+
+                        break;
+                    case MoveRouteEnum.MoveDownRight:
+                        if (CanMove((int)Directions.DownRight) == -1)
+                        {
+                            Move((int)Directions.DownRight, forPlayer, false, true);
+                            moved = true;
+                        }
+
+                        break;
                     case MoveRouteEnum.MoveRandomly:
-                        var dir = (byte)Randomization.Next(0, 4);
+                        var dir = (byte)Randomization.Next(0, 8);
                         if (CanMove(dir) == -1)
                         {
                             Move(dir, forPlayer);
@@ -551,6 +583,22 @@ namespace Intersect.Server.Entities
                                 break;
                             case (int) Directions.Right:
                                 moveDir = (int) Directions.Left;
+
+                                break;
+                            case (int)Directions.UpLeft:
+                                moveDir = (int)Directions.DownRight;
+
+                                break;
+                            case (int)Directions.UpRight:
+                                moveDir = (int)Directions.DownLeft;
+
+                                break;
+                            case (int)Directions.DownLeft:
+                                moveDir = (int)Directions.UpRight;
+
+                                break;
+                            case (int)Directions.DownRight:
+                                moveDir = (int)Directions.UpLeft;
 
                                 break;
                         }
@@ -586,19 +634,35 @@ namespace Intersect.Server.Entities
                         switch (Dir)
                         {
                             case (int) Directions.Up:
-                                lookDir = (int) Directions.Right;
+                                lookDir = (int) Directions.UpRight;
 
                                 break;
                             case (int) Directions.Down:
-                                lookDir = (int) Directions.Left;
+                                lookDir = (int) Directions.DownLeft;
 
                                 break;
                             case (int) Directions.Left:
-                                lookDir = (int) Directions.Down;
+                                lookDir = (int) Directions.UpLeft;
 
                                 break;
                             case (int) Directions.Right:
-                                lookDir = (int) Directions.Up;
+                                lookDir = (int) Directions.DownRight;
+
+                                break;
+                            case (int)Directions.UpLeft:
+                                lookDir = (int)Directions.Up;
+
+                                break;
+                            case (int)Directions.UpRight:
+                                lookDir = (int)Directions.Right;
+
+                                break;
+                            case (int)Directions.DownLeft:
+                                lookDir = (int)Directions.Left;
+
+                                break;
+                            case (int)Directions.DownRight:
+                                lookDir = (int)Directions.Down;
 
                                 break;
                         }
@@ -610,20 +674,36 @@ namespace Intersect.Server.Entities
                     case MoveRouteEnum.Turn90CounterClockwise:
                         switch (Dir)
                         {
-                            case (int) Directions.Up:
-                                lookDir = (int) Directions.Left;
+                            case (int)Directions.Up:
+                                lookDir = (int)Directions.UpLeft;
 
                                 break;
-                            case (int) Directions.Down:
-                                lookDir = (int) Directions.Right;
+                            case (int)Directions.Down:
+                                lookDir = (int)Directions.DownRight;
 
                                 break;
-                            case (int) Directions.Left:
-                                lookDir = (int) Directions.Up;
+                            case (int)Directions.Left:
+                                lookDir = (int)Directions.DownLeft;
 
                                 break;
-                            case (int) Directions.Right:
-                                lookDir = (int) Directions.Down;
+                            case (int)Directions.Right:
+                                lookDir = (int)Directions.UpRight;
+
+                                break;
+                            case (int)Directions.UpLeft:
+                                lookDir = (int)Directions.Left;
+
+                                break;
+                            case (int)Directions.UpRight:
+                                lookDir = (int)Directions.Up;
+
+                                break;
+                            case (int)Directions.DownLeft:
+                                lookDir = (int)Directions.Down;
+
+                                break;
+                            case (int)Directions.DownRight:
+                                lookDir = (int)Directions.Right;
 
                                 break;
                         }
@@ -651,6 +731,22 @@ namespace Intersect.Server.Entities
                                 lookDir = (int) Directions.Left;
 
                                 break;
+                            case (int)Directions.UpLeft:
+                                lookDir = (int)Directions.DownRight;
+
+                                break;
+                            case (int)Directions.UpRight:
+                                lookDir = (int)Directions.DownLeft;
+
+                                break;
+                            case (int)Directions.DownLeft:
+                                lookDir = (int)Directions.UpRight;
+
+                                break;
+                            case (int)Directions.DownRight:
+                                lookDir = (int)Directions.UpLeft;
+
+                                break;
                         }
 
                         ChangeDir(lookDir);
@@ -658,7 +754,7 @@ namespace Intersect.Server.Entities
 
                         break;
                     case MoveRouteEnum.TurnRandomly:
-                        ChangeDir((byte)Randomization.Next(0, 4));
+                        ChangeDir((byte)Randomization.Next(0, 8));
                         moved = true;
 
                         break;
@@ -784,6 +880,7 @@ namespace Intersect.Server.Entities
             }
 
             Dir = moveDir;
+
 
             var tile = new TileHelper(MapId, X, Y);
 
@@ -1136,6 +1233,16 @@ namespace Intersect.Server.Entities
                 value = 0; //Can't have less than 0 mana
             }
 
+            if (value < 0 && vital == (int)Vitals.Hunger)
+            {
+                value = 0; //Can't have less than 0 hunger
+            }
+
+            if (value < 0 && vital == (int)Vitals.Activity)
+            {
+                value = 0; //Can't have less than 0 activity
+            }
+
             _maxVital[vital] = value;
             if (value < GetVital(vital))
             {
@@ -1213,7 +1320,12 @@ namespace Intersect.Server.Entities
             var stats = new int[(int) Stats.StatCount];
             for (var i = 0; i < (int) Stats.StatCount; i++)
             {
-                stats[i] = Stat[i].Value();
+                if(i>=6 && i <= 14)
+                {
+                    stats[i] = Stat[i].ValueElement();
+                }
+                else { stats[i] = Stat[i].Value(); }
+
             }
 
             return stats;
@@ -1359,7 +1471,8 @@ namespace Intersect.Server.Entities
             }
 
             //If there is a knockback, knock them backwards and make sure its linear (diagonal player movement not coded).
-            if (projectile.Knockback > 0 && projectileDir < 4)
+            //Diagonal movement coded with diagonal patch
+            if (projectile.Knockback > 0 && projectileDir < 8)
             {
                 var dash = new Dash(target, projectile.Knockback, projectileDir, false, false, false, false);
             }
@@ -1691,10 +1804,46 @@ namespace Intersect.Server.Entities
             bool isAutoAttack = false
         )
         {
+            int brokenWeapon = 0;
             var damagingAttack = baseDamage > 0;
             if (enemy == null)
             {
                 return;
+            }
+
+            if (this is Player player)
+            {
+                InventorySlot weapon = null;
+                if (Options.WeaponIndex > -1 &&
+                    Options.WeaponIndex < player.Equipment.Length &&
+                    player.Equipment[Options.WeaponIndex] >= 0)
+                {
+
+                    weapon = player.Items[player.Equipment[Options.WeaponIndex]];
+
+                    if (weapon.currentDurability > 0)
+                    {
+                        weapon.currentDurability--;
+
+                        if (weapon.currentDurability == 0) {
+                            PacketSender.SendActionMsg(player, "Your weapon broke!", CustomColors.Combat.PhysicalDamage);
+                        }
+
+                    }
+                    else
+                    {
+                        brokenWeapon = 1;
+                        PacketSender.SendActionMsg(player, "Your weapon is broken!", CustomColors.Combat.PhysicalDamage);
+                    }
+
+                    if (weapon.currentWeaponSkillPoint < weapon.MaxWeaponSkillsPoint)
+                    {
+                        weapon.currentWeaponSkillPoint++;
+                    }
+
+                    PacketSender.SendInventoryItemUpdate(player, weapon.Slot);
+
+                }
             }
 
             //Check for enemy statuses
@@ -1733,6 +1882,11 @@ namespace Intersect.Server.Entities
                     baseDamage, damageType, scalingStat, scaling, critMultiplier, this, enemy
                 );
 
+                if (brokenWeapon == 1)
+                {
+                    baseDamage = (int)(baseDamage * 0.20);
+                }
+
                 if (baseDamage < 0 && damagingAttack)
                 {
                     baseDamage = 0;
@@ -1763,7 +1917,78 @@ namespace Intersect.Server.Entities
                             );
 
                             break;
+
+                        case DamageType.Faith:
+                            PacketSender.SendActionMsg(
+                                enemy, Strings.Combat.removesymbol + (int)baseDamage, CustomColors.Combat.FaithDamage
+                            );
+
+                            break;
+
+                        case DamageType.Fire:
+                            PacketSender.SendActionMsg(
+                                enemy, Strings.Combat.removesymbol + (int)baseDamage, CustomColors.Combat.FireDamage
+                            );
+
+                            break;
+
+                        case DamageType.Ice:
+                            PacketSender.SendActionMsg(
+                                enemy, Strings.Combat.removesymbol + (int)baseDamage, CustomColors.Combat.IceDamage
+                            );
+
+                            break;
+
+                        case DamageType.Thunder:
+                            PacketSender.SendActionMsg(
+                                enemy, Strings.Combat.removesymbol + (int)baseDamage, CustomColors.Combat.ThunderDamage
+                            );
+
+                            break;
+
+                        case DamageType.Earth:
+                            PacketSender.SendActionMsg(
+                                enemy, Strings.Combat.removesymbol + (int)baseDamage, CustomColors.Combat.EarthDamage
+                            );
+
+                            break;
+
+                        case DamageType.Wind:
+                            PacketSender.SendActionMsg(
+                                enemy, Strings.Combat.removesymbol + (int)baseDamage, CustomColors.Combat.WindDamage
+                            );
+
+                            break;
+
+                        case DamageType.Water:
+                            PacketSender.SendActionMsg(
+                                enemy, Strings.Combat.removesymbol + (int)baseDamage, CustomColors.Combat.WaterDamage
+                            );
+
+                            break;
+
+                        case DamageType.Nature:
+                            PacketSender.SendActionMsg(
+                                enemy, Strings.Combat.removesymbol + (int)baseDamage, CustomColors.Combat.NatureDamage
+                            );
+
+                            break;
+
+                        case DamageType.Light:
+                            PacketSender.SendActionMsg(
+                                enemy, Strings.Combat.removesymbol + (int)baseDamage, CustomColors.Combat.LightDamage
+                            );
+
+                            break;
+
+                        case DamageType.Dark:
+                            PacketSender.SendActionMsg(
+                                enemy, Strings.Combat.removesymbol + (int)baseDamage, CustomColors.Combat.DarkDamage
+                            );
+
+                            break;
                     }
+
 
                     foreach (var status in statuses)
                     {
@@ -2183,25 +2408,49 @@ namespace Intersect.Server.Entities
             var enemyTile = new TileHelper(target.MapId, target.X, target.Y);
             if (Z == target.Z)
             {
-                myTile.Translate(0, -1);
+                myTile.Translate(0, -1); // Target Up
                 if (myTile.Matches(enemyTile))
                 {
                     return true;
                 }
 
-                myTile.Translate(0, 2);
+                myTile.Translate(0, 2); // Target Down
                 if (myTile.Matches(enemyTile))
                 {
                     return true;
                 }
 
-                myTile.Translate(-1, -1);
+                myTile.Translate(-1, -1); // Target Left
                 if (myTile.Matches(enemyTile))
                 {
                     return true;
                 }
 
-                myTile.Translate(2, 0);
+                myTile.Translate(2, 0); // Target Right 
+                if (myTile.Matches(enemyTile))
+                {
+                    return true;
+                }
+
+                myTile.Translate(-2, -1); // Target UpLeft
+                if (myTile.Matches(enemyTile))
+                {
+                    return true;
+                }
+
+                myTile.Translate(2, 0); // Target UpRight
+                if (myTile.Matches(enemyTile))
+                {
+                    return true;
+                }
+
+                myTile.Translate(-2, 2); // Target DownLeft
+                if (myTile.Matches(enemyTile))
+                {
+                    return true;
+                }
+
+                myTile.Translate(2, 0); // Target DownRight
                 if (myTile.Matches(enemyTile))
                 {
                     return true;
@@ -2238,6 +2487,30 @@ namespace Intersect.Server.Entities
 
                 myTile.Translate(2, 0);
                 if (myTile.Matches(enemyTile) && Dir == (int) Directions.Right)
+                {
+                    return true;
+                }
+
+                myTile.Translate(-2, -1);
+                if (myTile.Matches(enemyTile) && Dir == (int)Directions.UpLeft)
+                {
+                    return true;
+                }
+
+                myTile.Translate(2, 0);
+                if (myTile.Matches(enemyTile) && Dir == (int)Directions.UpRight)
+                {
+                    return true;
+                }
+
+                myTile.Translate(-2, 2);
+                if (myTile.Matches(enemyTile) && Dir == (int)Directions.DownLeft)
+                {
+                    return true;
+                }
+
+                myTile.Translate(2, 0);
+                if (myTile.Matches(enemyTile) && Dir == (int)Directions.DownRight)
                 {
                     return true;
                 }
@@ -2307,27 +2580,49 @@ namespace Intersect.Server.Entities
             var x2 = target.X + MapInstance.Get(target.MapId).MapGridX * Options.MapWidth;
             var y2 = target.Y + MapInstance.Get(target.MapId).MapGridY * Options.MapHeight;
 
-            if (Math.Abs(x1 - x2) > Math.Abs(y1 - y2))
-            {
-                //Left or Right
-                if (x1 - x2 < 0)
-                {
-                    return (byte) Directions.Right;
-                }
 
-                return (byte) Directions.Left;
-            }
-
+            // When to attack in fact. Basically it's when the NPC is next tile from me. So right now it's always N, S, E, W
             //Left or Right
-            if (y1 - y2 < 0)
+            if (x1 - x2 < 0 && y1 - y2 < 0)
             {
-                return (byte) Directions.Down;
+                return (byte)Directions.DownRight;
             }
-
-            return (byte) Directions.Up;
+            else if (x1 - x2 < 0 && y1 - y2 > 0)
+            {
+                return (byte)Directions.UpRight;
+            }
+            else if (x1 - x2 < 0 && y1 - y2 == 0)
+            {
+                return (byte)Directions.Right;
+            }
+            else if (x1 - x2 > 0 && y1 - y2 < 0)
+            {
+                return (byte)Directions.DownLeft;
+            }
+            else if (x1 - x2 > 0 && y1 - y2 > 0)
+            {
+                return (byte)Directions.UpLeft;
+            }
+            else if (x1 - x2 > 0 && y1 - y2 == 0)
+            {
+                return (byte)Directions.Left;
+            }
+            else if (x1 - x2 == 0 && y1 - y2 < 0)
+            {
+                return (byte)Directions.Down;
+            }
+            else if (x1 - x2 == 0 && y1 - y2 > 0)
+            {
+                return (byte)Directions.Up;
+            }
+            else
+            {
+                return 0;
+            }
         }
 
-        //Check if the target is either up, down, left or right of the target on the correct Z dimension.
+        // Outdated : Check if the target is either up, down, left or right of the target on the correct Z dimension.
+        // Check for 8 directions
         protected bool IsOneBlockAway(Guid mapId, int x, int y, int z = 0)
         {
             //Calculate World Tile of Me
@@ -2339,7 +2634,7 @@ namespace Intersect.Server.Entities
             var y2 = y + MapInstance.Get(mapId).MapGridY * Options.MapHeight;
             if (z == Z)
             {
-                if (y1 == y2)
+                if (y1 == y2 || y1 - 1 == y2 || y1 + 1 == y2)
                 {
                     if (x1 == x2 - 1)
                     {
@@ -2351,7 +2646,7 @@ namespace Intersect.Server.Entities
                     }
                 }
 
-                if (x1 == x2)
+                if (x1 == x2 || x1 - 1 == x2 || x1 + 1 == x2)
                 {
                     if (y1 == y2 - 1)
                     {
@@ -2377,6 +2672,28 @@ namespace Intersect.Server.Entities
 
             if (dropitems > 0)
             {
+                //Find tiles to spawn items
+                var tiles = new List<TileHelper>();
+                for (var x = X - Options.ItemDropRange; x <= X + Options.ItemDropRange; x++)
+                {
+                    for (var y = Y - Options.ItemDropRange; y <= Y + Options.ItemDropRange; y++)
+                    {
+                        var tileHelper = new TileHelper(MapId, x, y);
+                        if (tileHelper.TryFix())
+                        {
+                            //Tile is valid.. let's see if its open
+                            var map = MapInstance.Get(tileHelper.GetMapId());
+                            if (map != null)
+                            {
+                                if (!map.TileBlocked(tileHelper.GetX(), tileHelper.GetY()))
+                                {
+                                    tiles.Add(tileHelper);
+                                }
+                            }
+                        }
+                    }
+                }   
+
                 // Drop items
                 for (var n = 0; n < Items.Count; n++)
                 {
@@ -2435,9 +2752,22 @@ namespace Intersect.Server.Entities
                         lootOwner = playerKiller?.Id ?? Id;
                     }
 
-                    // Spawn the actual item!
-                    var map = MapInstance.Get(MapId);
+                    if (tiles.Count > 0)
+                    {
+                        var tile = tiles[Randomization.Next(tiles.Count)];
+                        var map = MapInstance.Get(tile.GetMapId());
+                        map?.SpawnItem(tile.GetX(), tile.GetY(), item, item.Quantity,lootOwner);
+
+
+                    }
+                    else
+                    {
+                        var map = MapInstance.Get(MapId);
                     map?.SpawnItem(X, Y, item, item.Quantity, lootOwner);
+                    
+					
+					
+					}
 
                     // Remove the item from inventory if a player.
                     var player = this as Player;
@@ -2522,6 +2852,7 @@ namespace Intersect.Server.Entities
             packet.NameColor = NameColor;
             packet.HeaderLabel = new LabelPacket(HeaderLabel.Text, HeaderLabel.Color);
             packet.FooterLabel = new LabelPacket(FooterLabel.Text, FooterLabel.Color);
+            
 
             return packet;
         }

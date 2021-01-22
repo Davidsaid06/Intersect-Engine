@@ -53,6 +53,30 @@ namespace Intersect.Server.Entities.Combat
             return s;
         }
 
+        public int ValueElement()
+        {
+            var s = BaseStat;
+
+            s += mOwner.StatPointAllocations[(int)mStatType];
+            s += mOwner.GetStatBuffs(mStatType);
+
+            //Add buffs
+            var buffs = mBuff.Values.ToArray();
+            foreach (var buff in buffs)
+            {
+                s += buff.BuffType;
+            }
+
+            /* // The formula i use expects the value even if it's zero to it's logic.
+            if (s <= 0)
+            {
+                s = 1; //No 0 or negative stats, will give errors elsewhere in the code (especially divide by 0 errors).
+            }
+            */
+
+            return s;
+        }
+
         public bool Update()
         {
             var changed = false;

@@ -39,6 +39,14 @@ namespace Intersect.GameObjects.Events
         IsItemEquipped,
 
         HasFreeInventorySlots,
+        
+        EquippedItemTagIs,
+
+        HasItemWTag,
+
+        MapHasNpcWTag,
+
+        MapHasTag,
 
     }
 
@@ -197,6 +205,15 @@ namespace Intersect.GameObjects.Events
 
     }
 
+    public class MapHasNPCWTag : Condition
+    {
+
+        public override ConditionTypes Type { get; } = ConditionTypes.MapHasNpcWTag;
+
+        public string Tag { get; set; }
+
+    }
+
     public class GenderIsCondition : Condition
     {
 
@@ -212,6 +229,15 @@ namespace Intersect.GameObjects.Events
         public override ConditionTypes Type { get; } = ConditionTypes.MapIs;
 
         public Guid MapId { get; set; }
+
+    }
+
+    public class MapHasTag : Condition
+    {
+
+        public override ConditionTypes Type { get; } = ConditionTypes.MapHasTag;
+
+        public string Tag { get; set; }
 
     }
 
@@ -253,6 +279,22 @@ namespace Intersect.GameObjects.Events
         /// The Variable Id to use.
         /// </summary>
         public Guid VariableId { get; set; }
+    }
+
+    public class EquippedItemTagIsCondition : Condition
+    {
+        public override ConditionTypes Type { get; } = ConditionTypes.EquippedItemTagIs;
+
+        public string Tag { get; set; }
+    }
+
+    public class HasItemWTagCondition : Condition
+    {
+        public override ConditionTypes Type { get; } = ConditionTypes.HasItemWTag;
+
+        public string Tag { get; set; }
+
+        public int Quantity { get; set; }
 
     }
 

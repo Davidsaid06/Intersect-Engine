@@ -325,6 +325,7 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
+
     public class LevelUpCommand : EventCommand
     {
 
@@ -492,6 +493,69 @@ namespace Intersect.GameObjects.Events.Commands
             return base.GetCopyData(commandLists, copyLists);
         }
 
+
+        public override void FixBranchIds(Dictionary<Guid, Guid> idDict)
+        {
+            for (var i = 0; i < BranchIds.Length; i++)
+            {
+                if (idDict.ContainsKey(BranchIds[i]))
+                {
+                    BranchIds[i] = idDict[BranchIds[i]];
+                }
+            }
+        }
+
+    }
+
+    public class ChangeItemsByTag : EventCommand
+    {
+
+        //For Json Deserialization
+        public ChangeItemsByTag()
+        {
+        }
+
+        public ChangeItemsByTag(Dictionary<Guid, List<EventCommand>> commandLists)
+        {
+            for (var i = 0; i < BranchIds.Length; i++)
+            {
+                BranchIds[i] = Guid.NewGuid();
+                commandLists.Add(BranchIds[i], new List<EventCommand>());
+            }
+        }
+
+        public override EventCommandType Type { get; } = EventCommandType.ChangeItemsByTag;
+
+        public string Tag { get; set; }
+
+        public int Quantity { get; set; }
+
+        public bool Add { get; set; }
+
+        public Guid[] BranchIds { get; set; } =
+            new Guid[2]; //Branch[0] is the event commands to execute when given/taken successfully, Branch[1] is for when they're not.
+
+        public override string GetCopyData(
+            Dictionary<Guid, List<EventCommand>> commandLists,
+            Dictionary<Guid, List<EventCommand>> copyLists
+        )
+        {
+            foreach (var branch in BranchIds)
+            {
+                if (branch != Guid.Empty && commandLists.ContainsKey(branch))
+                {
+                    copyLists.Add(branch, commandLists[branch]);
+                    foreach (var cmd in commandLists[branch])
+                    {
+                        cmd.GetCopyData(commandLists, copyLists);
+                    }
+                }
+            }
+
+            return base.GetCopyData(commandLists, copyLists);
+        }
+
+
         public override void FixBranchIds(Dictionary<Guid, Guid> idDict)
         {
             for (var i = 0; i < BranchIds.Length; i++)
@@ -557,6 +621,15 @@ namespace Intersect.GameObjects.Events.Commands
         public override EventCommandType Type { get; } = EventCommandType.ChangeFace;
 
         public string Face { get; set; } = "";
+
+    }
+
+    public class ChangeHairCommand : EventCommand
+    {
+
+        public override EventCommandType Type { get; } = EventCommandType.ChangeHair;
+
+        public string Hair { get; set; } = "";
 
     }
 
@@ -868,6 +941,7 @@ namespace Intersect.GameObjects.Events.Commands
 
     }
 
+
     /// <summary>
     /// Defines the Event command class for the Change Player Color command.
     /// </summary>
@@ -883,6 +957,14 @@ namespace Intersect.GameObjects.Events.Commands
         /// The <see cref="Color"/> to apply to the player.
         /// </summary>
         public Color Color { get; set; } = new Color(255, 255, 255, 255);
+    public class ChangeStatCommand : EventCommand
+    {
+
+        public override EventCommandType Type { get; } = EventCommandType.ChangeStat;
+
+        public int Amount { get; set; }
+
+        public int Index { get; set; }
 
     }
 

@@ -75,6 +75,9 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<string>("JsonBaseVitals")
                         .HasColumnName("BaseVitals");
 
+                    b.Property<string>("JsonCustomSpriteLayers")
+                        .HasColumnName("CustomSpriteLayers");
+
                     b.Property<string>("JsonItems")
                         .HasColumnName("Items");
 
@@ -124,6 +127,12 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<Guid>("CraftEventId")
+                        .HasColumnName("CraftEvent");
+
+                    b.Property<Guid>("CraftEventIdFailed")
+                        .HasColumnName("CraftEventFailed ");
+
                     b.Property<string>("Folder");
 
                     b.Property<string>("IngredientsJson")
@@ -131,9 +140,15 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<Guid>("ItemId");
 
+                    b.Property<string>("JsonCraftRequirements")
+                        .HasColumnName("CraftRequirements");
+
                     b.Property<string>("Name");
 
                     b.Property<int>("Quantity");
+
+                    b.Property<int>("SuccessRate")
+                        .HasColumnName("SuccessRate");
 
                     b.Property<int>("Time");
 
@@ -225,6 +240,11 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<string>("Description");
 
+
+                    b.Property<bool>("DestroySpell");
+
+                    b.Property<int>("Durability");
+
                     b.Property<Guid>("EquipmentAnimationId")
                         .HasColumnName("EquipmentAnimation");
 
@@ -241,8 +261,11 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<int>("ItemType");
 
+
                     b.Property<string>("JsonColor")
                         .HasColumnName("Color");
+                    b.Property<string>("JsonTags")
+                        .HasColumnName("Tag");
 
                     b.Property<string>("JsonUsageRequirements")
                         .HasColumnName("UsageRequirements");
@@ -299,6 +322,8 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<string>("VitalsRegenJson")
                         .HasColumnName("VitalsRegen");
 
+                    b.Property<int>("WeaponSkill");
+
                     b.HasKey("Id");
 
                     b.ToTable("Items");
@@ -347,6 +372,8 @@ namespace Intersect.Server.Migrations.Game
 
                     b.Property<int>("DamageType");
 
+                    b.Property<string>("Description");
+
                     b.Property<long>("Experience");
 
                     b.Property<byte>("FleeHealthPercentage");
@@ -370,7 +397,14 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<string>("JsonStat")
                         .HasColumnName("Stats");
 
+                    b.Property<string>("JsonTags")
+                        .HasColumnName("Tag");
+
                     b.Property<int>("Level");
+
+                    b.Property<string>("Localization");
+
+                    b.Property<int>("MoveRange");
 
                     b.Property<byte>("Movement");
 
@@ -732,6 +766,9 @@ namespace Intersect.Server.Migrations.Game
                     b.Property<int>("GHue");
 
                     b.Property<bool>("IsIndoors");
+
+                    b.Property<string>("JsonTags")
+                        .HasColumnName("Tag");
 
                     b.Property<Guid>("Left");
 

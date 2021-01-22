@@ -13,6 +13,7 @@ using Intersect.GameObjects.Maps;
 using Intersect.Logging;
 using Intersect.Server.Classes.Maps;
 using Intersect.Server.Database;
+using Intersect.Server.Database.PlayerData.Players;
 using Intersect.Server.Entities;
 using Intersect.Server.Entities.Events;
 using Intersect.Server.General;
@@ -325,6 +326,74 @@ namespace Intersect.Server.Maps
                 PacketSender.SendMapItemsToProximity(Id);
             }
             
+        }
+
+        public void SpawnItem(int x, int y, InventorySlot item, int amount, Guid owner)
+        {
+            if (item == null)
+            {
+                Log.Warn($"Tried to spawn {amount} of a null item at ({x}, {y}) in map {Id}.");
+
+                return;
+            }
+
+            var itemDescriptor = ItemBase.Get(item.ItemId);
+            if (itemDescriptor == null)
+            {
+                Log.Warn($"No item found for {item.ItemId}.");
+
+                return;
+            }
+
+            // if we can stack this item or the user configured to drop items consolidated, simply spawn a single stack of it.
+            if (itemDescriptor.Stackable || Options.Loot.ConsolidateMapDrops)
+            {
+                var mapItem = new MapItem(item.ItemId, amount, item.BagId, item.Bag,item.currentDurability,item.currentWeaponSkillPoint)
+                {
+                    X = x,
+                    Y = y,
+                    DespawnTime = Globals.Timing.TimeMs + Options.Loot.ItemDespawnTime,
+                    Owner = owner,
+                    OwnershipTime = Globals.Timing.TimeMs + Options.Loot.ItemOwnershipTime,
+                    VisibleToAll = Options.Loot.ShowUnownedItems
+                };
+
+                // If this is a piece of equipment, set up the stat buffs for it.
+                if (itemDescriptor.ItemType == ItemTypes.Equipment)
+                {
+                    //mapItem.Quantity = 1; DR
+                    mapItem.SetupStatBuffs(item);
+                }
+
+                MapItems.Add(mapItem);
+                PacketSender.SendMapItemUpdate(Id, MapItems.Count - 1);
+            }
+            else
+            {
+                // Oh boy here we go! Set quantity to 1 and drop multiple!
+                for (var i = 0; i < amount; i++)
+                {
+                    var mapItem = new MapItem(item.ItemId, amount, item.BagId, item.Bag,item.currentDurability,item.currentWeaponSkillPoint)
+                    {
+                        X = x,
+                        Y = y,
+                        DespawnTime = Globals.Timing.TimeMs + Options.Loot.ItemDespawnTime,
+                        Owner = owner,
+                        OwnershipTime = Globals.Timing.TimeMs + Options.Loot.ItemOwnershipTime,
+                        VisibleToAll = Options.Loot.ShowUnownedItems
+                    };
+
+                    // If this is a piece of equipment, set up the stat buffs for it.
+                    if (itemDescriptor.ItemType == ItemTypes.Equipment)
+                    {
+                        mapItem.SetupStatBuffs(item);
+                    }
+
+                    MapItems.Add(mapItem);
+                }
+                PacketSender.SendMapItemsToProximity(Id);
+            }
+
         }
 
         private void SpawnAttributeItem(int x, int y)

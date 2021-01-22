@@ -18,6 +18,8 @@ namespace Intersect.Client.General
 
         private static long sUpdateTime;
 
+        private static bool timeChanged = false;
+
         public static void LoadTime(DateTime timeUpdate, Color clr, float rate)
         {
             sServerTime = timeUpdate;
@@ -28,13 +30,14 @@ namespace Intersect.Client.General
 
         public static void Update()
         {
+
             if (sUpdateTime < Globals.System.GetTimeMs())
             {
                 var ts = new TimeSpan(0, 0, 0, 0, (int) (1000 * sRate));
                 sServerTime = sServerTime.Add(ts);
                 sUpdateTime = Globals.System.GetTimeMs() + 1000;
             }
-
+            colorChanged();
             float ecTime = Globals.System.GetTimeMs() - sColorUpdate;
             var valChange = 255 * ecTime / 10000f;
             sCurrentColor.A = LerpVal(sCurrentColor.A, sTargetColor.A, valChange);
@@ -82,6 +85,24 @@ namespace Intersect.Client.General
         public static ColorF GetTintColor()
         {
             return sCurrentColor;
+        }
+
+        public static void colorChanged() {
+            if(sCurrentColor.A == sTargetColor.A && sCurrentColor.R==sTargetColor.R && sCurrentColor.G ==sTargetColor.G && sCurrentColor.B == sTargetColor.B)
+            {
+                timeChanged= true;
+            }        
+
+        }
+
+        public static bool getTimeChanged()
+        {
+            return timeChanged;
+        }
+
+        public static void setTimeChanged(bool b) 
+        {
+            timeChanged = b;
         }
 
     }

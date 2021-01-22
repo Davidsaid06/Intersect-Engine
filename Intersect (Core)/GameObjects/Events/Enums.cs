@@ -94,6 +94,14 @@
 
         SetAnimation,
 
+        // At the bottom becauase of Designer Tag
+        MoveUpLeft,
+
+        MoveUpRight,
+
+        MoveDownLeft,
+
+        MoveDownRight,
     }
 
     //ONLY ADD TO THE END OF THIS LIST ELSE FACE THE WRATH OF JC!!!!!
@@ -217,6 +225,14 @@
 
         // Player Color
         ChangePlayerColor,
+        //Change Hair
+        ChangeHair,
+
+        //Change Stat
+        ChangeStat,
+		
+        // Take Items By tag
+        ChangeItemsByTag,
 
     }
 

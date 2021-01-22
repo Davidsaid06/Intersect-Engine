@@ -59,6 +59,12 @@
         /// </summary>
         public bool ShowLevelByName = false;
 
+        // PATCH: EXP Loss On Death
+        public float EXPLossOnDeathPercentage = 0;
+
+        public int EXPLossOnDeath = 0;
+        // PATCH: EXP Loss On Death
+
     }
 
 }
