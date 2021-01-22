@@ -480,7 +480,7 @@ namespace Intersect.Server.Entities
                                         {
                                             PacketSender.SendChatMsg(
                                             this, Strings.Crafting.noitems.ToString(ItemBase.GetName(CraftBase.Get(CraftRequestId).ItemId)),
-                                            CustomColors.Alerts.Error
+                                            ChatMessageType.Error
                                             );
                                             CraftRequestId = Guid.Empty;
                                             PacketSender.SendStartCraft(this);
@@ -491,7 +491,7 @@ namespace Intersect.Server.Entities
                                     {
                                         PacketSender.SendChatMsg(
                                         this, Strings.Crafting.noitems.ToString(ItemBase.GetName(CraftBase.Get(CraftRequestId).ItemId)),
-                                        CustomColors.Alerts.Error
+                                        ChatMessageType.Error
                                         );
                                         CraftRequestId = Guid.Empty;
                                         PacketSender.SendStartCraft(this);
@@ -519,7 +519,7 @@ namespace Intersect.Server.Entities
                 {
                     PacketSender.SendChatMsg(
                                     this, Strings.Crafting.reqnotmet.ToString(ItemBase.GetName(CraftBase.Get(CraftRequestId).ItemId)),
-                                    CustomColors.Alerts.Error
+                                    ChatMessageType.Error
                                     );
                     CraftRequestId = Guid.Empty;
                     PacketSender.SendStartCraft(this);
@@ -3195,7 +3195,7 @@ namespace Intersect.Server.Entities
                     {
                         PacketSender.SendChatMsg(
                             this, Strings.Crafting.crafted.ToString(ItemBase.GetName(CraftBase.Get(id).ItemId)),
-                            CustomColors.Alerts.Success
+                            ChatMessageType.Local
                         );
                         // trigger craft event
                         if (CraftBase.Get(id).CraftEventId != Guid.Empty)
@@ -3215,7 +3215,7 @@ namespace Intersect.Server.Entities
                         PacketSender.SendInventory(this);
                         PacketSender.SendChatMsg(
                             this, Strings.Crafting.nospace.ToString(ItemBase.GetName(CraftBase.Get(id).ItemId)),
-                            CustomColors.Alerts.Error
+                            ChatMessageType.Error
                         );
                     }
                 }

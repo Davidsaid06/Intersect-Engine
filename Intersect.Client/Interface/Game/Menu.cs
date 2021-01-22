@@ -21,9 +21,9 @@ namespace Intersect.Client.Interface.Game
 
         private readonly CharacterWindow mCharacterWindow;
 
-        [NotNull] private readonly ImagePanel mStatsBackground;
+        private readonly ImagePanel mStatsBackground;
 
-        [NotNull] private readonly Button mStatsButton;
+        private readonly Button mStatsButton;
 
         private readonly ImagePanel mFriendsBackground;
 
@@ -52,7 +52,7 @@ namespace Intersect.Client.Interface.Game
 
         private readonly ImagePanel mQuestsBackground;
 		
-        [NotNull] private readonly StatsWindow mStatsWindow;
+        private readonly StatsWindow mStatsWindow;
 
         private readonly Button mQuestsButton;
 

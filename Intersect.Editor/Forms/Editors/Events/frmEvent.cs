@@ -731,6 +731,8 @@ namespace Intersect.Editor.Forms.Editors.Events
 
                 case EventCommandType.ChangePlayerColor:
                     tmpCommand = new ChangePlayerColorCommand();
+                    break;
+
                 case EventCommandType.ChangeItemsByTag:
                     tmpCommand = new ChangeItemsByTag(CurrentPage.CommandLists);
 
@@ -1324,6 +1326,8 @@ namespace Intersect.Editor.Forms.Editors.Events
                     break;
                 case EventCommandType.ChangePlayerColor:
                     cmdWindow = new EventCommandChangePlayerColor((ChangePlayerColorCommand)command, this);
+                    break;
+
                 case EventCommandType.ChangeItemsByTag:
                     cmdWindow = new EventCommandChangeItemsBytag((ChangeItemsByTag)command, CurrentPage, this);
 

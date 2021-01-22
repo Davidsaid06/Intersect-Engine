@@ -98,6 +98,7 @@
     </Compile>
     <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangePlayerColor.Designer.cs">
       <DependentUpon>EventCommand_ChangePlayerColor.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeHair.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -691,6 +692,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangePlayerColor.resx">
       <DependentUpon>EventCommand_ChangePlayerColor.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ChangeStat.resx">
       <DependentUpon>EventCommand_ChangeStat.cs</DependentUpon>
     </EmbeddedResource>
@@ -729,6 +731,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_ConditionalBranch.resx">
       <DependentUpon>EventCommand_ConditionalBranch.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\Editors\Events\Event Commands\EventCommand_EndQuest.resx">
       <DependentUpon>EventCommand_EndQuest.cs</DependentUpon>

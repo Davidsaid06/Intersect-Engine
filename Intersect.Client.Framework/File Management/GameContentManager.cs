@@ -65,7 +65,7 @@ namespace Intersect.Client.Framework.File_Management
 
         protected Dictionary<string, IAsset> mFaceDict = new Dictionary<string, IAsset>();
 		
-        protected Dictionary<string, GameTexture> mHairDict = new Dictionary<string, GameTexture>();
+        protected Dictionary<string, IAsset> mHairDict = new Dictionary<string, IAsset>();
 
         protected Dictionary<string, IAsset> mFogDict = new Dictionary<string, IAsset>();
 

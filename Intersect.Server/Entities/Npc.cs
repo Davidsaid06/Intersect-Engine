@@ -861,7 +861,7 @@ namespace Intersect.Server.Entities
                                                     dir = 6;
 
                                                     break;
-                                            }
+                                            
                                         }
                                     }
 
@@ -1012,7 +1012,7 @@ namespace Intersect.Server.Entities
                             if (!fleed && Target == null)
                             {
                                 moveTargetMap = Guid.Empty;
-                                NextPathWaitTime = Globals.Timing.TimeMs + Randomization.Next(500, 2000);
+                                NextPathWaitTime = Globals.Timing.Milliseconds + Randomization.Next(500, 2000);
                             }
                         }
                     }
@@ -1201,7 +1201,7 @@ namespace Intersect.Server.Entities
         
         public void FindMoveTarget()
         {
-            if (NextPathWaitTime > Globals.Timing.TimeMs)
+            if (NextPathWaitTime > Globals.Timing.Milliseconds)
             {
                 moveTargetMap = Guid.Empty;
                 moveTarget[0] = 0;

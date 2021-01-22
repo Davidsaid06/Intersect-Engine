@@ -522,7 +522,7 @@
     <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.cs" />
     <Compile Include="Migrations\Logging\20201119230003_AddUserActivityHistory.Designer.cs">
       <DependentUpon>20201119230003_AddUserActivityHistory.cs</DependentUpon>
-
+    </Compile>
     <Compile Include="Migrations\20200413042444_playerDurability.cs" />
     <Compile Include="Migrations\20200413042444_playerDurability.designer.cs">
       <DependentUpon>20200413042444_playerDurability.cs</DependentUpon>

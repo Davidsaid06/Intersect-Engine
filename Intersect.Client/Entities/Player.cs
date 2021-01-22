@@ -1652,8 +1652,7 @@ namespace Intersect.Client.Entities
 
                         float speed = GetMovementTime();
                         speed = speed - (speed * (capSpeedBonus/100));
-                        MoveTimer = Globals.System.GetTimeMs() + speed;
-                        didMove = true;
+                        MoveTimer = (Timing.Global.Ticks / TimeSpan.TicksPerMillisecond) + (long)GetMovementTime();
                         if (tmpX < 0 || tmpY < 0 || tmpX > Options.MapWidth - 1 || tmpY > Options.MapHeight - 1)
                         {
                             var gridX = MapInstance.Get(Globals.Me.CurrentMap).MapGridX;

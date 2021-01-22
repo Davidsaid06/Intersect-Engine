@@ -29,9 +29,6 @@ namespace Intersect.Server.Maps
         // We need this mostly for the client-side.. They can't keep track of our timer after all!
         public bool VisibleToAll = true;
 
-        public MapItem(Guid itemId, int quantity) : base(itemId, quantity, null, null)
-        {
-            UniqueId = Guid.NewGuid();
 
         public int X = 0;
 
@@ -44,9 +41,10 @@ namespace Intersect.Server.Maps
         public int MaxWeaponSkillsPoint { get; private set; }
 
         public int CurrentWeaponSkillPoint { get; private set; }
-
+        
         public MapItem(Guid itemId, int quantity) : base(itemId, quantity, null, null)
         {
+            UniqueId = Guid.NewGuid();
             this.MaxDurability = Descriptor.Durability;
             this.MaxWeaponSkillsPoint = Descriptor.WeaponSkill;
             this.CurrentDurability = MaxDurability;

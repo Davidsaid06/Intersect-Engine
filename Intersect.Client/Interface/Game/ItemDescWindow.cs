@@ -235,7 +235,7 @@ namespace Intersect.Client.Interface.Game
 
 
         public ItemDescWindow(
-            [NotNull] Client.Items.Item item,
+            Client.Items.Item item,
             int amount,
             int x,
             int y,

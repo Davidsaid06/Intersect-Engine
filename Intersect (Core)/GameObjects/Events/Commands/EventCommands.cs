@@ -957,6 +957,7 @@ namespace Intersect.GameObjects.Events.Commands
         /// The <see cref="Color"/> to apply to the player.
         /// </summary>
         public Color Color { get; set; } = new Color(255, 255, 255, 255);
+    }
     public class ChangeStatCommand : EventCommand
     {
 
@@ -967,5 +968,6 @@ namespace Intersect.GameObjects.Events.Commands
         public int Index { get; set; }
 
     }
+
 
 }
